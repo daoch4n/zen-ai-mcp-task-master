@@ -37,20 +37,20 @@ const DEFAULTS = {
 	models: {
 		main: {
 			provider: 'openai',
-			modelId: 'gemini-2.5-flash-preview-05-20',
+			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000,
 			temperature: 0.2
 		},
 		research: {
 			provider: 'openai',
-			modelId: 'gemini-2.5-flash-preview-05-20',
+			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 8700,
 			temperature: 0.1
 		},
 		fallback: {
 			// No default fallback provider/model initially
 			provider: 'openai',
-			modelId: 'gemini-2.5-flash-preview-05-20',
+			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000, // Default parameters if fallback IS configured
 			temperature: 0.2
 		}
