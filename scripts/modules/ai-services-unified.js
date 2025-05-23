@@ -22,14 +22,7 @@ import {
 } from './config-manager.js';
 import { log, resolveEnvVariable, isSilentMode } from './utils.js';
 
-import * as anthropic from '../../src/ai-providers/anthropic.js';
-import * as perplexity from '../../src/ai-providers/perplexity.js';
-import * as google from '../../src/ai-providers/google.js';
 import * as openai from '../../src/ai-providers/openai.js';
-import * as xai from '../../src/ai-providers/xai.js';
-import * as openrouter from '../../src/ai-providers/openrouter.js';
-import * as ollama from '../../src/ai-providers/ollama.js';
-// TODO: Import other provider modules when implemented (ollama, etc.)
 
 // Helper function to get cost for a specific model
 function _getCostForModel(providerName, modelId) {
@@ -64,46 +57,11 @@ function _getCostForModel(providerName, modelId) {
 // --- Provider Function Map ---
 // Maps provider names (lowercase) to their respective service functions
 const PROVIDER_FUNCTIONS = {
-	anthropic: {
-		generateText: anthropic.generateAnthropicText,
-		streamText: anthropic.streamAnthropicText,
-		generateObject: anthropic.generateAnthropicObject
-	},
-	perplexity: {
-		generateText: perplexity.generatePerplexityText,
-		streamText: perplexity.streamPerplexityText,
-		generateObject: perplexity.generatePerplexityObject
-	},
-	google: {
-		// Add Google entry
-		generateText: google.generateGoogleText,
-		streamText: google.streamGoogleText,
-		generateObject: google.generateGoogleObject
-	},
 	openai: {
-		// ADD: OpenAI entry
 		generateText: openai.generateOpenAIText,
 		streamText: openai.streamOpenAIText,
 		generateObject: openai.generateOpenAIObject
-	},
-	xai: {
-		// ADD: xAI entry
-		generateText: xai.generateXaiText,
-		streamText: xai.streamXaiText,
-		generateObject: xai.generateXaiObject // Note: Object generation might be unsupported
-	},
-	openrouter: {
-		// ADD: OpenRouter entry
-		generateText: openrouter.generateOpenRouterText,
-		streamText: openrouter.streamOpenRouterText,
-		generateObject: openrouter.generateOpenRouterObject
-	},
-	ollama: {
-		generateText: ollama.generateOllamaText,
-		streamText: ollama.streamOllamaText,
-		generateObject: ollama.generateOllamaObject
 	}
-	// TODO: Add entries for ollama, etc. when implemented
 };
 
 // --- Configuration for Retries ---
@@ -182,15 +140,7 @@ function _extractErrorMessage(error) {
  */
 function _resolveApiKey(providerName, session, projectRoot = null) {
 	const keyMap = {
-		openai: 'OPENAI_API_KEY',
-		anthropic: 'ANTHROPIC_API_KEY',
-		google: 'GOOGLE_API_KEY',
-		perplexity: 'PERPLEXITY_API_KEY',
-		mistral: 'MISTRAL_API_KEY',
-		azure: 'AZURE_OPENAI_API_KEY',
-		openrouter: 'OPENROUTER_API_KEY',
-		xai: 'XAI_API_KEY',
-		ollama: 'OLLAMA_API_KEY'
+		openai: 'OPENAI_API_KEY'
 	};
 
 	const envVarName = keyMap[providerName];
@@ -201,11 +151,6 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 	}
 
 	const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
-
-	// Special handling for Ollama - API key is optional
-	if (providerName === 'ollama') {
-		return apiKey || null;
-	}
 
 	if (!apiKey) {
 		log('warn', `API key ${envVarName} for provider '${providerName}' is not set. Skipping this provider.`);
@@ -327,257 +272,222 @@ async function _unifiedServiceRunner(serviceType, params) {
 	// Get userId from config - ensure effectiveProjectRoot is passed
 	const userId = getUserId(effectiveProjectRoot);
 
-	let sequence;
-	if (initialRole === 'main') {
-		sequence = ['main', 'fallback', 'research'];
-	} else if (initialRole === 'research') {
-		sequence = ['research', 'fallback', 'main'];
-	} else if (initialRole === 'fallback') {
-		sequence = ['fallback', 'main', 'research'];
-	} else {
-		log(
-			'warn',
-			`Unknown initial role: ${initialRole}. Defaulting to main -> fallback -> research sequence.`
-		);
-		sequence = ['main', 'fallback', 'research'];
-	}
+	// Since all AI providers are now redirected to OpenAI, we can simplify the sequence.
+	// The 'role' parameter still exists for historical/config purposes but will always map to OpenAI.
+	const providerName = 'openai';
+	const modelId = 'gemini-2.5-flash-preview-05-20'; // Hardcoded as per instructions
 
 	let lastError = null;
 	let lastCleanErrorMessage =
 		'AI service call failed for all configured roles.';
 
-	for (const currentRole of sequence) {
-		let providerName,
-			modelId,
+	// The loop is effectively removed as we only attempt OpenAI
+	try {
+		log('info', `AI service call with forced provider: ${providerName}`);
+
+		if (!providerName || !modelId) {
+			log(
+				'error',
+				`Critical: Provider or Model ID not configured for forced OpenAI. Provider: ${providerName}, Model: ${modelId}`
+			);
+			throw new Error(
+				`Critical configuration missing: Provider: ${providerName}, Model: ${modelId}`
+			);
+		}
+
+		// Get parameters for the initial role (main, research, or fallback)
+		// This is still relevant for maxTokens, temperature, etc., even if provider/model are forced.
+		const roleParams = getParametersForRole(initialRole, effectiveProjectRoot);
+		const baseUrl = getBaseUrlForRole(initialRole, effectiveProjectRoot);
+
+		// Get Provider Function Set
+		const providerFnSet = PROVIDER_FUNCTIONS[providerName?.toLowerCase()];
+		if (!providerFnSet) {
+			log(
+				'error',
+				`Critical: Provider '${providerName}' not supported or map entry missing.`
+			);
+			throw new Error(`Unsupported provider configured: ${providerName}`);
+		}
+
+		// Use the original service type to get the function
+		const providerApiFn = providerFnSet[serviceType];
+		if (typeof providerApiFn !== 'function') {
+			log(
+				'error',
+				`Critical: Service type '${serviceType}' not implemented for provider '${providerName}'.`
+			);
+			throw new Error(
+				`Service '${serviceType}' not implemented for provider ${providerName}`
+			);
+		}
+
+		// Resolve API Key (will throw if required and missing)
+		const apiKey = _resolveApiKey(
+			providerName?.toLowerCase(),
+			session,
+			effectiveProjectRoot
+		);
+
+		// If API key is null, it means it's required but not set.
+		if (apiKey === null) {
+			throw new Error(`API key missing for provider '${providerName}'.`);
+		}
+
+		// Construct Messages Array
+		const messages = [];
+		if (systemPrompt) {
+			messages.push({ role: 'system', content: systemPrompt });
+		}
+
+		if (prompt) {
+			// Ensure prompt exists before adding
+			messages.push({ role: 'user', content: prompt });
+		} else {
+			// Throw an error if the prompt is missing, as it's essential
+			throw new Error('User prompt content is missing.');
+		}
+
+		// Prepare call parameters (using messages array)
+		const callParams = {
 			apiKey,
-			roleParams,
-			providerFnSet,
-			providerApiFn,
+			modelId,
+			maxTokens: roleParams.maxTokens,
+			temperature: roleParams.temperature,
+			messages,
 			baseUrl,
-			providerResponse,
-			telemetryData = null;
+			...(serviceType === 'generateObject' && { schema, objectName }),
+			...restApiParams
+		};
 
-		try {
-			log('info', `New AI service call with role: ${currentRole}`);
+		// Attempt the call with retries
+		const providerResponse = await _attemptProviderCallWithRetries(
+			providerApiFn,
+			callParams,
+			providerName,
+			modelId,
+			initialRole // Use initialRole for logging consistency
+		);
 
-			// Force provider to OpenAI and model to gemini-2.5-flash-preview-05-20
-			providerName = 'openai';
-			modelId = 'gemini-2.5-flash-preview-05-20';
-
-			// 1. Get Config: Provider, Model, Parameters for the current role
-			// Pass effectiveProjectRoot to config getters
-			// Original logic commented out:
-			// if (currentRole === 'main') {
-			// 	providerName = getMainProvider(effectiveProjectRoot);
-			// 	modelId = getMainModelId(effectiveProjectRoot);
-			// } else if (currentRole === 'research') {
-			// 	providerName = getResearchProvider(effectiveProjectRoot);
-			// 	modelId = getResearchModelId(effectiveProjectRoot);
-			// } else if (currentRole === 'fallback') {
-			// 	providerName = getFallbackProvider(effectiveProjectRoot);
-			// 	modelId = getFallbackModelId(effectiveProjectRoot);
-			// } else {
-			// 	log(
-			// 		'error',
-			// 		`Unknown role encountered in _unifiedServiceRunner: ${currentRole}`
-			// 	);
-			// 	lastError =
-			// 		lastError || new Error(`Unknown AI role specified: ${currentRole}`);
-			// 	continue;
-			// }
-
-			if (!providerName || !modelId) {
-				log(
-					'warn',
-					`Skipping role '${currentRole}': Provider or Model ID not configured.`
-				);
-				lastError =
-					lastError ||
-					new Error(
-						`Configuration missing for role '${currentRole}'. Provider: ${providerName}, Model: ${modelId}`
+		// --- Log Telemetry & Capture Data ---
+		if (userId && providerResponse && providerResponse.usage) {
+			try {
+				const telemetryData = await logAiUsage({
+					userId,
+					commandName,
+					providerName,
+					modelId,
+					inputTokens: providerResponse.usage.inputTokens,
+					outputTokens: providerResponse.usage.outputTokens,
+					outputType
+				});
+				// --- Extract the correct main result based on serviceType ---
+				let finalMainResult;
+				if (serviceType === 'generateText') {
+					finalMainResult = providerResponse.text;
+				} else if (serviceType === 'generateObject') {
+					finalMainResult = providerResponse.object;
+				} else if (serviceType === 'streamText') {
+					finalMainResult = providerResponse; // Return the whole stream object
+				} else {
+					log(
+						'error',
+						`Unknown serviceType in _unifiedServiceRunner: ${serviceType}`
 					);
-				continue;
-			}
-
-			// Pass effectiveProjectRoot to getParametersForRole
-			roleParams = getParametersForRole(currentRole, effectiveProjectRoot);
-			baseUrl = getBaseUrlForRole(currentRole, effectiveProjectRoot);
-
-			// 2. Get Provider Function Set
-			providerFnSet = PROVIDER_FUNCTIONS[providerName?.toLowerCase()];
-			if (!providerFnSet) {
-				log(
-					'warn',
-					`Skipping role '${currentRole}': Provider '${providerName}' not supported or map entry missing.`
-				);
-				lastError =
-					lastError ||
-					new Error(`Unsupported provider configured: ${providerName}`);
-				continue;
-			}
-
-			// Use the original service type to get the function
-			providerApiFn = providerFnSet[serviceType];
-			if (typeof providerApiFn !== 'function') {
-				log(
-					'warn',
-					`Skipping role '${currentRole}': Service type '${serviceType}' not implemented for provider '${providerName}'.`
-				);
-				lastError =
-					lastError ||
-					new Error(
-						`Service '${serviceType}' not implemented for provider ${providerName}`
-					);
-				continue;
-			}
-
-			// 3. Resolve API Key (will throw if required and missing)
-			// Pass effectiveProjectRoot to _resolveApiKey
-			apiKey = _resolveApiKey(
-				providerName?.toLowerCase(),
-				session,
-				effectiveProjectRoot
-			);
-
-			// If API key is null, skip this provider and try the next one
-			if (apiKey === null) {
-				lastError = new Error(`API key missing for provider '${providerName}'.`);
-				lastCleanErrorMessage = `API key missing for provider '${providerName}'.`;
-				continue; // Skip to the next role in the sequence
-			}
-
-			// 4. Construct Messages Array
-			const messages = [];
-			if (systemPrompt) {
-				messages.push({ role: 'system', content: systemPrompt });
-			}
-
-			// IN THE FUTURE WHEN DOING CONTEXT IMPROVEMENTS
-			// {
-			//     type: 'text',
-			//     text: 'Large cached context here like a tasks json',
-			//     providerOptions: {
-			//       anthropic: { cacheControl: { type: 'ephemeral' } }
-			//     }
-			//   }
-
-			// Example
-			// if (params.context) { // context is a json string of a tasks object or some other stu
-			//     messages.push({
-			//         type: 'text',
-			//         text: params.context,
-			//         providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } }
-			//     });
-			// }
-
-			if (prompt) {
-				// Ensure prompt exists before adding
-				messages.push({ role: 'user', content: prompt });
-			} else {
-				// Throw an error if the prompt is missing, as it's essential
-				throw new Error('User prompt content is missing.');
-			}
-
-			// 5. Prepare call parameters (using messages array)
-			const callParams = {
-				apiKey,
-				modelId,
-				maxTokens: roleParams.maxTokens,
-				temperature: roleParams.temperature,
-				messages,
-				baseUrl,
-				...(serviceType === 'generateObject' && { schema, objectName }),
-				...restApiParams
-			};
-
-			// 6. Attempt the call with retries
-			providerResponse = await _attemptProviderCallWithRetries(
-				providerApiFn,
-				callParams,
-				providerName,
-				modelId,
-				currentRole
-			);
-
-			// --- Log Telemetry & Capture Data ---
-			// Use providerResponse which contains the usage data directly for text/object
-			if (userId && providerResponse && providerResponse.usage) {
-				try {
-					telemetryData = await logAiUsage({
-						userId,
-						commandName,
-						providerName,
-						modelId,
-						inputTokens: providerResponse.usage.inputTokens,
-						outputTokens: providerResponse.usage.outputTokens,
-						outputType
-					});
-				} catch (telemetryError) {
-					// logAiUsage already logs its own errors and returns null on failure
-					// No need to log again here, telemetryData will remain null
+					finalMainResult = providerResponse; // Default to returning the whole object as fallback
 				}
-			} else if (userId && providerResponse && !providerResponse.usage) {
-				log(
-					'warn',
-					`Cannot log telemetry for ${commandName} (${providerName}/${modelId}): AI result missing 'usage' data. (May be expected for streams)`
-				);
-			}
-			// --- End Log Telemetry ---
+				// --- End Main Result Extraction ---
 
-			// --- Extract the correct main result based on serviceType ---
+				// Return a composite object including the extracted main result and telemetry data
+				return {
+					mainResult: finalMainResult,
+					telemetryData: telemetryData
+				};
+			} catch (telemetryError) {
+				// logAiUsage already logs its own errors and returns null on failure
+				// No need to log again here, telemetryData will remain null
+				log('warn', `Telemetry logging failed: ${telemetryError.message}`);
+				// Proceed without telemetry data
+				let finalMainResult;
+				if (serviceType === 'generateText') {
+					finalMainResult = providerResponse.text;
+				} else if (serviceType === 'generateObject') {
+					finalMainResult = providerResponse.object;
+				} else if (serviceType === 'streamText') {
+					finalMainResult = providerResponse;
+				} else {
+					finalMainResult = providerResponse;
+				}
+				return {
+					mainResult: finalMainResult,
+					telemetryData: null
+				};
+			}
+		} else if (userId && providerResponse && !providerResponse.usage) {
+			log(
+				'warn',
+				`Cannot log telemetry for ${commandName} (${providerName}/${modelId}): AI result missing 'usage' data. (May be expected for streams)`
+			);
+			// Proceed without telemetry data
 			let finalMainResult;
 			if (serviceType === 'generateText') {
 				finalMainResult = providerResponse.text;
 			} else if (serviceType === 'generateObject') {
 				finalMainResult = providerResponse.object;
 			} else if (serviceType === 'streamText') {
-				finalMainResult = providerResponse; // Return the whole stream object
+				finalMainResult = providerResponse;
 			} else {
-				log(
-					'error',
-					`Unknown serviceType in _unifiedServiceRunner: ${serviceType}`
-				);
-				finalMainResult = providerResponse; // Default to returning the whole object as fallback
+				finalMainResult = providerResponse;
 			}
-			// --- End Main Result Extraction ---
-
-			// Return a composite object including the extracted main result and telemetry data
 			return {
 				mainResult: finalMainResult,
-				telemetryData: telemetryData
+				telemetryData: null
 			};
-		} catch (error) {
-			const cleanMessage = _extractErrorMessage(error);
-			log(
-				'error',
-				`Service call failed for role ${currentRole} (Provider: ${providerName || 'unknown'}, Model: ${modelId || 'unknown'}): ${cleanMessage}`
-			);
-			lastError = error;
-			lastCleanErrorMessage = cleanMessage;
+		} else {
+			// No userId or providerResponse, proceed without telemetry
+			let finalMainResult;
+			if (serviceType === 'generateText') {
+				finalMainResult = providerResponse.text;
+			} else if (serviceType === 'generateObject') {
+				finalMainResult = providerResponse.object;
+			} else if (serviceType === 'streamText') {
+				finalMainResult = providerResponse;
+			} else {
+				finalMainResult = providerResponse;
+			}
+			return {
+				mainResult: finalMainResult,
+				telemetryData: null
+			};
+		}
+	} catch (error) {
+		const cleanMessage = _extractErrorMessage(error);
+		log(
+			'error',
+			`Service call failed for forced OpenAI (Provider: ${providerName || 'unknown'}, Model: ${modelId || 'unknown'}): ${cleanMessage}`
+		);
+		lastError = error;
+		lastCleanErrorMessage = cleanMessage;
 
-			if (serviceType === 'generateObject') {
-				const lowerCaseMessage = cleanMessage.toLowerCase();
-				if (
-					lowerCaseMessage.includes(
-						'no endpoints found that support tool use'
-					) ||
-					lowerCaseMessage.includes('does not support tool_use') ||
-					lowerCaseMessage.includes('tool use is not supported') ||
-					lowerCaseMessage.includes('tools are not supported') ||
-					lowerCaseMessage.includes('function calling is not supported')
-				) {
-					const specificErrorMsg = `Model '${modelId || 'unknown'}' via provider '${providerName || 'unknown'}' does not support the 'tool use' required by generateObjectService. Please configure a model that supports tool/function calling for the '${currentRole}' role, or use generateTextService if structured output is not strictly required.`;
-					log('error', `[Tool Support Error] ${specificErrorMsg}`);
-					throw new Error(specificErrorMsg);
-				}
+		if (serviceType === 'generateObject') {
+			const lowerCaseMessage = cleanMessage.toLowerCase();
+			if (
+				lowerCaseMessage.includes(
+					'no endpoints found that support tool use'
+				) ||
+				lowerCaseMessage.includes('does not support tool_use') ||
+				lowerCaseMessage.includes('tool use is not supported') ||
+				lowerCaseMessage.includes('tools are not supported') ||
+				lowerCaseMessage.includes('function calling is not supported')
+			) {
+				const specificErrorMsg = `Model '${modelId || 'unknown'}' via provider '${providerName || 'unknown'}' does not support the 'tool use' required by generateObjectService. Please configure a model that supports tool/function calling for the '${initialRole}' role, or use generateTextService if structured output is not strictly required.`;
+				log('error', `[Tool Support Error] ${specificErrorMsg}`);
+				throw new Error(specificErrorMsg);
 			}
 		}
+		// Re-throw the error as there's no fallback
+		throw new Error(lastCleanErrorMessage);
 	}
-
-	// If loop completes, all roles failed
-	log('error', `All roles in the sequence [${sequence.join(', ')}] failed.`);
-	// Throw a new error with the cleaner message from the last failure
-	throw new Error(lastCleanErrorMessage);
 }
 
 /**
