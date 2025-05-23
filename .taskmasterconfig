@@ -20,7 +20,7 @@
  		}
  	},
  	"global": {
- 		"logLevel": "info",
+ 		"logLevel": "debug",
  		"debug": false,
  		"defaultSubtasks": 5,
  		"defaultPriority": "medium",
