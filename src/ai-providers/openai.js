@@ -155,6 +155,7 @@ export async function generateOpenAIObject(params) {
 		throw new Error('Schema is required for OpenAI object generation.');
 	if (!objectName)
 		throw new Error('Object name is required for OpenAI object generation.');
+const openaiClient = getClient(apiKey, baseUrl);
 
 	// Deep copy the schema to avoid modifying the original object
 	const cleanedSchema = JSON.parse(JSON.stringify(schema));
