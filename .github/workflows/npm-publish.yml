@@ -1,0 +1,40 @@
+# This workflow is designed to publish the npm package to GitHub Packages.
+# It runs daily at midnight UTC and can also be triggered manually.
+
+name: Node.js Package Publish (GPR)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+
+jobs:
+  publish-gpr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for git operations
+      - name: Bump version for nightly release
+        run: npm version prerelease --preid=nightly -m "Bump version to %s for nightly release" --no-gpg-sign --author="zen-ai-dev[bot] <210175559+zen-ai-dev[bot]@users.noreply.github.com>"
+        
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Set the default registry to npmjs.org for public packages
+          registry-url: https://registry.npmjs.org/
+          # Configure GitHub Packages for scoped packages
+          scope: '@daoch4n'
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          # This step is crucial for npm to know where to find packages under the specified scope.
+          # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
+          npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
+          npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
+      - run: npm install
+      - run: npm publish --tag nightly
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

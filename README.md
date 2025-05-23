@@ -1,73 +1,67 @@
-# Task Master [![GitHub stars](https://img.shields.io/github/stars/zen-ai/zen-ai-mcp-task-master?style=social)](https://github.com/zen-ai/zen-ai-mcp-task-master/stargazers)
+# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/zen-ai/zen-ai-mcp-task-master-lite?style=social)](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/stargazers)
 
-[![CI](https://github.com/zen-ai/zen-ai-mcp-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/zen-ai/zen-ai-mcp-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/actions/workflows/ci.yml/badge.svg)](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-lite-ai.svg)](https://badge.fury.io/js/task-master-lite-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
 
-A task management system for AI-driven development, designed to work seamlessly with Cursor AI.
+A stripped down lite version of Task Master focusing on OpenAI integration and network-interfaced MCP server.
 
 ## Requirements
 
-Taskmaster utilizes AI across several commands, and those require a separate API key. You can use a variety of models from different AI providers provided you add your API keys.
+Taskmaster Lite utilizes OpenAI for AI-driven commands, which requires an OpenAI API key.
+You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env. Any OpenAI-compatible model can be used by specifying a custom endpoint.
+Note: The Gemini Flash 2.5 05-20 model is currently hardcoded.
 
-You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env.
+An OpenAI API key is required.
 
-At least one (1) of the following is required:
-
-- OpenAI API key
-- Perplexity API key (for research model)
-- xAI API Key (for research or main model)
-- OpenRouter API Key (for research or main model)
-
-Using the research model is optional but highly recommended. You will need at least ONE API key. Adding all API keys enables you to seamlessly switch between model providers at will.
+Using the research model is optional but highly recommended.
 
 ## Quick Start
 
 ### Option 1 | MCP (Recommended):
 
-MCP (Model Control Protocol) provides the easiest way to get started with Task Master directly in your editor.
+MCP (Model Control Protocol) provides the easiest way to get started with Task Master Lite directly in your editor.
 
-1. **Add the MCP config to your editor** (Cursor recommended, but it works with other text editors):
+1.  **Start the MCP server**:
 
-```json
-{
-	"mcpServers": {
-		"taskmaster-ai": {
-			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
-			"env": {
-				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
-				"OPENAI_API_KEY": "YOUR_OPENAI_KEY_HERE",
-				"MISTRAL_API_KEY": "YOUR_MISTRAL_KEY_HERE",
-				"OPENROUTER_API_KEY": "YOUR_OPENROUTER_KEY_HERE",
-				"XAI_API_KEY": "YOUR_XAI_KEY_HERE",
-				"AZURE_OPENAI_API_KEY": "YOUR_AZURE_KEY_HERE",
-				"OLLAMA_API_KEY": "YOUR_OLLAMA_API_KEY_HERE"
-			}
-		}
-	}
-}
-```
+    ```bash
+    node mcp-server/server.js
+    ```
 
-2. **Enable the MCP** in your editor
+2.  **Add the MCP config to your editor** :
 
-3. **Prompt the AI** to initialize Task Master:
+    ```json
+    {
+    	"mcpServers": {
+    		"taskmaster-lite-ai": {
+    			"env": {
+    				"OPENAI_API_KEY": "YOUR_OPENAI_KEY_HERE"
+    			},
+    			"url": "http://localhost:3000/events"
+    		}
+    	}
+    }
+    ```
 
-```
-Can you please initialize taskmaster-ai into my project?
-```
+3.  **Enable the MCP** in your editor
 
-4. **Use common commands** directly through your AI assistant:
+4.  **Prompt the AI** to initialize Task Master Lite:
 
-```txt
-Can you parse my PRD at scripts/prd.txt?
-What's the next task I should work on?
-Can you help me implement task 3?
-Can you help me expand task 4?
-```
+    ```
+    Initialize taskmaster-lite-ai into project.
+    ```
+
+5.  **Use common commands** directly through your AI assistant:
+
+    ```txt
+    Parse PRD at scripts/prd.txt.
+    Get next task.
+    Implement task 3.
+    Expand task 4.
+    ```
 
 ### Option 2: Using Command Line
 
@@ -75,20 +69,20 @@ Can you help me expand task 4?
 
 ```bash
 # Install globally
-npm install -g task-master-ai
+npm install -g task-master-lite-ai
 
 # OR install locally within your project
-npm install task-master-ai
+npm install task-master-lite-ai
 ```
 
 #### Initialize a new project
 
 ```bash
 # If installed globally
-task-master init
+task-master-lite init
 
 # If installed locally
-npx task-master init
+npx task-master-lite init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
@@ -97,74 +91,74 @@ This will prompt you for project details and set up a new project with the neces
 
 ```bash
 # Initialize a new project
-task-master init
+task-master-lite init
 
 # Parse a PRD and generate tasks
-task-master parse-prd your-prd.txt
+task-master-lite parse-prd your-prd.txt
 
 # List all tasks
-task-master list
+task-master-lite list
 
 # Show the next task to work on
-task-master next
+task-master-lite next
 
 # Generate task files
-task-master generate
+task-master-lite generate
 ```
 
 ## Documentation
 
 For more detailed information, check out the documentation in the `docs` directory:
 
-- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
-- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master
+- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master Lite
+- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master Lite
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands
 - [Task Structure](docs/task-structure.md) - Understanding the task format and features
 - [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
 
 ## Troubleshooting
 
-### If `task-master init` doesn't respond:
+### If `task-master-lite init` doesn't respond:
 
 Try running it with Node directly:
 
 ```bash
-npx task-master-ai init
+npx task-master-lite-ai init
 ```
 
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/zen-ai/zen-ai-mcp-task-master.git
-cd zen-ai-mcp-task-master
+git clone https://github.com/zen-ai/zen-ai-mcp-task-master-lite.git
+cd zen-ai-mcp-task-master-lite
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/zen-ai/zen-ai-mcp-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=zen-ai/zen-ai-mcp-task-master" alt="Task Master project contributors" />
+<a href="https://github.com/zen-ai/zen-ai-mcp-task-master-lite/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=zen-ai/zen-ai-mcp-task-master-lite" alt="Task Master Lite project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=zen-ai/zen-ai-mcp-task-master&type=Timeline)](https://www.star-history.com/#zen-ai/zen-ai-mcp-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=zen-ai/zen-ai-mcp-task-master-lite&type=Timeline)](https://www.star-history.com/#zen-ai/zen-ai-mcp-task-master-lite&Timeline)
 
 ## Licensing
 
-Task Master is licensed under the MIT License with Commons Clause. This means you can:
+Task Master Lite is licensed under the MIT License with Commons Clause. This means you can:
 
 ✅ **Allowed**:
 
-- Use Task Master for any purpose (personal, commercial, academic)
+- Use Task Master Lite for any purpose (personal, commercial, academic)
 - Modify the code
 - Distribute copies
-- Create and sell products built using Task Master
+- Create and sell products built using Task Master Lite
 
 ❌ **Not Allowed**:
 
-- Sell Task Master itself
-- Offer Task Master as a hosted service
-- Create competing products based on Task Master
+- Sell Task Master Lite itself
+- Offer Task Master Lite as a hosted service
+- Create competing products based on Task Master Lite
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.

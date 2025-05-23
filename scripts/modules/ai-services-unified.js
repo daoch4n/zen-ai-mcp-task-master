@@ -23,11 +23,11 @@ import {
 import { log, resolveEnvVariable, isSilentMode } from './utils.js';
 
 import * as openai from '../../src/ai-providers/openai.js';
-import * as perplexity from '../../src/ai-providers/perplexity.js';
-import * as mistral from '../../src/ai-providers/mistral.js';
-import * as azure from '../../src/ai-providers/azure.js';
+
+
+
 import * as openrouter from '../../src/ai-providers/openrouter.js';
-import * as xai from '../../src/ai-providers/xai.js';
+
 
 // Helper function to get cost for a specific model
 function _getCostForModel(providerName, modelId) {
@@ -67,31 +67,15 @@ const PROVIDER_FUNCTIONS = {
 		streamText: openai.streamOpenAIText,
 		generateObject: openai.generateOpenAIObject
 	},
-	perplexity: {
-		generateText: perplexity.generatePerplexityText,
-		streamText: perplexity.streamPerplexityText,
-		generateObject: perplexity.generatePerplexityObject
-	},
-	mistral: {
-		generateText: mistral.generateMistralText,
-		streamText: mistral.streamMistralText,
-		generateObject: mistral.generateMistralObject
-	},
-	azure: {
-		generateText: azure.generateAzureText,
-		streamText: azure.streamAzureText,
-		generateObject: azure.generateAzureObject
-	},
+	
+	
+	
 	openrouter: {
 		generateText: openrouter.generateOpenRouterText,
 		streamText: openrouter.streamOpenRouterText,
 		generateObject: openrouter.generateOpenRouterObject
 	},
-	xai: {
-		generateText: xai.generateXaiText,
-		streamText: xai.streamXaiText,
-		generateObject: xai.generateXaiObject
-	}
+	
 };
 
 // --- Configuration for Retries ---
@@ -171,11 +155,11 @@ function _extractErrorMessage(error) {
 function _resolveApiKey(providerName, session, projectRoot = null) {
 	const keyMap = {
 		openai: 'OPENAI_API_KEY',
-		perplexity: 'PERPLEXITY_API_KEY',
-		mistral: 'MISTRAL_API_KEY',
-		azure: 'AZURE_OPENAI_API_KEY',
+		
+		
+		
 		openrouter: 'OPENROUTER_API_KEY',
-		xai: 'XAI_API_KEY'
+
 	};
 
 	const envVarName = keyMap[providerName];

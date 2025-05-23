@@ -37,7 +37,7 @@ function displayBanner() {
 	if (isSilentMode()) return;
 
 	console.clear();
-	const bannerText = figlet.textSync('Task Master', {
+	const bannerText = figlet.textSync('Task Master Lite', {
 		font: 'Standard',
 		horizontalLayout: 'default',
 		verticalLayout: 'default'
@@ -49,6 +49,7 @@ function displayBanner() {
 	console.log(
 		chalk.dim('by ') + chalk.cyan.underline('https://x.com/eyaltoledano')
 	);
+console.log(chalk.dim('Patched by daoch4n'));
 
 	// Read version directly from package.json
 	const version = getTaskMasterVersion();

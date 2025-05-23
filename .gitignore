@@ -67,3 +67,5 @@ dev-debug.log
 .npmrc
 
 package-lock.json
+
+tasks/

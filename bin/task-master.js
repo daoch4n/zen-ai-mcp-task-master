@@ -271,8 +271,8 @@ function createDevScriptAction(commandName) {
 const program = new Command();
 
 program
-	.name('task-master')
-	.description('Claude Task Master CLI')
+	.name('task-master-lite')
+	.description('A CLI for managing AI-driven development tasks, focusing on OpenAI integration and network-interfaced MCP server.')
 	.version(version)
 	.addHelpText('afterAll', () => {
 		// Use the same help display function as dev.js for consistency
