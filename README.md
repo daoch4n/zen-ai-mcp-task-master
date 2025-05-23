@@ -1,6 +1,6 @@
-# Task Master [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+# Task Master [![GitHub stars](https://img.shields.io/github/stars/daoch4n/task-master?style=social)](https://github.com/daoch4n/task-master/stargazers)
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/daoch4n/task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/daoch4n/task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/@daoch4n/task-master.svg)](https://badge.fury.io/js/@daoch4n/task-master) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -39,7 +39,7 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 	"mcpServers": {
 		"taskmaster-ai": {
 			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
+			"args": ["-y", "--package=@daoch4n/task-master", "@daoch4n/task-master"],
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -79,10 +79,10 @@ Can you help me expand task 4?
 
 ```bash
 # Install globally
-npm install -g task-master-ai
+npm install -g @daoch4n/task-master --force
 
 # OR install locally within your project
-npm install task-master-ai
+npm install @daoch4n/task-master
 ```
 
 #### Initialize a new project
@@ -139,20 +139,20 @@ node node_modules/claude-task-master/scripts/init.js
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/daoch4n/task-master.git
 cd claude-task-master
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master project contributors" />
+<a href="https://github.com/daoch4n/task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=daoch4n/task-master" alt="Task Master project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=daoch4n/task-master&type=Timeline)](https://www.star-history.com/#daoch4n/task-master&Timeline)
 
 ## Licensing
 
