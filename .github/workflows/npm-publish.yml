@@ -56,6 +56,8 @@ jobs:
 
           # Commit the merge. This will create the merge commit.
           git commit -m "Automerge upstream/main and resolve conflicts" --no-gpg-sign --author="zen-ai-dev[bot] <210175559+zen-ai-dev[bot]@users.noreply.github.com>"
+      - name: Bump version
+        run: npm version patch -m "Bump version to %s after upstream merge"
 
       - uses: actions/setup-node@v4
         with:
@@ -70,9 +72,7 @@ jobs:
           # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
           npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
           npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
-      - name: Create and bump versions
-        run: npm run changeset version
       - run: npm install
-      - run: npm publish --registry=https://npm.pkg.github.com/
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
