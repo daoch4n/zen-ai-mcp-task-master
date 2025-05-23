@@ -29,7 +29,7 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 
     ```bash
     git clone https://github.com/daoch4n/zen-ai-mcp-task-master
-    cd claude-task-master
+    cd zen-ai-mcp-task-master
     ```
 
 2.  **Start the MCP server**:
@@ -78,7 +78,7 @@ For a containerized environment, you can run Task Master Lite using Docker.
 
     ```bash
     git clone https://github.com/daoch4n/zen-ai-mcp-task-master
-    cd claude-task-master
+    cd zen-ai-mcp-task-master
     ```
 
 2.  **Build the Docker image**:
