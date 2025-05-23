@@ -158,10 +158,36 @@ export async function generateOpenAIObject(params) {
 
 	const openaiClient = getClient(apiKey, baseUrl);
 
+	let processedSchema = schema;
+
+	// If the schema is a Zod schema, convert it to JSON schema
+log('debug', 'Original schema:', schema);
+	if (typeof schema === 'object' && schema !== null && typeof schema.json === 'function') {
+		processedSchema = schema.json();
+	}
+
+	// Deep copy the schema to avoid modifying the original object
+	const cleanedSchema = JSON.parse(JSON.stringify(processedSchema));
+
+	// Recursively remove unsupported keywords
+	function cleanSchema(obj) {
+		for (const key in obj) {
+			if (Object.prototype.hasOwnProperty.call(obj, key)) {
+				if (key === '$schema' || key === 'exclusiveMinimum') {
+					delete obj[key];
+				} else if (typeof obj[key] === 'object' && obj[key] !== null) {
+					cleanSchema(obj[key]);
+				}
+			}
+		}
+	}
+	cleanSchema(cleanedSchema);
+
 	try {
+log('debug', 'Cleaned schema:', cleanedSchema);
 		const result = await generateObject({
 			model: openaiClient(modelId),
-			schema: schema, // Use the original schema directly
+			schema: cleanedSchema, // Use the cleaned schema
 			messages: messages,
 			mode: 'tool',
 			maxTokens: maxTokens,
