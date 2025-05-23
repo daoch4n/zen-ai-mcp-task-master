@@ -43,7 +43,7 @@ const DEFAULTS = {
 		},
 		research: {
 			provider: 'openai',
-			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
+			modelId: resolveEnvVariable('TASKMASTER_RESEARCH_MODEL', null, explicitRoot) || 'perplexity/llama-3-sonar-large-32k-online',
 			maxTokens: 8700,
 			temperature: 0.1
 		},

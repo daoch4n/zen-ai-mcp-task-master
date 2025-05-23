@@ -12,6 +12,7 @@ ARG OPENAI_API_BASE_URL
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 ENV OPENAI_API_BASE_URL=$OPENAI_API_BASE_URL
 ENV TASKMASTER_AI_MODEL="gemini-2.5-flash-preview-05-20"
+ENV TASKMASTER_RESEARCH_MODEL="perplexity/llama-3-sonar-large-32k-online"
 
 # Copy package.json and package-lock.json to the working directory
 # This allows caching of dependencies
