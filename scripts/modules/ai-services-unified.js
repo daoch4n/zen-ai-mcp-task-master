@@ -207,11 +207,9 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		return apiKey || null;
 	}
 
-	// For all other providers, API key is required
 	if (!apiKey) {
-		throw new Error(
-			`Required API key ${envVarName} for provider '${providerName}' is not set in environment, session, or .env file.`
-		);
+		log('warn', `API key ${envVarName} for provider '${providerName}' is not set. Skipping this provider.`);
+		return null; // Return null instead of throwing
 	}
 	return apiKey;
 }
@@ -435,6 +433,13 @@ async function _unifiedServiceRunner(serviceType, params) {
 				session,
 				effectiveProjectRoot
 			);
+
+			// If API key is null, skip this provider and try the next one
+			if (apiKey === null) {
+				lastError = new Error(`API key missing for provider '${providerName}'.`);
+				lastCleanErrorMessage = `API key missing for provider '${providerName}'.`;
+				continue; // Skip to the next role in the sequence
+			}
 
 			// 4. Construct Messages Array
 			const messages = [];
