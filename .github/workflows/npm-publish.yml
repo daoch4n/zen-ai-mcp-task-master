@@ -4,6 +4,9 @@
 name: Node.js Package Publish (GPR)
 
 on:
+  push:
+    branches:
+      - zen-ai
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *' # Run daily at midnight UTC
