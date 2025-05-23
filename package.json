@@ -1,5 +1,5 @@
 {
-	"name": "task-master-ai",
+	"name": "@daoch4n/task-master",
 	"version": "0.14.0",
 	"description": "A task management system for ambitious AI-driven development that doesn't overwhelm and confuse Cursor.",
 	"main": "index.js",
@@ -91,6 +91,9 @@
 		"mcp-server/**",
 		"src/**"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"overrides": {
 		"node-fetch": "^3.3.2",
 		"whatwg-url": "^11.0.0"
