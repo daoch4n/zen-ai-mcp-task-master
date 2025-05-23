@@ -1,6 +1,6 @@
-# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/zen-ai/zen-ai-mcp-task-master-lite?style=social)](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/stargazers)
+# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
 
-[![CI](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/actions/workflows/ci.yml/badge.svg)](https://github.com/zen-ai/zen-ai-mcp-task-master-lite/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-lite-ai.svg)](https://badge.fury.io/js/task-master-lite-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-lite-ai.svg)](https://badge.fury.io/js/task-master-lite-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -129,20 +129,20 @@ npx task-master-lite-ai init
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/zen-ai/zen-ai-mcp-task-master-lite.git
+git clone https://github.com/eyaltoledano/claude-task-master.git
 cd zen-ai-mcp-task-master-lite
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/zen-ai/zen-ai-mcp-task-master-lite/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=zen-ai/zen-ai-mcp-task-master-lite" alt="Task Master Lite project contributors" />
+<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master Lite project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=zen-ai/zen-ai-mcp-task-master-lite&type=Timeline)](https://www.star-history.com/#zen-ai/zen-ai-mcp-task-master-lite&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
 
 ## Licensing
 
