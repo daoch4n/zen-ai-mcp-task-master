@@ -34,8 +34,26 @@ jobs:
         run: git remote add upstream https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git
       - name: Fetch upstream
         run: git fetch upstream
-      - name: Merge upstream changes and resolve conflicts
+      - name: Get upstream package.json version
+        id: upstream_version
         run: |
+          UPSTREAM_PACKAGE_JSON=$(git show upstream/main:package.json)
+          UPSTREAM_VERSION=$(echo "$UPSTREAM_PACKAGE_JSON" | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+          echo "Upstream version: $UPSTREAM_VERSION"
+          echo "upstream_version=$UPSTREAM_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Get current package.json version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(grep '"version":' package.json | head -1 | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+          echo "Current version: $CURRENT_VERSION"
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Merge upstream changes and resolve conflicts
+        id: merge_upstream # Add an ID to the step
+        run: |
+          # Store current HEAD SHA before merge attempt
+          BEFORE_MERGE_SHA=$(git rev-parse HEAD)
+          echo "Before merge SHA: $BEFORE_MERGE_SHA"
+
           # Perform the merge without committing, allowing manual conflict resolution.
           # package-lock.json conflicts should be avoided due to prior purging.
           git merge upstream/main --no-commit --allow-unrelated-histories || true
@@ -56,10 +74,25 @@ jobs:
 
           # Commit the merge. This will create the merge commit.
           git commit -m "Automerge upstream/main and resolve conflicts" --no-gpg-sign --author="zen-ai-dev[bot] <210175559+zen-ai-dev[bot]@users.noreply.github.com>"
+
+          # Store current HEAD SHA after merge attempt
+          AFTER_MERGE_SHA=$(git rev-parse HEAD)
+          echo "After merge SHA: $AFTER_MERGE_SHA"
+
+          # Determine if a new commit was created (i.e., if merge actually happened)
+          if [ "$BEFORE_MERGE_SHA" != "$AFTER_MERGE_SHA" ]; then
+            echo "A new merge commit was created."
+            echo "merged_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No new merge commit was created. Repository is already up-to-date."
+            echo "merged_changes=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Bump version
+        if: steps.merge_upstream.outputs.merged_changes == 'true'
         run: npm version patch -m "Bump version to %s after upstream merge"
 
       - uses: actions/setup-node@v4
+        if: steps.merge_upstream.outputs.merged_changes == 'true'
         with:
           node-version: 20
           # Set the default registry to npmjs.org for public packages
@@ -67,12 +100,15 @@ jobs:
           # Configure GitHub Packages for scoped packages
           scope: '@daoch4n'
       - name: Configure .npmrc for GitHub Packages
+        if: steps.merge_upstream.outputs.merged_changes == 'true'
         run: |
           # This step is crucial for npm to know where to find packages under the specified scope.
           # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
           npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
           npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
       - run: npm install
+        if: steps.merge_upstream.outputs.merged_changes == 'true'
       - run: npm publish
+        if: steps.merge_upstream.outputs.merged_changes == 'true'
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
