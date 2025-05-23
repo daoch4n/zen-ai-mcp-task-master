@@ -13,7 +13,7 @@ A stripped down lite version of Task Master focusing on OpenAI integration and n
 
 Taskmaster Lite utilizes OpenAI for AI-driven commands, which requires an OpenAI API key.
 You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env. Any OpenAI-compatible model can be used by specifying a custom endpoint.
-Note: The Gemini Flash 2.5 05-20 model is currently hardcoded.
+You can configure the main AI model using `TASKMASTER_AI_MODEL` and the research AI model using `TASKMASTER_RESEARCH_MODEL` in the `.env.example` file. Both default to "gemini-2.5-flash-preview-05-20".
 
 An OpenAI API key is required.
 
