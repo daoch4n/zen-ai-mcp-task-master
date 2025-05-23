@@ -1,13 +1,13 @@
 # Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/daoch4n/zen-ai-mcp-task-master?style=social)](https://github.com/daoch4n/zen-ai-mcp-task-master/stargazers)
+### A stripped down lite version of Task Master <br> Focusing on OpenAI-compatible custom endpoints and network-interfaced MCP server
 
-[![CI](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
-### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
-[![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
+https://github.com/user-attachments/assets/3212ebe3-9495-4181-bacf-65b431274fe7
 
-A stripped down lite version of Task Master focusing on OpenAI integration and network-interfaced MCP server.
+
+
+[![CI](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml)  [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE) [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano) [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
 
 ## Requirements
 
@@ -23,10 +23,12 @@ Using the research model is optional but highly recommended.
 
 The following environment variables can be configured in a `.env` file (based on `.env.example`):
 
-- `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
-- `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Default: `https://open-ai-endpoint.example.com`
+- `OPENAI_API_KEY
+
+`: Your OpenAI API key. This is required for using any AI role (main, research, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
+- `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Defaults to OpenAI provider
 - `TASKMASTER_AI_MODEL`: Specifies the AI model to be used for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
-- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `perplexity/llama-3-sonar-large-32k-online`
+- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `gemini-2.5-flash-preview-05-20`
 
 ## Quick Start
 
@@ -109,26 +111,12 @@ For a containerized environment, you can run Task Master Lite using Docker.
 6.  **Prompt the AI** to initialize Task Master Lite (same as Option 1, step 5).
 7.  **Use common commands** directly through your AI assistant (same as Option 1, step 6).
 
-### Option 3: Using Command Line
-
-#### Installation
-
-```bash
-# Install globally
-npm install -g task-master-ai
-
-# OR install locally within your project
-npm install task-master-ai
-```
+### Option 3 | Terminal:
 
 #### Initialize a new project
 
 ```bash
-# If installed globally
-task-master init
-
-# If installed locally
-npx task-master init
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
@@ -137,19 +125,19 @@ This will prompt you for project details and set up a new project with the neces
 
 ```bash
 # Initialize a new project
-task-master init
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js init
 
 # Parse a PRD and generate tasks
-task-master parse-prd your-prd.txt
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js parse-prd your-prd.txt
 
 # List all tasks
-task-master list
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js list
 
 # Show the next task to work on
-task-master next
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js next
 
 # Generate task files
-task-master generate
+node /path-to/zen-ai-mcp-task-master/bin/task-master.js generate
 ```
 
 ## Documentation
@@ -162,37 +150,9 @@ For more detailed information, check out the documentation in the `docs` directo
 - [Task Structure](docs/task-structure.md) - Understanding the task format and features
 - [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
 
-## Troubleshooting
-
-### If `task-master init` doesn't respond:
-
-Try running it with Node directly:
-
-```bash
-npx task-master-ai init
-```
-
-Or clone the repository and run:
-
-```bash
-git clone https://github.com/daoch4n/zen-ai-mcp-task-master
-cd zen-ai-mcp-task-master
-node scripts/init.js
-```
-
-## Contributors
-
-<a href="https://github.com/daoch4n/zen-ai-mcp-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=daoch4n/zen-ai-mcp-task-master" alt="Task Master Lite project contributors" />
-</a>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=daoch4n/zen-ai-mcp-task-master&type=Timeline)](https://www.star-history.com/#daoch4n/zen-ai-mcp-task-master&Timeline)
-
 ## Licensing
 
-Task Master is licensed under the MIT License with Commons Clause. This means you can:
+Task Master is licensed under the MIT License with Commons Clause:
 
 ✅ **Allowed**:
 
