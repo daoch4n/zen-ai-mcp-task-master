@@ -23,10 +23,10 @@ Using the research model is optional but highly recommended.
 
 The following environment variables can be configured in a `.env` file (based on `.env.example`):
 
-- `OPENAI_API_KEY`: Your OpenAI API key. Required for using any AI role (main, research, fallback). Default: `YOUR_OPENAI_KEY_HERE`
-- `OPENAI_API_BASE_URL`: Custom endpoint for OpenAI-compatible models. Default: `https://open-ai-endpoint.example.com`
-- `TASKMASTER_AI_MODEL`: Sets the desired AI model for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
-- `TASKMASTER_RESEARCH_MODEL`: Sets the desired AI model for research operations. Default: `perplexity/llama-3-sonar-large-32k-online`
+- `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
+- `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Default: `https://open-ai-endpoint.example.com`
+- `TASKMASTER_AI_MODEL`: Specifies the AI model to be used for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
+- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `perplexity/llama-3-sonar-large-32k-online`
 
 ## Quick Start
 
