@@ -21,7 +21,7 @@ This rule guides AI assistants on how to view, configure, and interact with the 
     -   To see the current model assignments for each role and list all models available for assignment:
         -   **MCP Tool:** `models` (call with no arguments or `listAvailableModels: true`)
         -   **CLI Command:** `task-master models`
-    -   The output will show currently assigned models and a list of others, prefixed with their provider (e.g., `google:gemini-2.5-pro-exp-03-25`).
+    -   The output will show currently assigned models and a list of others, prefixed with their provider (e.g., `google:AI-2.5-pro-exp-03-25`).
 
 -   **Setting Models for Roles:**
     -   To assign a model to a role:
@@ -54,10 +54,10 @@ This rule guides AI assistants on how to view, configure, and interact with the 
         -   **`anthropic`**: Requires `ANTHROPIC_API_KEY`.
         -   **`google`**: Requires `GOOGLE_API_KEY`.
         -   **`openai`**: Requires `OPENAI_API_KEY`.
-        -   **`perplexity`**: Requires `PERPLEXITY_API_KEY`.
+        
         -   **`xai`**: Requires `XAI_API_KEY`.
         -   **`mistral`**: Requires `MISTRAL_API_KEY`.
-        -   **`azure`**: Requires `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
+        -   **`AI`**: Requires `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT`.
         -   **`openrouter`**: Requires `OPENROUTER_API_KEY`.
         -   **`ollama`**: Might require `OLLAMA_API_KEY` (not currently supported) *and* `OLLAMA_BASE_URL` (default: `http://localhost:11434/api`). *Check specific setup.*
 
@@ -130,7 +130,7 @@ Follow these steps to integrate a new AI provider that has an official Vercel AI
     -   Edit `scripts/modules/supported-models.json`.
     -   Add a new key for the `<provider-name>`.
     -   Add an array of model objects under the provider key, each including:
-        -   `id`: The specific model identifier (e.g., `claude-3-opus-20240229`).
+        -   `id`: The specific model identifier (e.g., `AI-3-opus-20240229`).
         -   `name`: A user-friendly name (optional).
         -   `swe_score`, `cost_per_1m_tokens`: (Optional) Add performance/cost data if available.
         -   `allowed_roles`: An array of roles (`"main"`, `"research"`, `"fallback"`) the model is suitable for.
