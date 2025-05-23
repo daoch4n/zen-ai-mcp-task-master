@@ -640,7 +640,7 @@ function registerCommands(programInstance) {
 		)
 		.option(
 			'-r, --research',
-			'Use Perplexity AI for research-backed task updates'
+			'Enable research-backed task updates'
 		)
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -689,7 +689,7 @@ function registerCommands(programInstance) {
 
 			if (useResearch) {
 				console.log(
-					chalk.blue('Using Perplexity AI for research-backed task updates')
+					chalk.blue('Using research-backed task updates')
 				);
 			}
 
@@ -717,7 +717,7 @@ function registerCommands(programInstance) {
 		)
 		.option(
 			'-r, --research',
-			'Use Perplexity AI for research-backed task updates'
+			'Enable research-backed task updates'
 		)
 		.action(async (options) => {
 			try {
