@@ -1,0 +1,76 @@
+# This workflow is designed to keep a forked repository in sync with its upstream
+# (original) repository and then publish the npm package to GitHub Packages.
+# It runs daily at midnight UTC and can also be triggered manually.
+
+name: Node.js Package Publish (Upstream Sync & GPR)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+
+jobs:
+  publish-gpr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for git operations
+      - name: Purge local package-lock.json before any Git operations
+        run: |
+          # Ensure package-lock.json is completely removed from the working directory
+          # and its tracking is removed from the Git index. This is crucial to prevent
+          # modify/delete conflicts during the merge, as it should be ignored.
+          rm -f package-lock.json
+          git rm --cached --ignore-unmatch package-lock.json || true
+      - name: Set up Git
+        run: |
+          git config user.name "zen-ai-dev[bot]"
+          git config user.email "210175559+zen-ai-dev[bot]@users.noreply.github.com"
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git
+      - name: Fetch upstream
+        run: git fetch upstream
+      - name: Merge upstream changes and resolve conflicts
+        run: |
+          # Perform the merge without committing, allowing manual conflict resolution.
+          # package-lock.json conflicts should be avoided due to prior purging.
+          git merge upstream/main --no-commit --allow-unrelated-histories || true
+
+          # If, against expectations, package-lock.json still causes a conflict (e.g., modify/delete),
+          # explicitly resolve it by taking the upstream version (which might be deletion).
+          if git status --porcelain | grep "^UD package-lock.json"; then
+            echo "Resolving package-lock.json modify/delete conflict by accepting upstream's deletion."
+            git rm package-lock.json
+          fi
+
+          # Resolve any other conflicts by preferring 'theirs' (upstream's version).
+          # This will stage the files as resolved.
+          git checkout --theirs . || true
+
+          # Add all changes (including resolved conflicts) to the staging area.
+          git add .
+
+          # Commit the merge. This will create the merge commit.
+          git commit -m "Automerge upstream/main and resolve conflicts" --no-gpg-sign --author="zen-ai-dev[bot] <210175559+zen-ai-dev[bot]@users.noreply.github.com>"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Set the default registry to npmjs.org for public packages
+          registry-url: https://registry.npmjs.org/
+          # Configure GitHub Packages for scoped packages
+          scope: '@daoch4n'
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          # This step is crucial for npm to know where to find packages under the specified scope.
+          # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
+          npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
+          npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
+      - run: npm install
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
