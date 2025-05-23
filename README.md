@@ -99,7 +99,7 @@ For a containerized environment, you can run Task Master Lite using Docker.
 3.  **Run the Docker container**:
 
     ```bash
-    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" taskmaster-lite-ai
+    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" -e OPENAI_API_BASE_URL="YOUR_OPENAI_API_BASE_URL_HERE" -e TASKMASTER_AI_MODEL="YOUR_TASKMASTER_AI_MODEL_HERE" -e TASKMASTER_RESEARCH_MODEL="YOUR_TASKMASTER_RESEARCH_MODEL_HERE" taskmaster-lite-ai
     ```
 
     Ensure you replace `YOUR_OPENAI_KEY_HERE` with your actual OpenAI API key.
