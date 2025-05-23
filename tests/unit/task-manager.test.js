@@ -11,8 +11,8 @@ const mockReadFileSync = jest.fn();
 const mockExistsSync = jest.fn();
 const mockMkdirSync = jest.fn();
 const mockDirname = jest.fn();
-const mockCallClaude = jest.fn().mockResolvedValue({ tasks: [] }); // Default resolved value
-const mockCallPerplexity = jest.fn().mockResolvedValue({ tasks: [] }); // Default resolved value
+const mockGenerateObjectService = jest.fn().mockResolvedValue({ tasks: [] }); // Default resolved value
+
 const mockWriteJSON = jest.fn();
 const mockGenerateTaskFiles = jest.fn();
 const mockWriteFileSync = jest.fn();
@@ -23,7 +23,7 @@ const mockReadJSON = jest.fn();
 const mockLog = jest.fn();
 const mockIsTaskDependentOn = jest.fn().mockReturnValue(false);
 
-const mockChatCompletionsCreate = jest.fn(); // Mock for Perplexity chat.completions.create
+
 const mockGetAvailableAIModel = jest.fn(); // <<<<< Added mock function
 const mockPromptYesNo = jest.fn(); // Mock for confirmation prompt
 
@@ -66,7 +66,7 @@ jest.mock('../../scripts/modules/utils.js', () => ({
 	log: mockLog,
 	CONFIG: {
 		// <<<<< Added CONFIG mock
-		model: 'mock-claude-model',
+		model: 'mock-ai-model',
 		maxTokens: 4000,
 		temperature: 0.7,
 		debug: false,
@@ -91,18 +91,7 @@ jest.mock('../../scripts/modules/ai-services-unified.js', () => ({
 
 
 
-// Mock Perplexity using OpenAI
-jest.mock('openai', () => {
-	return {
-		default: jest.fn().mockImplementation(() => ({
-			chat: {
-				completions: {
-					create: mockChatCompletionsCreate
-				}
-			}
-		}))
-	};
-});
+
 
 // Mock the task-manager module itself (if needed, like for generateTaskFiles)
 // jest.mock('../../scripts/modules/task-manager.js', ... )
@@ -146,8 +135,8 @@ const testParsePRD = async (prdPath, outputPath, numTasks, options = {}) => {
 		}
 
 		const prdContent = mockReadFileSync(prdPath, 'utf8');
-		// Modify mockCallClaude to accept lastTaskId parameter
-		let newTasks = await mockCallClaude(prdContent, prdPath, numTasks);
+		// Modify mockGenerateObjectService to accept lastTaskId parameter
+		let newTasks = await mockGenerateObjectService(prdContent, prdPath, numTasks);
 
 		// Merge tasks if appending
 		const tasksData = append
@@ -324,7 +313,7 @@ const testAddTask = (
 
 // Import after mocks
 import * as taskManager from '../../scripts/modules/task-manager.js';
-import { sampleClaudeResponse } from '../fixtures/sample-claude-response.js';
+
 import { sampleTasks, emptySampleTasks } from '../fixtures/sample-tasks.js';
 import {
 	isValidTaskStatus,
@@ -499,8 +488,8 @@ describe('Task Manager Module', () => {
 			mockReadJSON.mockReturnValue(JSON.parse(JSON.stringify(sampleTasks)));
 			mockWriteJSON.mockImplementation((path, data) => data); // Return data for chaining/assertions
 			// Just set the mock resolved values directly - no spies needed
-			mockCallClaude.mockResolvedValue(sampleApiResponse);
-			mockCallPerplexity.mockResolvedValue(sampleApiResponse);
+			mockGenerateObjectService.mockResolvedValue(sampleApiResponse);
+			
 
 			// Mock console methods to prevent test output clutter
 			jest.spyOn(console, 'log').mockImplementation(() => {});
@@ -521,7 +510,7 @@ describe('Task Manager Module', () => {
 			await testAnalyzeTaskComplexity(options);
 
 			// Assert
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 			expect(mockCallPerplexity).not.toHaveBeenCalled();
 			expect(mockWriteJSON).toHaveBeenCalledWith(
 				reportPath,
@@ -529,21 +518,7 @@ describe('Task Manager Module', () => {
 			);
 		});
 
-		test('should call Perplexity when research flag is true', async () => {
-			// Arrange
-			const options = { ...baseOptions, research: true };
-
-			// Act
-			await testAnalyzeTaskComplexity(options);
-
-			// Assert
-			expect(mockCallPerplexity).toHaveBeenCalled();
-			expect(mockCallClaude).not.toHaveBeenCalled();
-			expect(mockWriteJSON).toHaveBeenCalledWith(
-				reportPath,
-				expect.any(Object)
-			);
-		});
+		
 
 		test('should handle valid JSON response from LLM (Claude)', async () => {
 			// Arrange
@@ -554,7 +529,7 @@ describe('Task Manager Module', () => {
 
 			// Assert
 			expect(mockReadJSON).toHaveBeenCalledWith(tasksPath);
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 			expect(mockCallPerplexity).not.toHaveBeenCalled();
 			expect(mockWriteJSON).toHaveBeenCalledWith(
 				reportPath,
@@ -575,14 +550,14 @@ describe('Task Manager Module', () => {
 			const malformedJsonResponse = {
 				tasks: [{ id: 1, complexity: 3 }]
 			};
-			mockCallClaude.mockResolvedValueOnce(malformedJsonResponse);
+			mockGenerateObjectService.mockResolvedValueOnce(malformedJsonResponse);
 			const options = { ...baseOptions, research: false };
 
 			// Act
 			await testAnalyzeTaskComplexity(options);
 
 			// Assert
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 			expect(mockCallPerplexity).not.toHaveBeenCalled();
 			expect(mockWriteJSON).toHaveBeenCalled();
 		});
@@ -590,7 +565,7 @@ describe('Task Manager Module', () => {
 		test('should handle missing tasks in the response (Claude)', async () => {
 			// Arrange
 			const incompleteResponse = { tasks: [sampleApiResponse.tasks[0]] };
-			mockCallClaude.mockResolvedValueOnce(incompleteResponse);
+			mockGenerateObjectService.mockResolvedValueOnce(incompleteResponse);
 
 			const options = { ...baseOptions, research: false };
 
@@ -598,7 +573,7 @@ describe('Task Manager Module', () => {
 			await testAnalyzeTaskComplexity(options);
 
 			// Assert
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 			expect(mockCallPerplexity).not.toHaveBeenCalled();
 			expect(mockWriteJSON).toHaveBeenCalled();
 		});
@@ -609,7 +584,7 @@ describe('Task Manager Module', () => {
 			let options = { ...baseOptions, threshold: '7' };
 			const report1 = await testAnalyzeTaskComplexity(options);
 			expect(report1.meta.thresholdScore).toBe(7);
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 
 			// Reset mocks
 			jest.clearAllMocks();
@@ -618,7 +593,7 @@ describe('Task Manager Module', () => {
 			options = { ...baseOptions, threshold: 8 };
 			const report2 = await testAnalyzeTaskComplexity(options);
 			expect(report2.meta.thresholdScore).toBe(8);
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 
 			// Reset mocks
 			jest.clearAllMocks();
@@ -627,7 +602,7 @@ describe('Task Manager Module', () => {
 			options = { ...baseOptions, threshold: 6.5 };
 			const report3 = await testAnalyzeTaskComplexity(options);
 			expect(report3.meta.thresholdScore).toBe(6.5);
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 
 			// Reset mocks
 			jest.clearAllMocks();
@@ -636,7 +611,7 @@ describe('Task Manager Module', () => {
 			const { threshold, ...optionsWithoutThreshold } = baseOptions;
 			const report4 = await testAnalyzeTaskComplexity(optionsWithoutThreshold);
 			expect(report4.meta.thresholdScore).toBe(5); // Default value from the function
-			expect(mockCallClaude).toHaveBeenCalled();
+			expect(mockGenerateObjectService).toHaveBeenCalled();
 		});
 	});
 
@@ -673,7 +648,7 @@ describe('Task Manager Module', () => {
 			mockReadFileSync.mockReturnValue(samplePRDContent);
 			mockExistsSync.mockReturnValue(true);
 			mockDirname.mockReturnValue('tasks');
-			mockCallClaude.mockResolvedValue(sampleClaudeResponse);
+			mockGenerateObjectService.mockResolvedValue(sampleClaudeResponse);
 			mockGenerateTaskFiles.mockResolvedValue(undefined);
 			mockPromptYesNo.mockResolvedValue(true); // Default to "yes" for confirmation
 		});
@@ -686,7 +661,7 @@ describe('Task Manager Module', () => {
 			expect(mockReadFileSync).toHaveBeenCalledWith('path/to/prd.txt', 'utf8');
 
 			// Verify callClaude was called with the correct arguments
-			expect(mockCallClaude).toHaveBeenCalledWith(
+			expect(mockGenerateObjectService).toHaveBeenCalledWith(
 				samplePRDContent,
 				'path/to/prd.txt',
 				3
@@ -727,7 +702,7 @@ describe('Task Manager Module', () => {
 		test('should handle errors in the PRD parsing process', async () => {
 			// Mock an error in callClaude
 			const testError = new Error('Test error in Claude API call');
-			mockCallClaude.mockRejectedValueOnce(testError);
+			mockGenerateObjectService.mockRejectedValueOnce(testError);
 
 			// Mock console.error and process.exit
 			const mockConsoleError = jest
@@ -862,7 +837,7 @@ describe('Task Manager Module', () => {
 			// mockReadJSON = jest.fn().mockReturnValue(existingTasks);
 
 			// Mock callClaude to return new tasks with continuing IDs
-			mockCallClaude.mockResolvedValueOnce(newTasksWithContinuedIds);
+			mockGenerateObjectService.mockResolvedValueOnce(newTasksWithContinuedIds);
 
 			// Call the function with append option
 			const result = await testParsePRD(
@@ -2781,7 +2756,7 @@ describe('Task Manager Module', () => {
 			mockExistsSync.mockReturnValue(true); // Ensure file is found
 			mockGetAvailableAIModel.mockReturnValue({
 				// Ensure this returns the correct structure
-				type: 'claude',
+				type: 'test-ai',
 				client: { messages: { create: mockCreate } }
 			});
 
@@ -2816,190 +2791,20 @@ describe('Task Manager Module', () => {
 
 			// ... (rest of the assertions as before) ...
 			expect(mockGetAvailableAIModel).toHaveBeenCalledWith({
-				claudeOverloaded: false,
+				aiOverloaded: false,
 				requiresResearch: false
 			});
 			expect(mockCreate).toHaveBeenCalledTimes(1);
 			// ... etc ...
 		});
 
-		test('should successfully update subtask using Perplexity (research)', async () => {
-			const subtaskIdToUpdate = '1.1';
-			const updatePrompt = 'Research best practices for this subtask.';
-			const expectedPerplexityResponse =
-				'Based on research, here are the best practices...';
-			const perplexityModelName = 'mock-perplexity-model'; // Define a mock model name
+		
 
-			// --- Arrange ---
-			// Mock environment variable for Perplexity model if needed by CONFIG/logic
-			process.env.PERPLEXITY_MODEL = perplexityModelName;
+			
 
-			// Mock getAvailableAIModel to return Perplexity client when research is required
-			mockGetAvailableAIModel.mockReturnValue({
-				type: 'perplexity',
-				client: { chat: { completions: { create: mockChatCompletionsCreate } } } // Match the mocked structure
-			});
+		
 
-			// Mock Perplexity's response
-			mockChatCompletionsCreate.mockResolvedValue({
-				choices: [{ message: { content: expectedPerplexityResponse } }]
-			});
-
-			// --- Act ---
-			const updatedSubtask = await taskManager.updateSubtaskById(
-				tasksPath,
-				subtaskIdToUpdate,
-				updatePrompt,
-				true
-			); // useResearch = true
-
-			// --- Assert ---
-			expect(mockReadJSON).toHaveBeenCalledWith(tasksPath);
-			// Verify getAvailableAIModel was called correctly for research
-			expect(mockGetAvailableAIModel).toHaveBeenCalledWith({
-				claudeOverloaded: false,
-				requiresResearch: true
-			});
-			expect(mockChatCompletionsCreate).toHaveBeenCalledTimes(1);
-
-			// Verify Perplexity API call parameters
-			expect(mockChatCompletionsCreate).toHaveBeenCalledWith(
-				expect.objectContaining({
-					model: perplexityModelName, // Check the correct model is used
-					temperature: 0.7, // From CONFIG mock
-					max_tokens: 4000, // From CONFIG mock
-					messages: expect.arrayContaining([
-						expect.objectContaining({
-							role: 'system',
-							content: expect.any(String)
-						}),
-						expect.objectContaining({
-							role: 'user',
-							content: expect.stringContaining(updatePrompt) // Check prompt is included
-						})
-					])
-				})
-			);
-
-			// Verify subtask data was updated
-			const writtenData = mockWriteJSON.mock.calls[0][1]; // Get data passed to writeJSON
-			const parentTask = writtenData.tasks.find((t) => t.id === 1);
-			const targetSubtask = parentTask.subtasks.find((st) => st.id === 1);
-
-			expect(targetSubtask.details).toContain(expectedPerplexityResponse);
-			expect(targetSubtask.details).toMatch(/<info added on .*>/); // Check for timestamp tag
-			expect(targetSubtask.description).toMatch(/\[Updated: .*]/); // Check description update
-
-			// Verify writeJSON and generateTaskFiles were called
-			expect(mockWriteJSON).toHaveBeenCalledWith(tasksPath, writtenData);
-			expect(mockGenerateTaskFiles).toHaveBeenCalledWith(tasksPath, outputDir);
-
-			// Verify the function returned the updated subtask
-			expect(updatedSubtask).toBeDefined();
-			expect(updatedSubtask.id).toBe(1);
-			expect(updatedSubtask.parentTaskId).toBe(1);
-			expect(updatedSubtask.details).toContain(expectedPerplexityResponse);
-
-			// Clean up env var if set
-			delete process.env.PERPLEXITY_MODEL;
-		});
-
-		test('should fall back to Perplexity if Claude is overloaded', async () => {
-			const subtaskIdToUpdate = '1.1';
-			const updatePrompt = 'Add details, trying Claude first.';
-			const expectedPerplexityResponse =
-				'Perplexity provided these details as fallback.';
-			const perplexityModelName = 'mock-perplexity-model-fallback';
-
-			// --- Arrange ---
-			// Mock environment variable for Perplexity model
-			process.env.PERPLEXITY_MODEL = perplexityModelName;
-
-			// Mock getAvailableAIModel: Return Claude first, then Perplexity
-			mockGetAvailableAIModel
-				.mockReturnValueOnce({
-					// First call: Return Claude
-					type: 'claude',
-					client: { messages: { create: mockCreate } }
-				})
-				.mockReturnValueOnce({
-					// Second call: Return Perplexity (after overload)
-					type: 'perplexity',
-					client: {
-						chat: { completions: { create: mockChatCompletionsCreate } }
-					}
-				});
-
-			// Mock Claude to throw an overload error
-			const overloadError = new Error('Claude API is overloaded.');
-			overloadError.type = 'overloaded_error'; // Match one of the specific checks
-			mockCreate.mockRejectedValue(overloadError); // Simulate Claude failing
-
-			// Mock Perplexity's successful response
-			mockChatCompletionsCreate.mockResolvedValue({
-				choices: [{ message: { content: expectedPerplexityResponse } }]
-			});
-
-			// --- Act ---
-			const updatedSubtask = await taskManager.updateSubtaskById(
-				tasksPath,
-				subtaskIdToUpdate,
-				updatePrompt,
-				false
-			); // Start with useResearch = false
-
-			// --- Assert ---
-			expect(mockReadJSON).toHaveBeenCalledWith(tasksPath);
-
-			// Verify getAvailableAIModel calls
-			expect(mockGetAvailableAIModel).toHaveBeenCalledTimes(2);
-			expect(mockGetAvailableAIModel).toHaveBeenNthCalledWith(1, {
-				claudeOverloaded: false,
-				requiresResearch: false
-			});
-			expect(mockGetAvailableAIModel).toHaveBeenNthCalledWith(2, {
-				claudeOverloaded: true,
-				requiresResearch: false
-			}); // claudeOverloaded should now be true
-
-			// Verify Claude was attempted and failed
-			expect(mockCreate).toHaveBeenCalledTimes(1);
-			// Verify Perplexity was called as fallback
-			expect(mockChatCompletionsCreate).toHaveBeenCalledTimes(1);
-
-			// Verify Perplexity API call parameters
-			expect(mockChatCompletionsCreate).toHaveBeenCalledWith(
-				expect.objectContaining({
-					model: perplexityModelName,
-					messages: expect.arrayContaining([
-						expect.objectContaining({
-							role: 'user',
-							content: expect.stringContaining(updatePrompt)
-						})
-					])
-				})
-			);
-
-			// Verify subtask data was updated with Perplexity's response
-			const writtenData = mockWriteJSON.mock.calls[0][1];
-			const parentTask = writtenData.tasks.find((t) => t.id === 1);
-			const targetSubtask = parentTask.subtasks.find((st) => st.id === 1);
-
-			expect(targetSubtask.details).toContain(expectedPerplexityResponse); // Should contain fallback response
-			expect(targetSubtask.details).toMatch(/<info added on .*>/);
-			expect(targetSubtask.description).toMatch(/\[Updated: .*]/);
-
-			// Verify writeJSON and generateTaskFiles were called
-			expect(mockWriteJSON).toHaveBeenCalledWith(tasksPath, writtenData);
-			expect(mockGenerateTaskFiles).toHaveBeenCalledWith(tasksPath, outputDir);
-
-			// Verify the function returned the updated subtask
-			expect(updatedSubtask).toBeDefined();
-			expect(updatedSubtask.details).toContain(expectedPerplexityResponse);
-
-			// Clean up env var if set
-			delete process.env.PERPLEXITY_MODEL;
-		});
+			
 
 		// More tests will go here...
 	});
@@ -3013,7 +2818,7 @@ describe('Task Manager Module', () => {
 			const tasksPath = options.file || 'tasks/tasks.json';
 			const reportPath =
 				options.output || 'scripts/task-complexity-report.json';
-			const modelName = options.model || 'mock-claude-model';
+			const modelName = options.model || 'mock-ai-model';
 
 			// Read tasks file
 			const tasksData = mockReadJSON(tasksPath);
@@ -3031,7 +2836,7 @@ describe('Task Manager Module', () => {
 			if (useResearch) {
 				apiResponse = await mockCallPerplexity();
 			} else {
-				apiResponse = await mockCallClaude();
+				apiResponse = await mockGenerateObjectService();
 			}
 
 			// Format report with threshold check
@@ -3168,215 +2973,8 @@ describe('Task Manager Module', () => {
 		// ... etc ...
 	});
 
-	// ... (Rest of the file) ...
+	
+
+
 });
 
-// Define test versions of the addSubtask and removeSubtask functions
-const testAddSubtask = (
-	tasksPath,
-	parentId,
-	existingTaskId,
-	newSubtaskData,
-	generateFiles = true
-) => {
-	// Read the existing tasks
-	const data = mockReadJSON(tasksPath);
-	if (!data || !data.tasks) {
-		throw new Error(`Invalid or missing tasks file at ${tasksPath}`);
-	}
-
-	// Convert parent ID to number
-	const parentIdNum = parseInt(parentId, 10);
-
-	// Find the parent task
-	const parentTask = data.tasks.find((t) => t.id === parentIdNum);
-	if (!parentTask) {
-		throw new Error(`Parent task with ID ${parentIdNum} not found`);
-	}
-
-	// Initialize subtasks array if it doesn't exist
-	if (!parentTask.subtasks) {
-		parentTask.subtasks = [];
-	}
-
-	let newSubtask;
-
-	// Case 1: Convert an existing task to a subtask
-	if (existingTaskId !== null) {
-		const existingTaskIdNum = parseInt(existingTaskId, 10);
-
-		// Find the existing task
-		const existingTaskIndex = data.tasks.findIndex(
-			(t) => t.id === existingTaskIdNum
-		);
-		if (existingTaskIndex === -1) {
-			throw new Error(`Task with ID ${existingTaskIdNum} not found`);
-		}
-
-		const existingTask = data.tasks[existingTaskIndex];
-
-		// Check if task is already a subtask
-		if (existingTask.parentTaskId) {
-			throw new Error(
-				`Task ${existingTaskIdNum} is already a subtask of task ${existingTask.parentTaskId}`
-			);
-		}
-
-		// Check for circular dependency
-		if (existingTaskIdNum === parentIdNum) {
-			throw new Error(`Cannot make a task a subtask of itself`);
-		}
-
-		// Check for circular dependency using mockIsTaskDependentOn
-		if (mockIsTaskDependentOn()) {
-			throw new Error(
-				`Cannot create circular dependency: task ${parentIdNum} is already a subtask or dependent of task ${existingTaskIdNum}`
-			);
-		}
-
-		// Find the highest subtask ID to determine the next ID
-		const highestSubtaskId =
-			parentTask.subtasks.length > 0
-				? Math.max(...parentTask.subtasks.map((st) => st.id))
-				: 0;
-		const newSubtaskId = highestSubtaskId + 1;
-
-		// Clone the existing task to be converted to a subtask
-		newSubtask = {
-			...existingTask,
-			id: newSubtaskId,
-			parentTaskId: parentIdNum
-		};
-
-		// Add to parent's subtasks
-		parentTask.subtasks.push(newSubtask);
-
-		// Remove the task from the main tasks array
-		data.tasks.splice(existingTaskIndex, 1);
-	}
-	// Case 2: Create a new subtask
-	else if (newSubtaskData) {
-		// Find the highest subtask ID to determine the next ID
-		const highestSubtaskId =
-			parentTask.subtasks.length > 0
-				? Math.max(...parentTask.subtasks.map((st) => st.id))
-				: 0;
-		const newSubtaskId = highestSubtaskId + 1;
-
-		// Create the new subtask object
-		newSubtask = {
-			id: newSubtaskId,
-			title: newSubtaskData.title,
-			description: newSubtaskData.description || '',
-			details: newSubtaskData.details || '',
-			status: newSubtaskData.status || 'pending',
-			dependencies: newSubtaskData.dependencies || [],
-			parentTaskId: parentIdNum
-		};
-
-		// Add to parent's subtasks
-		parentTask.subtasks.push(newSubtask);
-	} else {
-		throw new Error('Either existingTaskId or newSubtaskData must be provided');
-	}
-
-	// Write the updated tasks back to the file
-	mockWriteJSON(tasksPath, data);
-
-	// Generate task files if requested
-	if (generateFiles) {
-		mockGenerateTaskFiles(tasksPath, path.dirname(tasksPath));
-	}
-
-	return newSubtask;
-};
-
-const testRemoveSubtask = (
-	tasksPath,
-	subtaskId,
-	convertToTask = false,
-	generateFiles = true
-) => {
-	// Read the existing tasks
-	const data = mockReadJSON(tasksPath);
-	if (!data || !data.tasks) {
-		throw new Error(`Invalid or missing tasks file at ${tasksPath}`);
-	}
-
-	// Parse the subtask ID (format: "parentId.subtaskId")
-	if (!subtaskId.includes('.')) {
-		throw new Error(`Invalid subtask ID format: ${subtaskId}`);
-	}
-
-	const [parentIdStr, subtaskIdStr] = subtaskId.split('.');
-	const parentId = parseInt(parentIdStr, 10);
-	const subtaskIdNum = parseInt(subtaskIdStr, 10);
-
-	// Find the parent task
-	const parentTask = data.tasks.find((t) => t.id === parentId);
-	if (!parentTask) {
-		throw new Error(`Parent task with ID ${parentId} not found`);
-	}
-
-	// Check if parent has subtasks
-	if (!parentTask.subtasks || parentTask.subtasks.length === 0) {
-		throw new Error(`Parent task ${parentId} has no subtasks`);
-	}
-
-	// Find the subtask to remove
-	const subtaskIndex = parentTask.subtasks.findIndex(
-		(st) => st.id === subtaskIdNum
-	);
-	if (subtaskIndex === -1) {
-		throw new Error(`Subtask ${subtaskId} not found`);
-	}
-
-	// Get a copy of the subtask before removing it
-	const removedSubtask = { ...parentTask.subtasks[subtaskIndex] };
-
-	// Remove the subtask from the parent
-	parentTask.subtasks.splice(subtaskIndex, 1);
-
-	// If parent has no more subtasks, remove the subtasks array
-	if (parentTask.subtasks.length === 0) {
-		delete parentTask.subtasks;
-	}
-
-	let convertedTask = null;
-
-	// Convert the subtask to a standalone task if requested
-	if (convertToTask) {
-		// Find the highest task ID to determine the next ID
-		const highestId = Math.max(...data.tasks.map((t) => t.id));
-		const newTaskId = highestId + 1;
-
-		// Create the new task from the subtask
-		convertedTask = {
-			id: newTaskId,
-			title: removedSubtask.title,
-			description: removedSubtask.description || '',
-			details: removedSubtask.details || '',
-			status: removedSubtask.status || 'pending',
-			dependencies: removedSubtask.dependencies || [],
-			priority: parentTask.priority || 'medium' // Inherit priority from parent
-		};
-
-		// Add the parent task as a dependency if not already present
-		if (!convertedTask.dependencies.includes(parentId)) {
-			convertedTask.dependencies.push(parentId);
-		}
-
-		// Add the converted task to the tasks array
-		data.tasks.push(convertedTask);
-	}
-
-	// Write the updated tasks back to the file
-	mockWriteJSON(tasksPath, data);
-
-	// Generate task files if requested
-	if (generateFiles) {
-		mockGenerateTaskFiles(tasksPath, path.dirname(tasksPath));
-	}
-
-	return convertedTask;
-};

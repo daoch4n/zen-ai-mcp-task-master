@@ -213,7 +213,7 @@ describe('MCP Tool: analyze_project_complexity', () => {
 	// Test data
 	const validArgs = {
 		output: 'output/path/report.json',
-		model: 'claude-3-opus-20240229',
+		model: 'test-model-id',
 		threshold: 5,
 		research: true
 	};

@@ -18,7 +18,7 @@ Research and populate accurate values for each model from official documentation
 Example entry:
 ```json
 {
-  "id": "claude-3-7-sonnet-20250219",
+  "id": "ai-model-id",
   "swe_score": 0.623,
   "cost_per_1m_tokens": { "input": 3.0, "output": 15.0 },
   "allowed_roles": ["main", "fallback"],

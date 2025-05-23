@@ -44,7 +44,7 @@ Output example:
 Error: "invalidModel" is not a valid model.
 
 Available models for Main Operations:
-- claude
+- ai
 - openai
 - ollama
 - gemini
@@ -64,8 +64,8 @@ Available models for Main Operations:
    - Grok
 4. Update environment variables and provide clear documentation in `.env_example`:
 ```env
-# MAIN_MODEL options: claude, openai, ollama, gemini, openrouter
-MAIN_MODEL=claude
+# MAIN_MODEL options: ai, openai, ollama, gemini, openrouter
+MAIN_MODEL=ai
 
 # RESEARCH_MODEL options: perplexity, openai, ollama, grok
 RESEARCH_MODEL=perplexity
@@ -81,7 +81,7 @@ RESEARCH_MODEL=perplexity
 import { createClient } from '@vercel/ai';
 
 const clients = {
-  claude: createClient({ provider: 'anthropic', apiKey: process.env.ANTHROPIC_API_KEY }),
+  ai: createClient({ provider: 'ai', apiKey: process.env.ANTHROPIC_API_KEY }),
   openai: createClient({ provider: 'openai', apiKey: process.env.OPENAI_API_KEY }),
   ollama: createClient({ provider: 'ollama', apiKey: process.env.OLLAMA_API_KEY }),
   gemini: createClient({ provider: 'gemini', apiKey: process.env.GEMINI_API_KEY }),
@@ -167,7 +167,7 @@ The configuration management module should:
 4. Define constants for valid models:
    ```javascript
    const VALID_MAIN_MODELS = ['gpt-4', 'gpt-3.5-turbo', 'gpt-4-turbo'];
-   const VALID_RESEARCH_MODELS = ['gpt-4', 'gpt-4-turbo', 'claude-2'];
+   const VALID_RESEARCH_MODELS = ['gpt-4', 'gpt-4-turbo', 'ai-2'];
    const DEFAULT_MAIN_MODEL = 'gpt-3.5-turbo';
    const DEFAULT_RESEARCH_MODEL = 'gpt-4';
    ```
@@ -210,8 +210,8 @@ The configuration management module should be updated to:
 
 2. Define provider constants:
    ```javascript
-   const VALID_MAIN_PROVIDERS = ['openai', 'anthropic', 'local'];
-   const VALID_RESEARCH_PROVIDERS = ['openai', 'anthropic', 'cohere'];
+   const VALID_MAIN_PROVIDERS = ['openai', 'ai', 'local'];
+   const VALID_RESEARCH_PROVIDERS = ['openai', 'ai', 'cohere'];
    const DEFAULT_MAIN_PROVIDER = 'openai';
    const DEFAULT_RESEARCH_PROVIDER = 'openai';
    ```
@@ -220,7 +220,7 @@ The configuration management module should be updated to:
    ```javascript
    const MODEL_MAP = {
      'openai': ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
-     'anthropic': ['claude-2', 'claude-instant'],
+     'ai': ['ai-2', 'ai-instant'],
      'cohere': ['command', 'command-light'],
      'local': ['llama2', 'mistral']
    };
@@ -293,7 +293,7 @@ For the client factory implementation:
 ```javascript
 // ai-client-factory.js
 import { createOpenAI } from '@ai-sdk/openai';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { createAnthropic } from '@ai-sdk/ai';
 import { createGoogle } from '@ai-sdk/google';
 import { createPerplexity } from '@ai-sdk/perplexity';
 
@@ -324,8 +324,8 @@ const getModelForProvider = (provider, requestedModel) => {
       default: 'gpt-3.5-turbo',
       // Add other mappings
     },
-    anthropic: {
-      default: 'claude-3-opus-20240229',
+    ai: {
+      default: 'ai-3-opus-20240229',
       // Add other mappings
     },
     // Add mappings for other providers
@@ -359,7 +359,7 @@ export function getClient(providerName, model) {
 function validateEnvironment(provider) {
   const requirements = {
     openai: ['OPENAI_API_KEY'],
-    anthropic: ['ANTHROPIC_API_KEY'],
+    ai: ['ANTHROPIC_API_KEY'],
     google: ['GOOGLE_API_KEY'],
     perplexity: ['PERPLEXITY_API_KEY'],
     openrouter: ['OPENROUTER_API_KEY'],
@@ -382,7 +382,7 @@ describe('AI Client Factory', () => {
   beforeEach(() => {
     // Mock environment variables
     process.env.OPENAI_API_KEY = 'test-openai-key';
-    process.env.ANTHROPIC_API_KEY = 'test-anthropic-key';
+    process.env.ANTHROPIC_API_KEY = 'test-ai-key';
     // Add other mocks
   });
   
@@ -1276,23 +1276,23 @@ When testing the non-streaming `generateTextService` call in `updateSubtaskById`
 </info added on 2025-04-22T06:35:14.892Z>
 </info added on 2025-04-22T06:23:23.247Z>
 
-## 20. Implement `anthropic.js` Provider Module using Vercel AI SDK [done]
+## 20. Implement `ai.js` Provider Module using Vercel AI SDK [done]
 ### Dependencies: None
-### Description: Create and implement the `anthropic.js` module within `src/ai-providers/`. This module should contain functions to interact with the Anthropic API (streaming and non-streaming) using the **Vercel AI SDK**, adhering to the standardized input/output format defined for `ai-services-unified.js`.
+### Description: Create and implement the `ai.js` module within `src/ai-providers/`. This module should contain functions to interact with the Anthropic API (streaming and non-streaming) using the **Vercel AI SDK**, adhering to the standardized input/output format defined for `ai-services-unified.js`.
 ### Details:
 
 
 <info added on 2025-04-24T02:54:40.326Z>
-- Use the `@ai-sdk/anthropic` package to implement the provider module. You can import the default provider instance with `import { anthropic } from '@ai-sdk/anthropic'`, or create a custom instance using `createAnthropic` if you need to specify custom headers, API key, or base URL (such as for beta features or proxying)[1][4].
+- Use the `@ai-sdk/ai` package to implement the provider module. You can import the default provider instance with `import { ai } from '@ai-sdk/ai'`, or create a custom instance using `createAnthropic` if you need to specify custom headers, API key, or base URL (such as for beta features or proxying)[1][4].
 
-- To address persistent 'Not Found' errors, ensure the model name matches the latest Anthropic model IDs (e.g., `claude-3-haiku-20240307`, `claude-3-5-sonnet-20241022`). Model naming is case-sensitive and must match Anthropic's published versions[4][5].
+- To address persistent 'Not Found' errors, ensure the model name matches the latest Anthropic model IDs (e.g., `ai-3-haiku-20240307`, `ai-3-5-sonnet-20241022`). Model naming is case-sensitive and must match Anthropic's published versions[4][5].
 
 - If you require custom headers (such as for beta features), use the `createAnthropic` function and pass a `headers` object. For example:
   ```js
-  import { createAnthropic } from '@ai-sdk/anthropic';
-  const anthropic = createAnthropic({
+  import { createAnthropic } from '@ai-sdk/ai';
+  const ai = createAnthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
-    headers: { 'anthropic-beta': 'tools-2024-04-04' }
+    headers: { 'ai-beta': 'tools-2024-04-04' }
   });
   ```
 
@@ -1301,10 +1301,10 @@ When testing the non-streaming `generateTextService` call in `updateSubtaskById`
 - Example usage for non-streaming:
   ```js
   import { generateText } from 'ai';
-  import { anthropic } from '@ai-sdk/anthropic';
+  import { ai } from '@ai-sdk/ai';
 
   const result = await generateText({
-    model: anthropic('claude-3-haiku-20240307'),
+    model: ai('ai-3-haiku-20240307'),
     messages: [{ role: 'user', content: [{ type: 'text', text: 'Hello!' }] }]
   });
   ```
@@ -1312,10 +1312,10 @@ When testing the non-streaming `generateTextService` call in `updateSubtaskById`
 - Example usage for streaming:
   ```js
   import { streamText } from 'ai';
-  import { anthropic } from '@ai-sdk/anthropic';
+  import { ai } from '@ai-sdk/ai';
 
   const stream = await streamText({
-    model: anthropic('claude-3-haiku-20240307'),
+    model: ai('ai-3-haiku-20240307'),
     messages: [{ role: 'user', content: [{ type: 'text', text: 'Hello!' }] }]
   });
   ```
@@ -1589,7 +1589,7 @@ export async function streamOpenAITextSimplified(params) {
 
 ## 23. Implement Conditional Provider Logic in `ai-services-unified.js` [done]
 ### Dependencies: None
-### Description: Implement logic within the functions of `ai-services-unified.js` (e.g., `generateTextService`, `generateObjectService`, `streamChatService`) to dynamically select and call the appropriate provider module (`anthropic.js`, `perplexity.js`, etc.) based on configuration (e.g., environment variables like `AI_PROVIDER` and `AI_MODEL` from `process.env` or `session.env`).
+### Description: Implement logic within the functions of `ai-services-unified.js` (e.g., `generateTextService`, `generateObjectService`, `streamChatService`) to dynamically select and call the appropriate provider module (`ai.js`, `perplexity.js`, etc.) based on configuration (e.g., environment variables like `AI_PROVIDER` and `AI_MODEL` from `process.env` or `session.env`).
 ### Details:
 
 
@@ -1659,7 +1659,7 @@ async function executeWithFallback(serviceFunction, ...args) {
 ```javascript
 function checkProviderCapability(provider, capability) {
   const capabilities = {
-    'anthropic': ['text', 'chat', 'stream'],
+    'ai': ['text', 'chat', 'stream'],
     'perplexity': ['text', 'chat', 'stream', 'research'],
     'openai': ['text', 'chat', 'stream', 'embedding', 'vision']
     // Add other providers as needed
@@ -1842,8 +1842,8 @@ function resolveAIConfig(session = null, role = 'default') {
  * Configuration Resolution Documentation:
  * 
  * 1. Environment Variables:
- *    - AI_PROVIDER: Explicitly sets the AI provider (e.g., 'openai', 'anthropic')
- *    - AI_MODEL: Explicitly sets the model to use (e.g., 'gpt-4', 'claude-2')
+ *    - AI_PROVIDER: Explicitly sets the AI provider (e.g., 'openai', 'ai')
+ *    - AI_MODEL: Explicitly sets the model to use (e.g., 'gpt-4', 'ai-2')
  *    - OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.: Provider-specific API keys
  * 
  * 2. Resolution Strategy:
@@ -1984,7 +1984,7 @@ For the integration tests of the Unified AI Service, consider the following impl
 3. Mock the provider modules:
    ```javascript
    jest.mock('../services/openai-service.js');
-   jest.mock('../services/anthropic-service.js');
+   jest.mock('../services/ai-service.js');
    ```
 
 4. Test specific scenarios:
@@ -1997,7 +1997,7 @@ For the integration tests of the Unified AI Service, consider the following impl
    ```javascript
    test('task-manager correctly uses unified AI service with config-based settings', async () => {
      // Setup mock config with specific settings
-     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'anthropic']);
+     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'ai']);
      mockConfigManager.getModelForRole.mockReturnValue('gpt-4');
      mockConfigManager.getParametersForModel.mockReturnValue({ temperature: 0.7, maxTokens: 2000 });
      
@@ -2015,7 +2015,7 @@ For the integration tests of the Unified AI Service, consider the following impl
   "id": 31,
   "title": "Implement Integration Test for Unified AI Service",
   "description": "Implement integration tests for `ai-services-unified.js`. These tests should verify the correct routing to different provider module based on configuration and ensure the unified service function (`generateTextService`, `generateObjectService`, etc.) work correctly when called from module like `task-manager.js`.",
-  "details": "\n\n<info added on 2025-04-20T03:51:23.368Z>\nFor the integration test of the Unified AI Service, consider the following implementation details:\n\n1. Setup test fixture:\n   - Create a mock `.taskmasterconfig` file with different provider configuration\n   - Define test case with various model selection and parameter setting\n   - Use environment variable mock only for API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)\n\n2. Test configuration resolution:\n   - Verify that `ai-services-unified.js` correctly retrieve setting from `config-manager.js`\n   - Test that model selection follow the hierarchy defined in `.taskmasterconfig`\n   - Ensure fallback mechanism work when primary provider are unavailable\n\n3. Mock the provider module:\n   ```javascript\n   jest.mock('../service/openai-service.js');\n   jest.mock('../service/anthropic-service.js');\n   ```\n\n4. Test specific scenario:\n   - Provider selection based on configured preference\n   - Parameter inheritance from config (temperature, maxToken)\n   - Error handling when API key are missing\n   - Proper routing when specific model are requested\n\n5. Verify integration with task-manager:\n   ```javascript\n   test('task-manager correctly use unified AI service with config-based setting', async () => {\n     // Setup mock config with specific setting\n     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'anthropic']);\n     mockConfigManager.getModelForRole.mockReturnValue('gpt-4');\n     mockConfigManager.getParameterForModel.mockReturnValue({ temperature: 0.7, maxToken: 2000 });\n     \n     // Verify task-manager use these setting when calling the unified service\n     // ...\n   });\n   ```\n\n6. Include test for configuration change at runtime and their effect on service behavior.\n</info added on 2025-04-20T03:51:23.368Z>\n[2024-01-15 10:30:45] A custom e2e script was created to test all the CLI command but that we'll need one to test the MCP too and that task 76 are dedicated to that",
+  "details": "\n\n<info added on 2025-04-20T03:51:23.368Z>\nFor the integration test of the Unified AI Service, consider the following implementation details:\n\n1. Setup test fixture:\n   - Create a mock `.taskmasterconfig` file with different provider configuration\n   - Define test case with various model selection and parameter setting\n   - Use environment variable mock only for API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)\n\n2. Test configuration resolution:\n   - Verify that `ai-services-unified.js` correctly retrieve setting from `config-manager.js`\n   - Test that model selection follow the hierarchy defined in `.taskmasterconfig`\n   - Ensure fallback mechanism work when primary provider are unavailable\n\n3. Mock the provider module:\n   ```javascript\n   jest.mock('../service/openai-service.js');\n   jest.mock('../service/ai-service.js');\n   ```\n\n4. Test specific scenario:\n   - Provider selection based on configured preference\n   - Parameter inheritance from config (temperature, maxToken)\n   - Error handling when API key are missing\n   - Proper routing when specific model are requested\n\n5. Verify integration with task-manager:\n   ```javascript\n   test('task-manager correctly use unified AI service with config-based setting', async () => {\n     // Setup mock config with specific setting\n     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'ai']);\n     mockConfigManager.getModelForRole.mockReturnValue('gpt-4');\n     mockConfigManager.getParameterForModel.mockReturnValue({ temperature: 0.7, maxToken: 2000 });\n     \n     // Verify task-manager use these setting when calling the unified service\n     // ...\n   });\n   ```\n\n6. Include test for configuration change at runtime and their effect on service behavior.\n</info added on 2025-04-20T03:51:23.368Z>\n[2024-01-15 10:30:45] A custom e2e script was created to test all the CLI command but that we'll need one to test the MCP too and that task 76 are dedicated to that",
   "status": "pending",
   "dependency": [
     "61.18"
@@ -2050,7 +2050,7 @@ For the integration tests of the Unified AI Service, consider the following impl
 3. Mock the provider modules:
    ```javascript
    jest.mock('../services/openai-service.js');
-   jest.mock('../services/anthropic-service.js');
+   jest.mock('../services/ai-service.js');
    ```
 
 4. Test specific scenarios:
@@ -2063,7 +2063,7 @@ For the integration tests of the Unified AI Service, consider the following impl
    ```javascript
    test('task-manager correctly uses unified AI service with config-based settings', async () => {
      // Setup mock config with specific settings
-     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'anthropic']);
+     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'ai']);
      mockConfigManager.getModelForRole.mockReturnValue('gpt-4');
      mockConfigManager.getParametersForModel.mockReturnValue({ temperature: 0.7, maxTokens: 2000 });
      
@@ -2081,7 +2081,7 @@ For the integration tests of the Unified AI Service, consider the following impl
   "id": 31,
   "title": "Implement Integration Test for Unified AI Service",
   "description": "Implement integration tests for `ai-services-unified.js`. These tests should verify the correct routing to different provider module based on configuration and ensure the unified service function (`generateTextService`, `generateObjectService`, etc.) work correctly when called from module like `task-manager.js`.",
-  "details": "\n\n<info added on 2025-04-20T03:51:23.368Z>\nFor the integration test of the Unified AI Service, consider the following implementation details:\n\n1. Setup test fixture:\n   - Create a mock `.taskmasterconfig` file with different provider configuration\n   - Define test case with various model selection and parameter setting\n   - Use environment variable mock only for API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)\n\n2. Test configuration resolution:\n   - Verify that `ai-services-unified.js` correctly retrieve setting from `config-manager.js`\n   - Test that model selection follow the hierarchy defined in `.taskmasterconfig`\n   - Ensure fallback mechanism work when primary provider are unavailable\n\n3. Mock the provider module:\n   ```javascript\n   jest.mock('../service/openai-service.js');\n   jest.mock('../service/anthropic-service.js');\n   ```\n\n4. Test specific scenario:\n   - Provider selection based on configured preference\n   - Parameter inheritance from config (temperature, maxToken)\n   - Error handling when API key are missing\n   - Proper routing when specific model are requested\n\n5. Verify integration with task-manager:\n   ```javascript\n   test('task-manager correctly use unified AI service with config-based setting', async () => {\n     // Setup mock config with specific setting\n     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'anthropic']);\n     mockConfigManager.getModelForRole.mockReturnValue('gpt-4');\n     mockConfigManager.getParameterForModel.mockReturnValue({ temperature: 0.7, maxToken: 2000 });\n     \n     // Verify task-manager use these setting when calling the unified service\n     // ...\n   });\n   ```\n\n6. Include test for configuration change at runtime and their effect on service behavior.\n</info added on 2025-04-20T03:51:23.368Z>\n[2024-01-15 10:30:45] A custom e2e script was created to test all the CLI command but that we'll need one to test the MCP too and that task 76 are dedicated to that",
+  "details": "\n\n<info added on 2025-04-20T03:51:23.368Z>\nFor the integration test of the Unified AI Service, consider the following implementation details:\n\n1. Setup test fixture:\n   - Create a mock `.taskmasterconfig` file with different provider configuration\n   - Define test case with various model selection and parameter setting\n   - Use environment variable mock only for API key (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`)\n\n2. Test configuration resolution:\n   - Verify that `ai-services-unified.js` correctly retrieve setting from `config-manager.js`\n   - Test that model selection follow the hierarchy defined in `.taskmasterconfig`\n   - Ensure fallback mechanism work when primary provider are unavailable\n\n3. Mock the provider module:\n   ```javascript\n   jest.mock('../service/openai-service.js');\n   jest.mock('../service/ai-service.js');\n   ```\n\n4. Test specific scenario:\n   - Provider selection based on configured preference\n   - Parameter inheritance from config (temperature, maxToken)\n   - Error handling when API key are missing\n   - Proper routing when specific model are requested\n\n5. Verify integration with task-manager:\n   ```javascript\n   test('task-manager correctly use unified AI service with config-based setting', async () => {\n     // Setup mock config with specific setting\n     mockConfigManager.getAIProviderPreference.mockReturnValue(['openai', 'ai']);\n     mockConfigManager.getModelForRole.mockReturnValue('gpt-4');\n     mockConfigManager.getParameterForModel.mockReturnValue({ temperature: 0.7, maxToken: 2000 });\n     \n     // Verify task-manager use these setting when calling the unified service\n     // ...\n   });\n   ```\n\n6. Include test for configuration change at runtime and their effect on service behavior.\n</info added on 2025-04-20T03:51:23.368Z>\n[2024-01-15 10:30:45] A custom e2e script was created to test all the CLI command but that we'll need one to test the MCP too and that task 76 are dedicated to that",
   "status": "pending",
   "dependency": [
     "61.18"

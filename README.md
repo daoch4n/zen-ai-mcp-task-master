@@ -1,6 +1,6 @@
-# Task Master [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+# Task Master [![GitHub stars](https://img.shields.io/github/stars/zen-ai/zen-ai-mcp-task-master?style=social)](https://github.com/zen-ai/zen-ai-mcp-task-master/stargazers)
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/zen-ai/zen-ai-mcp-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/zen-ai/zen-ai-mcp-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -129,26 +129,26 @@ For more detailed information, check out the documentation in the `docs` directo
 Try running it with Node directly:
 
 ```bash
-node node_modules/task-master-ai/scripts/init.js
+npx task-master-ai init
 ```
 
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/task-master.git
-cd task-master
+git clone https://github.com/zen-ai/zen-ai-mcp-task-master.git
+cd zen-ai-mcp-task-master
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master project contributors" />
+<a href="https://github.com/zen-ai/zen-ai-mcp-task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=zen-ai/zen-ai-mcp-task-master" alt="Task Master project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=zen-ai/zen-ai-mcp-task-master&type=Timeline)](https://www.star-history.com/#zen-ai/zen-ai-mcp-task-master&Timeline)
 
 ## Licensing
 

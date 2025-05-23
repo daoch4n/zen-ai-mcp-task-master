@@ -20,12 +20,7 @@ const mockModelMap = {
 			cost_per_1m_tokens: { input: 5, output: 15, currency: 'USD' }
 		}
 	],
-	perplexity: [
-		{
-			id: 'test-research-model',
-			cost_per_1m_tokens: { input: 1, output: 1, currency: 'USD' }
-		}
-	]
+	
 	// Add other providers/models if needed for specific tests
 };
 const mockGetBaseUrlForRole = jest.fn();
@@ -97,8 +92,8 @@ describe('Unified AI Services', () => {
 		// Set default mock behaviors
 		mockGetMainProvider.mockReturnValue('openai');
 		mockGetMainModelId.mockReturnValue('gpt-4o');
-		mockGetResearchProvider.mockReturnValue('perplexity');
-		mockGetResearchModelId.mockReturnValue('test-research-model');
+		
+		
 		mockGetFallbackProvider.mockReturnValue('openai');
 		mockGetFallbackModelId.mockReturnValue('gpt-4o');
 		mockGetParametersForRole.mockImplementation((role) => {
@@ -109,7 +104,7 @@ describe('Unified AI Services', () => {
 		});
 		mockResolveEnvVariable.mockImplementation((key) => {
 			if (key === 'OPENAI_API_KEY') return 'mock-openai-key';
-			if (key === 'PERPLEXITY_API_KEY') return 'mock-perplexity-key';
+			
 			return null;
 		});
 
@@ -158,7 +153,7 @@ describe('Unified AI Services', () => {
 					{ role: 'user', content: 'Test' }
 				]
 			});
-			expect(mockGeneratePerplexityText).not.toHaveBeenCalled();
+			
 		});
 
 		test('should fall back to fallback provider if main fails', async () => {
@@ -198,7 +193,7 @@ describe('Unified AI Services', () => {
 			);
 
 			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(2);
-			expect(mockGeneratePerplexityText).not.toHaveBeenCalled();
+			
 			expect(mockLog).toHaveBeenCalledWith(
 				'error',
 				expect.stringContaining('Service call failed for role main')

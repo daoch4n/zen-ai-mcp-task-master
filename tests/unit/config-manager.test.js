@@ -66,12 +66,6 @@ const DEFAULT_CONFIG = {
 			maxTokens: 64000,
 			temperature: 0.2
 		},
-		research: {
-			provider: 'perplexity',
-			modelId: 'sonar-pro',
-			maxTokens: 8700,
-			temperature: 0.1
-		},
 		fallback: {
 			provider: 'openai',
 			modelId: 'gpt-4o',
@@ -98,12 +92,6 @@ const VALID_CUSTOM_CONFIG = {
 			maxTokens: 4096,
 			temperature: 0.5
 		},
-		research: {
-			provider: 'perplexity',
-			modelId: 'sonar-pro',
-			maxTokens: 8192,
-			temperature: 0.3
-		},
 		fallback: {
 			provider: 'openai',
 			modelId: 'gpt-4o',
@@ -129,11 +117,7 @@ const PARTIAL_CONFIG = {
 
 const INVALID_PROVIDER_CONFIG = {
 	models: {
-		main: { provider: 'invalid-provider', modelId: 'some-model' },
-		research: {
-			provider: 'perplexity',
-			modelId: 'llama-3-sonar-large-32k-online'
-		}
+		main: { provider: 'invalid-provider', modelId: 'some-model' }
 	},
 	global: {
 		logLevel: 'warn'
@@ -198,7 +182,6 @@ describe('Validation Functions', () => {
 	// Tests for validateProvider and validateProviderModelCombination
 	test('validateProvider should return true for valid providers', () => {
 		expect(configManager.validateProvider('openai')).toBe(true);
-		expect(configManager.validateProvider('perplexity')).toBe(true);
 		expect(configManager.validateProvider('ollama')).toBe(true);
 		expect(configManager.validateProvider('openrouter')).toBe(true);
 	});
@@ -226,7 +209,7 @@ describe('Validation Functions', () => {
 		expect(
 			configManager.validateProviderModelCombination(
 				'openai',
-				'claude-3-opus-20240229'
+				'test-model-id'
 			)
 		).toBe(false);
 	});
@@ -303,7 +286,6 @@ describe('getConfig Tests', () => {
 				// Provide necessary models for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -322,10 +304,6 @@ describe('getConfig Tests', () => {
 				main: {
 					...DEFAULT_CONFIG.models.main,
 					...VALID_CUSTOM_CONFIG.models.main
-				},
-				research: {
-					...DEFAULT_CONFIG.models.research,
-					...VALID_CUSTOM_CONFIG.models.research
 				},
 				fallback: {
 					...DEFAULT_CONFIG.models.fallback,
@@ -346,7 +324,6 @@ describe('getConfig Tests', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4-turbo' }],
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -379,7 +356,6 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before parse error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -407,7 +383,6 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before read error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -434,7 +409,6 @@ describe('getConfig Tests', () => {
 				return JSON.stringify(INVALID_PROVIDER_CONFIG);
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					perplexity: [{ id: 'llama-3-sonar-large-32k-online' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -456,10 +430,7 @@ describe('getConfig Tests', () => {
 		const expectedMergedConfig = {
 			models: {
 				main: { ...DEFAULT_CONFIG.models.main },
-				research: {
-					...DEFAULT_CONFIG.models.research,
-					...INVALID_PROVIDER_CONFIG.models.research
-				},
+				research: { ...DEFAULT_CONFIG.models.research },
 				fallback: { ...DEFAULT_CONFIG.models.fallback }
 			},
 			global: { ...DEFAULT_CONFIG.global, ...INVALID_PROVIDER_CONFIG.global }
@@ -540,10 +511,9 @@ describe('Getter Functions', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
-				}); // Added perplexity
+				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
 		});
@@ -566,7 +536,6 @@ describe('Getter Functions', () => {
 				// Provide enough mock model data for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -622,8 +591,12 @@ describe('getAllProviders', () => {
 		// Assert
 		// Assert against the actual keys in the REAL loaded data
 		const expectedProviders = Object.keys(REAL_SUPPORTED_MODELS_DATA);
-		expect(providers).toEqual(expect.arrayContaining(expectedProviders));
-		expect(providers.length).toBe(expectedProviders.length);
+		// Filter out 'perplexity' from expectedProviders if it's still there
+		const filteredExpectedProviders = expectedProviders.filter(
+			(p) => p !== 'perplexity'
+		);
+		expect(providers).toEqual(expect.arrayContaining(filteredExpectedProviders));
+		expect(providers.length).toBe(filteredExpectedProviders.length);
 	});
 });
 

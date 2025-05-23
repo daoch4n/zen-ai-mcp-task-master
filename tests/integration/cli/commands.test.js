@@ -1,17 +1,17 @@
 import { jest } from '@jest/globals';
 
 // --- Define mock functions ---
-const mockGetMainModelId = jest.fn().mockReturnValue('claude-3-opus');
+const mockGetMainModelId = jest.fn().mockReturnValue('test-ai-model');
 const mockGetResearchModelId = jest.fn().mockReturnValue('gpt-4-turbo');
-const mockGetFallbackModelId = jest.fn().mockReturnValue('claude-3-haiku');
+const mockGetFallbackModelId = jest.fn().mockReturnValue('test-ai-model-2');
 const mockSetMainModel = jest.fn().mockResolvedValue(true);
 const mockSetResearchModel = jest.fn().mockResolvedValue(true);
 const mockSetFallbackModel = jest.fn().mockResolvedValue(true);
 const mockGetAvailableModels = jest.fn().mockReturnValue([
-	{ id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'anthropic' },
+	{ id: 'test-ai-model', name: 'Test AI Model', provider: 'test-ai-provider' },
 	{ id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'openai' },
-	{ id: 'claude-3-haiku', name: 'Claude 3 Haiku', provider: 'anthropic' },
-	{ id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'anthropic' }
+	{ id: 'test-ai-model-2', name: 'Test AI Model 2', provider: 'test-ai-provider' },
+	{ id: 'test-ai-model-3', name: 'Test AI Model 3', provider: 'test-ai-provider' }
 ]);
 
 // Mock UI related functions
@@ -30,7 +30,7 @@ jest.unstable_mockModule('../../../scripts/modules/config-manager.js', () => ({
 	setResearchModel: mockSetResearchModel,
 	setFallbackModel: mockSetFallbackModel,
 	getAvailableModels: mockGetAvailableModels,
-	VALID_PROVIDERS: ['anthropic', 'openai']
+	VALID_PROVIDERS: ['test-ai-provider', 'openai']
 }));
 
 jest.unstable_mockModule('../../../scripts/modules/ui.js', () => ({
@@ -257,8 +257,8 @@ describe('CLI Models Command (Action Handler Test)', () => {
 	// --- Test Cases (Calling modelsAction directly) ---
 
 	it('should call setMainModel with correct provider and ID', async () => {
-		const modelId = 'claude-3-opus';
-		const expectedProvider = 'anthropic';
+		const modelId = 'test-ai-model';
+		const expectedProvider = 'test-ai-provider';
 		await modelsAction({ setMain: modelId });
 		expect(mockSetMainModel).toHaveBeenCalledWith(expectedProvider, modelId);
 		expect(console.log).toHaveBeenCalledWith(
@@ -296,8 +296,8 @@ describe('CLI Models Command (Action Handler Test)', () => {
 	});
 
 	it('should call setFallbackModel with correct provider and ID', async () => {
-		const modelId = 'claude-3-haiku';
-		const expectedProvider = 'anthropic';
+		const modelId = 'test-ai-model-2';
+		const expectedProvider = 'test-ai-provider';
 		await modelsAction({ setFallback: modelId });
 		expect(mockSetFallbackModel).toHaveBeenCalledWith(
 			expectedProvider,
@@ -312,12 +312,12 @@ describe('CLI Models Command (Action Handler Test)', () => {
 	});
 
 	it('should call all set*Model functions when all flags are used', async () => {
-		const mainModelId = 'claude-3-opus';
+		const mainModelId = 'test-ai-model';
 		const researchModelId = 'gpt-4-turbo';
-		const fallbackModelId = 'claude-3-haiku';
-		const mainProvider = 'anthropic';
+		const fallbackModelId = 'test-ai-model-2';
+		const mainProvider = 'test-ai-provider';
 		const researchProvider = 'openai';
-		const fallbackProvider = 'anthropic';
+		const fallbackProvider = 'test-ai-provider';
 
 		await modelsAction({
 			setMain: mainModelId,

@@ -47,7 +47,7 @@ fi
 
 
 # --- Configuration ---
-# Assumes script is run from the project root (claude-task-master)
+# Assumes script is run from the project root (task-master)
 TASKMASTER_SOURCE_DIR="." # Current directory is the source
 # Base directory for test runs, relative to project root
 BASE_TEST_DIR="$TASKMASTER_SOURCE_DIR/tests/e2e/_runs"
