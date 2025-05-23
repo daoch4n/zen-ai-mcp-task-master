@@ -68,6 +68,7 @@ class TaskMasterMCPServer {
 		// Start the FastMCP server with increased timeout
 		await this.server.start({
 			transportType: 'sse',
+			endpoint: '/events',
 			port: 3000,
 			timeout: 120000 // 2 minutes timeout (in milliseconds)
 		});
