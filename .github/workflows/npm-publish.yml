@@ -70,7 +70,9 @@ jobs:
           # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
           npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
           npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
+      - name: Create and bump versions
+        run: npm run changeset version
       - run: npm install
-      - run: npm publish
+      - run: npm publish --registry=https://npm.pkg.github.com/
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
