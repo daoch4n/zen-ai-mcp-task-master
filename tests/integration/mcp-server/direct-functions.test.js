@@ -28,44 +28,6 @@ const mockEnableSilentMode = jest.fn();
 const mockDisableSilentMode = jest.fn();
 const mockReadComplexityReport = jest.fn().mockReturnValue(null);
 
-const mockGetAnthropicClient = jest.fn().mockReturnValue({});
-const mockGetConfiguredAnthropicClient = jest.fn().mockReturnValue({});
-const mockHandleAnthropicStream = jest.fn().mockResolvedValue(
-	JSON.stringify([
-		{
-			id: 1,
-			title: 'Mock Subtask 1',
-			description: 'First mock subtask',
-			dependencies: [],
-			details: 'Implementation details for mock subtask 1'
-		},
-		{
-			id: 2,
-			title: 'Mock Subtask 2',
-			description: 'Second mock subtask',
-			dependencies: [1],
-			details: 'Implementation details for mock subtask 2'
-		}
-	])
-);
-const mockParseSubtasksFromText = jest.fn().mockReturnValue([
-	{
-		id: 1,
-		title: 'Mock Subtask 1',
-		description: 'First mock subtask',
-		status: 'pending',
-		dependencies: []
-	},
-	{
-		id: 2,
-		title: 'Mock Subtask 2',
-		description: 'Second mock subtask',
-		status: 'pending',
-		dependencies: [1]
-	}
-]);
-
-// Create a mock for expandTask that returns predefined responses instead of making real calls
 const mockExpandTask = jest
 	.fn()
 	.mockImplementation(
@@ -132,7 +94,7 @@ jest.mock('../../../scripts/modules/utils.js', () => ({
 	disableSilentMode: mockDisableSilentMode,
 	readComplexityReport: mockReadComplexityReport,
 	CONFIG: {
-		model: 'claude-3-7-sonnet-20250219',
+		model: 'gpt-4o',
 		maxTokens: 64000,
 		temperature: 0.2,
 		defaultSubtasks: 5
@@ -174,8 +136,8 @@ const mockLogger = {
 // Mock session
 const mockSession = {
 	env: {
-		ANTHROPIC_API_KEY: 'mock-api-key',
-		MODEL: 'claude-3-sonnet-20240229',
+		OPENAI_API_KEY: 'mock-api-key',
+		MODEL: 'gpt-4o',
 		MAX_TOKENS: 4000,
 		TEMPERATURE: '0.2'
 	}

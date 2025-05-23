@@ -22,7 +22,7 @@ const mockValidateAndFixDependencies = jest.fn();
 const mockReadJSON = jest.fn();
 const mockLog = jest.fn();
 const mockIsTaskDependentOn = jest.fn().mockReturnValue(false);
-const mockCreate = jest.fn(); // Mock for Anthropic messages.create
+
 const mockChatCompletionsCreate = jest.fn(); // Mock for Perplexity chat.completions.create
 const mockGetAvailableAIModel = jest.fn(); // <<<<< Added mock function
 const mockPromptYesNo = jest.fn(); // Mock for confirmation prompt
@@ -89,16 +89,7 @@ jest.mock('../../scripts/modules/ai-services-unified.js', () => ({
 	generateObjectService: jest.fn() // Ensure this mock function is created
 }));
 
-// Mock Anthropic SDK
-jest.mock('@anthropic-ai/sdk', () => {
-	return {
-		Anthropic: jest.fn().mockImplementation(() => ({
-			messages: {
-				create: mockCreate
-			}
-		}))
-	};
-});
+
 
 // Mock Perplexity using OpenAI
 jest.mock('openai', () => {
@@ -1948,7 +1939,7 @@ describe('Task Manager Module', () => {
 		});
 
 		test('should update a task successfully', async () => {
-			// Mock the return value of messages.create and Anthropic
+			
 			const mockTask = {
 				id: 2,
 				title: 'Updated Core Functionality',

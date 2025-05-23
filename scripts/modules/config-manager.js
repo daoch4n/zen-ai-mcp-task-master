@@ -443,7 +443,6 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 
 	const keyMap = {
 		openai: 'OPENAI_API_KEY',
-		google: 'GOOGLE_API_KEY',
 		mistral: 'MISTRAL_API_KEY',
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
@@ -512,10 +511,6 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 			case 'openrouter':
 				apiKeyToCheck = mcpEnv.OPENROUTER_API_KEY;
 				placeholderValue = 'YOUR_OPENROUTER_API_KEY_HERE';
-				break;
-			case 'google':
-				apiKeyToCheck = mcpEnv.GOOGLE_API_KEY;
-				placeholderValue = 'YOUR_GOOGLE_API_KEY_HERE';
 				break;
 			case 'xai':
 				apiKeyToCheck = mcpEnv.XAI_API_KEY;

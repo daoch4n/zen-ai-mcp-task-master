@@ -530,35 +530,29 @@ async function callAiService(params) {
 ```
 </info added on 2025-05-09T04:02:44.847Z>
 
-## 13. Update google.js for Telemetry Compatibility [done]
-### Dependencies: None
-### Description: Modify src/ai-providers/google.js functions to return usage data.
-### Details:
-Update the provider functions in `src/ai-providers/google.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateGoogleText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateGoogleObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamGoogleText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.\n\nReference `anthropic.js` for the pattern.
-
 ## 14. Update openai.js for Telemetry Compatibility [pending]
 ### Dependencies: None
 ### Description: Modify src/ai-providers/openai.js functions to return usage data.
 ### Details:
-Update the provider functions in `src/ai-providers/openai.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateOpenAIText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateOpenAIObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamOpenAIText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.\n\nReference `anthropic.js` for the pattern.
+Update the provider functions in `src/ai-providers/openai.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateOpenAIText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateOpenAIObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamOpenAIText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.
 
 ## 15. Update openrouter.js for Telemetry Compatibility [pending]
 ### Dependencies: None
 ### Description: Modify src/ai-providers/openrouter.js functions to return usage data.
 ### Details:
-Update the provider functions in `src/ai-providers/openrouter.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateOpenRouterText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateOpenRouterObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamOpenRouterText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.\n\nReference `anthropic.js` for the pattern.
+Update the provider functions in `src/ai-providers/openrouter.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateOpenRouterText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateOpenRouterObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamOpenRouterText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.
 
 ## 16. Update perplexity.js for Telemetry Compatibility [done]
 ### Dependencies: None
 ### Description: Modify src/ai-providers/perplexity.js functions to return usage data.
 ### Details:
-Update the provider functions in `src/ai-providers/perplexity.js` to ensure they return telemetry-compatible results:\n\n1.  **`generatePerplexityText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generatePerplexityObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamPerplexityText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.\n\nReference `anthropic.js` for the pattern.
+Update the provider functions in `src/ai-providers/perplexity.js` to ensure they return telemetry-compatible results:\n\n1.  **`generatePerplexityText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generatePerplexityObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamPerplexityText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.
 
 ## 17. Update xai.js for Telemetry Compatibility [pending]
 ### Dependencies: None
 ### Description: Modify src/ai-providers/xai.js functions to return usage data.
 ### Details:
-Update the provider functions in `src/ai-providers/xai.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateXaiText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateXaiObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamXaiText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.\n\nReference `anthropic.js` for the pattern.
+Update the provider functions in `src/ai-providers/xai.js` to ensure they return telemetry-compatible results:\n\n1.  **`generateXaiText`**: Return `{ text: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts from the Vercel AI SDK result.\n2.  **`generateXaiObject`**: Return `{ object: ..., usage: { inputTokens: ..., outputTokens: ... } }`. Extract token counts.\n3.  **`streamXaiText`**: Return the *full stream result object* returned by the Vercel AI SDK's `streamText`, not just the `textStream` property. The full object contains usage information.
 
 ## 18. Create dedicated telemetry transmission module [pending]
 ### Dependencies: 77.1, 77.3
@@ -591,4 +585,3 @@ Create a new module (e.g., `scripts/utils/telemetry-client.js`) that encapsulate
    - Call after telemetryData object is constructed
    - Only send if user consent is confirmed
    - Use non-blocking approach to avoid performance impact
-

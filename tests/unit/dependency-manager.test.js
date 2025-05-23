@@ -26,9 +26,7 @@ jest.mock('chalk', () => ({
 
 jest.mock('boxen', () => jest.fn((text) => `[boxed: ${text}]`));
 
-jest.mock('@anthropic-ai/sdk', () => ({
-	Anthropic: jest.fn().mockImplementation(() => ({}))
-}));
+
 
 // Mock utils module
 const mockTaskExists = jest.fn();

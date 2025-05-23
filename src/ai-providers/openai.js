@@ -185,6 +185,7 @@ log('debug', 'Original schema:', schema);
 
 	try {
 log('debug', 'Cleaned schema:', cleanedSchema);
+log('debug', 'Type of openaiClient(modelId):', typeof openaiClient(modelId)); // New log
 log('debug', 'Schema before generateObject call:', cleanedSchema); // New log
 		const result = await generateObject({
 			model: openaiClient(modelId),

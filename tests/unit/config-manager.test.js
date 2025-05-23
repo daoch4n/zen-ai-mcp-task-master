@@ -61,8 +61,8 @@ const MOCK_CONFIG_PATH = path.join(MOCK_PROJECT_ROOT, '.taskmasterconfig');
 const DEFAULT_CONFIG = {
 	models: {
 		main: {
-			provider: 'anthropic',
-			modelId: 'claude-3-7-sonnet-20250219',
+			provider: 'openai',
+			modelId: 'gpt-4o',
 			maxTokens: 64000,
 			temperature: 0.2
 		},
@@ -73,8 +73,8 @@ const DEFAULT_CONFIG = {
 			temperature: 0.1
 		},
 		fallback: {
-			provider: 'anthropic',
-			modelId: 'claude-3-5-sonnet',
+			provider: 'openai',
+			modelId: 'gpt-4o',
 			maxTokens: 64000,
 			temperature: 0.2
 		}
@@ -99,14 +99,14 @@ const VALID_CUSTOM_CONFIG = {
 			temperature: 0.5
 		},
 		research: {
-			provider: 'google',
-			modelId: 'gemini-1.5-pro-latest',
+			provider: 'perplexity',
+			modelId: 'sonar-pro',
 			maxTokens: 8192,
 			temperature: 0.3
 		},
 		fallback: {
-			provider: 'anthropic',
-			modelId: 'claude-3-opus-20240229',
+			provider: 'openai',
+			modelId: 'gpt-4o',
 			maxTokens: 100000,
 			temperature: 0.4
 		}
@@ -198,14 +198,14 @@ describe('Validation Functions', () => {
 	// Tests for validateProvider and validateProviderModelCombination
 	test('validateProvider should return true for valid providers', () => {
 		expect(configManager.validateProvider('openai')).toBe(true);
-		expect(configManager.validateProvider('anthropic')).toBe(true);
-		expect(configManager.validateProvider('google')).toBe(true);
 		expect(configManager.validateProvider('perplexity')).toBe(true);
 		expect(configManager.validateProvider('ollama')).toBe(true);
 		expect(configManager.validateProvider('openrouter')).toBe(true);
 	});
 
 	test('validateProvider should return false for invalid providers', () => {
+		expect(configManager.validateProvider('anthropic')).toBe(false);
+		expect(configManager.validateProvider('google')).toBe(false);
 		expect(configManager.validateProvider('invalid-provider')).toBe(false);
 		expect(configManager.validateProvider('grok')).toBe(false); // Not in mock map
 		expect(configManager.validateProvider('')).toBe(false);
@@ -217,12 +217,6 @@ describe('Validation Functions', () => {
 		configManager.getConfig(MOCK_PROJECT_ROOT, true);
 		expect(
 			configManager.validateProviderModelCombination('openai', 'gpt-4o')
-		).toBe(true);
-		expect(
-			configManager.validateProviderModelCombination(
-				'anthropic',
-				'claude-3-5-sonnet-20241022'
-			)
 		).toBe(true);
 	});
 
@@ -309,14 +303,7 @@ describe('getConfig Tests', () => {
 				// Provide necessary models for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					google: [{ id: 'gemini-1.5-pro-latest' }],
 					perplexity: [{ id: 'sonar-pro' }],
-					anthropic: [
-						{ id: 'claude-3-opus-20240229' },
-						{ id: 'claude-3-5-sonnet' },
-						{ id: 'claude-3-7-sonnet-20250219' },
-						{ id: 'claude-3-5-sonnet' }
-					],
 					ollama: [],
 					openrouter: []
 				});
@@ -360,10 +347,6 @@ describe('getConfig Tests', () => {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4-turbo' }],
 					perplexity: [{ id: 'sonar-pro' }],
-					anthropic: [
-						{ id: 'claude-3-7-sonnet-20250219' },
-						{ id: 'claude-3-5-sonnet' }
-					],
 					ollama: [],
 					openrouter: []
 				});
@@ -396,9 +379,7 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before parse error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					anthropic: [{ id: 'claude-3-7-sonnet-20250219' }],
 					perplexity: [{ id: 'sonar-pro' }],
-					fallback: [{ id: 'claude-3-5-sonnet' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -426,9 +407,7 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before read error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					anthropic: [{ id: 'claude-3-7-sonnet-20250219' }],
 					perplexity: [{ id: 'sonar-pro' }],
-					fallback: [{ id: 'claude-3-5-sonnet' }],
 					ollama: [],
 					openrouter: []
 				});
@@ -456,10 +435,6 @@ describe('getConfig Tests', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					perplexity: [{ id: 'llama-3-sonar-large-32k-online' }],
-					anthropic: [
-						{ id: 'claude-3-7-sonnet-20250219' },
-						{ id: 'claude-3-5-sonnet' }
-					],
 					ollama: [],
 					openrouter: []
 				});
@@ -565,12 +540,6 @@ describe('Getter Functions', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					google: [{ id: 'gemini-1.5-pro-latest' }],
-					anthropic: [
-						{ id: 'claude-3-opus-20240229' },
-						{ id: 'claude-3-7-sonnet-20250219' },
-						{ id: 'claude-3-5-sonnet' }
-					],
 					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []
@@ -597,12 +566,6 @@ describe('Getter Functions', () => {
 				// Provide enough mock model data for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					google: [{ id: 'gemini-1.5-pro-latest' }],
-					anthropic: [
-						{ id: 'claude-3-opus-20240229' },
-						{ id: 'claude-3-7-sonnet-20250219' },
-						{ id: 'claude-3-5-sonnet' }
-					],
 					perplexity: [{ id: 'sonar-pro' }],
 					ollama: [],
 					openrouter: []

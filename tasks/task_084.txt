@@ -3,7 +3,7 @@
 # Status: pending
 # Dependencies: 82
 # Priority: high
-# Description: Create a utility function to count tokens for prompts based on the model being used, primarily using tiktoken for OpenAI and Anthropic models with character-based fallbacks for other providers.
+# Description: Create a utility function to count tokens for prompts based on the model being used, primarily using tiktoken for OpenAI models with character-based fallbacks for other providers.
 # Details:
 1. Install the tiktoken package:
 ```bash
@@ -17,7 +17,7 @@ const tiktoken = require('tiktoken');
 /**
  * Count tokens for a given text and model
  * @param {string} text - The text to count tokens for
- * @param {string} provider - The AI provider (e.g., 'openai', 'anthropic')
+ * @param {string} provider - The AI provider (e.g., 'openai')
  * @param {string} modelId - The model ID
  * @returns {number} - Estimated token count
  */
@@ -33,19 +33,6 @@ function countTokens(text, provider, modelId) {
       // Most OpenAI chat models use cl100k_base encoding
       const encoding = tiktoken.encoding_for_model(modelId) || tiktoken.get_encoding('cl100k_base');
       return encoding.encode(text).length;
-    }
-    
-    // Anthropic models - can use cl100k_base as an approximation
-    // or follow Anthropic's guidance
-    if (providerLower === 'anthropic') {
-      try {
-        // Try to use cl100k_base as a reasonable approximation
-        const encoding = tiktoken.get_encoding('cl100k_base');
-        return encoding.encode(text).length;
-      } catch (e) {
-        // Fallback to Anthropic's character-based estimation
-        return Math.ceil(text.length / 3.5); // ~3.5 chars per token for English
-      }
     }
     
     // For other providers, use character-based estimation as fallback
@@ -72,13 +59,6 @@ describe('Token Counter', () => {
     expect(typeof count).toBe('number');
   });
   
-  test('counts tokens for Anthropic models', () => {
-    const text = 'Hello, world! This is a test.';
-    const count = countTokens(text, 'anthropic', 'claude-3-7-sonnet-20250219');
-    expect(count).toBeGreaterThan(0);
-    expect(typeof count).toBe('number');
-  });
-  
   test('handles empty text', () => {
     expect(countTokens('', 'openai', 'gpt-4')).toBe(0);
     expect(countTokens(null, 'openai', 'gpt-4')).toBe(0);
@@ -88,6 +68,6 @@ describe('Token Counter', () => {
 
 # Test Strategy:
 1. Unit test the countTokens function with various inputs and models
-2. Compare token counts with known examples from OpenAI and Anthropic documentation
+2. Compare token counts with known examples from OpenAI documentation
 3. Test edge cases: empty strings, very long texts, non-English texts
 4. Test fallback behavior when tiktoken fails or is not applicable

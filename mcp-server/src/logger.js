@@ -1,6 +1,8 @@
 import chalk from 'chalk';
 import { isSilentMode } from '../../scripts/modules/utils.js';
 import { getLogLevel } from '../../scripts/modules/config-manager.js';
+import fs from 'fs';
+import path from 'path';
 
 // Define log levels
 const LOG_LEVELS = {
@@ -13,6 +15,21 @@ const LOG_LEVELS = {
 
 // Get log level from config manager or default to info
 const LOG_LEVEL = LOG_LEVELS[getLogLevel().toLowerCase()] ?? LOG_LEVELS.info;
+
+// Define log directory and file
+const LOG_DIR = path.join(process.cwd(), 'logs');
+const LOG_FILE = path.join(LOG_DIR, 'mcp-server.log');
+
+// Ensure log directory exists
+function ensureLogDirectoryExists() {
+	try {
+		if (!fs.existsSync(LOG_DIR)) {
+			fs.mkdirSync(LOG_DIR, { recursive: true });
+		}
+	} catch (dirError) {
+		console.error(chalk.red('[ERROR] Failed to create log directory:'), dirError);
+	}
+}
 
 /**
  * Logs a message with the specified level
@@ -74,11 +91,18 @@ function log(level, ...args) {
 			coloredArgs = args;
 		}
 
-		// Revert to console.log - FastMCP's context logger (context.log)
-		// is responsible for directing logs correctly (e.g., to stderr)
-		// during tool execution without upsetting the client connection.
-		// Logs outside of tool execution (like startup) will go to stdout.
+		// Console log
 		console.log(prefix, ...coloredArgs);
+
+		// File log
+		ensureLogDirectoryExists();
+		try {
+			const timestamp = new Date().toISOString();
+			const logMessage = `${timestamp} ${prefix} ${args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ')}\n`;
+			fs.appendFileSync(LOG_FILE, logMessage);
+		} catch (fileError) {
+			console.error(chalk.red('[ERROR] Failed to write to log file:'), fileError);
+		}
 	}
 }
 
@@ -91,6 +115,15 @@ export function createLogger() {
 		(level) =>
 		(...args) =>
 			log(level, ...args);
+
+	// Log a message when the logger is initialized
+	ensureLogDirectoryExists();
+	try {
+		const timestamp = new Date().toISOString();
+		fs.appendFileSync(LOG_FILE, `${timestamp} [INFO] Logger initialized.\n`);
+	} catch (initLogError) {
+		console.error(chalk.red('[ERROR] Failed to write initial logger message:'), initLogError);
+	}
 
 	return {
 		debug: createLogMethod('debug'),

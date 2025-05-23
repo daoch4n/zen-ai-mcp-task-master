@@ -23,6 +23,11 @@ import {
 import { log, resolveEnvVariable, isSilentMode } from './utils.js';
 
 import * as openai from '../../src/ai-providers/openai.js';
+import * as perplexity from '../../src/ai-providers/perplexity.js';
+import * as mistral from '../../src/ai-providers/mistral.js';
+import * as azure from '../../src/ai-providers/azure.js';
+import * as openrouter from '../../src/ai-providers/openrouter.js';
+import * as xai from '../../src/ai-providers/xai.js';
 
 // Helper function to get cost for a specific model
 function _getCostForModel(providerName, modelId) {
@@ -61,6 +66,31 @@ const PROVIDER_FUNCTIONS = {
 		generateText: openai.generateOpenAIText,
 		streamText: openai.streamOpenAIText,
 		generateObject: openai.generateOpenAIObject
+	},
+	perplexity: {
+		generateText: perplexity.generatePerplexityText,
+		streamText: perplexity.streamPerplexityText,
+		generateObject: perplexity.generatePerplexityObject
+	},
+	mistral: {
+		generateText: mistral.generateMistralText,
+		streamText: mistral.streamMistralText,
+		generateObject: mistral.generateMistralObject
+	},
+	azure: {
+		generateText: azure.generateAzureText,
+		streamText: azure.streamAzureText,
+		generateObject: azure.generateAzureObject
+	},
+	openrouter: {
+		generateText: openrouter.generateOpenRouterText,
+		streamText: openrouter.streamOpenRouterText,
+		generateObject: openrouter.generateOpenRouterObject
+	},
+	xai: {
+		generateText: xai.generateXaiText,
+		streamText: xai.streamXaiText,
+		generateObject: xai.generateXaiObject
 	}
 };
 
@@ -140,11 +170,20 @@ function _extractErrorMessage(error) {
  */
 function _resolveApiKey(providerName, session, projectRoot = null) {
 	const keyMap = {
-		openai: 'OPENAI_API_KEY'
+		openai: 'OPENAI_API_KEY',
+		perplexity: 'PERPLEXITY_API_KEY',
+		mistral: 'MISTRAL_API_KEY',
+		azure: 'AZURE_OPENAI_API_KEY',
+		openrouter: 'OPENROUTER_API_KEY',
+		xai: 'XAI_API_KEY'
 	};
 
 	const envVarName = keyMap[providerName];
 	if (!envVarName) {
+		// Ollama does not require an API key, so it's not in keyMap
+		if (providerName === 'ollama') {
+			return 'ollama-no-key-required'; // Special value for Ollama
+		}
 		throw new Error(
 			`Unknown provider '${providerName}' for API key resolution.`
 		);
@@ -272,31 +311,47 @@ async function _unifiedServiceRunner(serviceType, params) {
 	// Get userId from config - ensure effectiveProjectRoot is passed
 	const userId = getUserId(effectiveProjectRoot);
 
-	// Since all AI providers are now redirected to OpenAI, we can simplify the sequence.
-	// The 'role' parameter still exists for historical/config purposes but will always map to OpenAI.
-	const providerName = 'openai';
-	const modelId = 'gemini-2.5-flash-preview-05-20'; // Hardcoded as per instructions
+	// Determine provider and model based on the role
+	let providerName;
+	let modelId;
+
+	switch (initialRole) {
+		case 'main':
+			providerName = getMainProvider(effectiveProjectRoot);
+			modelId = getMainModelId(effectiveProjectRoot);
+			break;
+		case 'research':
+			providerName = getResearchProvider(effectiveProjectRoot);
+			modelId = getResearchModelId(effectiveProjectRoot);
+			break;
+		case 'fallback':
+			providerName = getFallbackProvider(effectiveProjectRoot);
+			modelId = getFallbackModelId(effectiveProjectRoot);
+			break;
+		default:
+			log('error', `Unknown role: ${initialRole}. Defaulting to main.`);
+			providerName = getMainProvider(effectiveProjectRoot);
+			modelId = getMainModelId(effectiveProjectRoot);
+	}
 
 	let lastError = null;
 	let lastCleanErrorMessage =
 		'AI service call failed for all configured roles.';
 
-	// The loop is effectively removed as we only attempt OpenAI
 	try {
-		log('info', `AI service call with forced provider: ${providerName}`);
+		log('info', `AI service call with provider: ${providerName}, model: ${modelId}`);
 
 		if (!providerName || !modelId) {
 			log(
 				'error',
-				`Critical: Provider or Model ID not configured for forced OpenAI. Provider: ${providerName}, Model: ${modelId}`
+				`Critical: Provider or Model ID not configured for role '${initialRole}'. Provider: ${providerName}, Model: ${modelId}`
 			);
 			throw new Error(
-				`Critical configuration missing: Provider: ${providerName}, Model: ${modelId}`
+				`Critical configuration missing for role '${initialRole}': Provider: ${providerName}, Model: ${modelId}`
 			);
 		}
 
 		// Get parameters for the initial role (main, research, or fallback)
-		// This is still relevant for maxTokens, temperature, etc., even if provider/model are forced.
 		const roleParams = getParametersForRole(initialRole, effectiveProjectRoot);
 		const baseUrl = getBaseUrlForRole(initialRole, effectiveProjectRoot);
 
@@ -464,7 +519,7 @@ async function _unifiedServiceRunner(serviceType, params) {
 		const cleanMessage = _extractErrorMessage(error);
 		log(
 			'error',
-			`Service call failed for forced OpenAI (Provider: ${providerName || 'unknown'}, Model: ${modelId || 'unknown'}): ${cleanMessage}`
+			`Service call failed for role '${initialRole}' (Provider: ${providerName || 'unknown'}, Model: ${modelId || 'unknown'}): ${cleanMessage}`
 		);
 		lastError = error;
 		lastCleanErrorMessage = cleanMessage;

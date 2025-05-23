@@ -7,19 +7,17 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
 
-A task management system for AI-driven development with Claude, designed to work seamlessly with Cursor AI.
+A task management system for AI-driven development, designed to work seamlessly with Cursor AI.
 
 ## Requirements
 
-Taskmaster utilizes AI across several commands, and those require a separate API key. You can use a variety of models from different AI providers provided you add your API keys. For example, if you want to use Claude 3.7, you'll need an Anthropic API key.
+Taskmaster utilizes AI across several commands, and those require a separate API key. You can use a variety of models from different AI providers provided you add your API keys.
 
 You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env.
 
 At least one (1) of the following is required:
 
-- Anthropic API key (Claude API)
 - OpenAI API key
-- Google Gemini API key
 - Perplexity API key (for research model)
 - xAI API Key (for research or main model)
 - OpenRouter API Key (for research or main model)
@@ -41,10 +39,8 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 			"command": "npx",
 			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
 			"env": {
-				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
 				"OPENAI_API_KEY": "YOUR_OPENAI_KEY_HERE",
-				"GOOGLE_API_KEY": "YOUR_GOOGLE_KEY_HERE",
 				"MISTRAL_API_KEY": "YOUR_MISTRAL_KEY_HERE",
 				"OPENROUTER_API_KEY": "YOUR_OPENROUTER_KEY_HERE",
 				"XAI_API_KEY": "YOUR_XAI_KEY_HERE",
@@ -133,14 +129,14 @@ For more detailed information, check out the documentation in the `docs` directo
 Try running it with Node directly:
 
 ```bash
-node node_modules/claude-task-master/scripts/init.js
+node node_modules/task-master-ai/scripts/init.js
 ```
 
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
-cd claude-task-master
+git clone https://github.com/eyaltoledano/task-master.git
+cd task-master
 node scripts/init.js
 ```
 
