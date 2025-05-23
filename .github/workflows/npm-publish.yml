@@ -21,9 +21,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for git operations
-      - name: Bump version for nightly release
-        run: npm version prerelease --preid=nightly -m "Bump version to %s for nightly release" --no-gpg-sign --author="zen-ai-dev[bot] <210175559+zen-ai-dev[bot]@users.noreply.github.com>"
-        
+      - name: Get current version and create nightly tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TODAY=$(date +%Y%m%d)
+          # Assuming counter '0' for simplicity as per instructions
+          TAG_NAME="v${VERSION}-nightly.${TODAY}.0"
+          echo "Creating tag: $TAG_NAME"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+          
       - uses: actions/setup-node@v4
         with:
           node-version: 20
