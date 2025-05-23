@@ -4,6 +4,14 @@ FROM node:20-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
+# Add ARG instructions for OpenAI API keys
+ARG OPENAI_API_KEY
+ARG OPENAI_API_BASE_URL
+
+# Set them as ENV variables
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
+ENV OPENAI_API_BASE_URL=$OPENAI_API_BASE_URL
+
 # Copy package.json and package-lock.json to the working directory
 # This allows caching of dependencies
 COPY package*.json ./
@@ -18,5 +26,4 @@ COPY . .
 EXPOSE 3000
 
 # Define the command to start the application
-# Based on the project structure, 'node index.js' is appropriate
-CMD ["node", "index.js"]
+CMD ["node", "mcp-server/server.js"]
