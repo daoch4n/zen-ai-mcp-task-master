@@ -87,12 +87,10 @@ jobs:
             echo "No new merge commit was created. Repository is already up-to-date."
             echo "merged_changes=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Bump version
-        if: steps.merge_upstream.outputs.merged_changes == 'true'
-        run: npm version patch -m "Bump version to %s after upstream merge"
+      - name: Bump version for nightly release
+        run: npm version prerelease --preid=nightly -m "Bump version to %s for nightly release"
 
       - uses: actions/setup-node@v4
-        if: steps.merge_upstream.outputs.merged_changes == 'true'
         with:
           node-version: 20
           # Set the default registry to npmjs.org for public packages
@@ -100,15 +98,12 @@ jobs:
           # Configure GitHub Packages for scoped packages
           scope: '@daoch4n'
       - name: Configure .npmrc for GitHub Packages
-        if: steps.merge_upstream.outputs.merged_changes == 'true'
         run: |
           # This step is crucial for npm to know where to find packages under the specified scope.
           # It tells npm that packages under the '@daoch4n' scope should be fetched from GPR.
           npm config set '@daoch4n:registry' 'https://npm.pkg.github.com/'
           npm config set '//npm.pkg.github.com/:_authToken' '${{secrets.GITHUB_TOKEN}}'
       - run: npm install
-        if: steps.merge_upstream.outputs.merged_changes == 'true'
-      - run: npm publish
-        if: steps.merge_upstream.outputs.merged_changes == 'true'
+      - run: npm publish --tag nightly
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
