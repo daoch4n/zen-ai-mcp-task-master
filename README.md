@@ -1,6 +1,6 @@
 # Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-lite-ai.svg)](https://badge.fury.io/js/task-master-lite-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -69,20 +69,20 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 
 ```bash
 # Install globally
-npm install -g task-master-lite-ai
+npm install -g task-master-ai
 
 # OR install locally within your project
-npm install task-master-lite-ai
+npm install task-master-ai
 ```
 
 #### Initialize a new project
 
 ```bash
 # If installed globally
-task-master-lite init
+task-master init
 
 # If installed locally
-npx task-master-lite init
+npx task-master init
 ```
 
 This will prompt you for project details and set up a new project with the necessary files and structure.
@@ -91,19 +91,19 @@ This will prompt you for project details and set up a new project with the neces
 
 ```bash
 # Initialize a new project
-task-master-lite init
+task-master init
 
 # Parse a PRD and generate tasks
-task-master-lite parse-prd your-prd.txt
+task-master parse-prd your-prd.txt
 
 # List all tasks
-task-master-lite list
+task-master list
 
 # Show the next task to work on
-task-master-lite next
+task-master next
 
 # Generate task files
-task-master-lite generate
+task-master generate
 ```
 
 ## Documentation
@@ -118,19 +118,19 @@ For more detailed information, check out the documentation in the `docs` directo
 
 ## Troubleshooting
 
-### If `task-master-lite init` doesn't respond:
+### If `task-master init` doesn't respond:
 
 Try running it with Node directly:
 
 ```bash
-npx task-master-lite-ai init
+npx task-master-ai init
 ```
 
 Or clone the repository and run:
 
 ```bash
 git clone https://github.com/eyaltoledano/claude-task-master.git
-cd zen-ai-mcp-task-master-lite
+cd zen-ai-mcp-task-master
 node scripts/init.js
 ```
 
