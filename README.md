@@ -1,6 +1,6 @@
-# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/daoch4n/zen-ai-mcp-task-master?style=social)](https://github.com/daoch4n/zen-ai-mcp-task-master/stargazers)
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -13,25 +13,41 @@ A stripped down lite version of Task Master focusing on OpenAI integration and n
 
 Taskmaster Lite utilizes OpenAI for AI-driven commands, which requires an OpenAI API key.
 You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env. Any OpenAI-compatible model can be used by specifying a custom endpoint.
-Note: The Gemini Flash 2.5 05-20 model is currently hardcoded.
+You can configure the main AI model using `TASKMASTER_AI_MODEL` and the research AI model using `TASKMASTER_RESEARCH_MODEL` in the `.env.example` file. Both default to "gemini-2.5-flash-preview-05-20".
 
 An OpenAI API key is required.
 
 Using the research model is optional but highly recommended.
 
+## Environment Variables
+
+The following environment variables can be configured in a `.env` file (based on `.env.example`):
+
+- `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
+- `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Default: `https://open-ai-endpoint.example.com`
+- `TASKMASTER_AI_MODEL`: Specifies the AI model to be used for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
+- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `perplexity/llama-3-sonar-large-32k-online`
+
 ## Quick Start
 
-### Option 1 | MCP (Recommended):
+### Option 1 | MCP:
 
 MCP (Model Control Protocol) provides the easiest way to get started with Task Master Lite directly in your editor.
 
-1.  **Start the MCP server**:
+1.  **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/daoch4n/zen-ai-mcp-task-master
+    cd zen-ai-mcp-task-master
+    ```
+
+2.  **Start the MCP server**:
 
     ```bash
     node mcp-server/server.js
     ```
 
-2.  **Add the MCP config to your editor** :
+3.  **Add the MCP config to your editor** :
 
     ```json
     {
@@ -46,15 +62,15 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
     }
     ```
 
-3.  **Enable the MCP** in your editor
+4.  **Enable the MCP** in your editor
 
-4.  **Prompt the AI** to initialize Task Master Lite:
+5.  **Prompt the AI** to initialize Task Master Lite:
 
     ```
     Initialize taskmaster-lite-ai into project.
     ```
 
-5.  **Use common commands** directly through your AI assistant:
+6.  **Use common commands** directly through your AI assistant:
 
     ```txt
     Parse PRD at scripts/prd.txt.
@@ -63,7 +79,37 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
     Expand task 4.
     ```
 
-### Option 2: Using Command Line
+### Option 2 | MCP via Docker:
+
+For a containerized environment, you can run Task Master Lite using Docker.
+
+1.  **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/daoch4n/zen-ai-mcp-task-master
+    cd zen-ai-mcp-task-master
+    ```
+
+2.  **Build the Docker image**:
+
+    ```bash
+    docker build -t taskmaster-lite-ai .
+    ```
+
+3.  **Run the Docker container**:
+
+    ```bash
+    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" -e OPENAI_API_BASE_URL="YOUR_OPENAI_API_BASE_URL_HERE" -e TASKMASTER_AI_MODEL="YOUR_TASKMASTER_AI_MODEL_HERE" -e TASKMASTER_RESEARCH_MODEL="YOUR_TASKMASTER_RESEARCH_MODEL_HERE" taskmaster-lite-ai
+    ```
+
+    Ensure you replace `YOUR_OPENAI_KEY_HERE` with your actual OpenAI API key.
+
+4.  **Add the MCP config to your editor** (same as Option 1, step 3).
+5.  **Enable the MCP** in your editor.
+6.  **Prompt the AI** to initialize Task Master Lite (same as Option 1, step 5).
+7.  **Use common commands** directly through your AI assistant (same as Option 1, step 6).
+
+### Option 3: Using Command Line
 
 #### Installation
 
@@ -129,20 +175,20 @@ npx task-master-ai init
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/daoch4n/zen-ai-mcp-task-master
 cd zen-ai-mcp-task-master
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master Lite project contributors" />
+<a href="https://github.com/daoch4n/zen-ai-mcp-task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=daoch4n/zen-ai-mcp-task-master" alt="Task Master Lite project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=daoch4n/zen-ai-mcp-task-master&type=Timeline)](https://www.star-history.com/#daoch4n/zen-ai-mcp-task-master&Timeline)
 
 ## Licensing
 
