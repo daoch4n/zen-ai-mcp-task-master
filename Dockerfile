@@ -11,6 +11,7 @@ ARG OPENAI_API_BASE_URL
 # Set them as ENV variables
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 ENV OPENAI_API_BASE_URL=$OPENAI_API_BASE_URL
+ENV TASKMASTER_AI_MODEL="gemini-2.5-flash-preview-05-20"
 
 # Copy package.json and package-lock.json to the working directory
 # This allows caching of dependencies
