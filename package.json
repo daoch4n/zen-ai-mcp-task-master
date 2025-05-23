@@ -1,6 +1,6 @@
 {
   "name": "@daoch4n/task-master-lite",
-  "version": "1.3.3.7",
+  "version": "1.3.37",
   "description": "stripped down lite version of task-master focusing on openai integration and network-interfaced mcp server",
   "main": "index.js",
   "type": "module",
