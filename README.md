@@ -150,15 +150,15 @@ Task Master is licensed under the MIT License with Commons Clause. This means yo
 
 ✅ **Allowed**:
 
-- Use Task Master Lite for any purpose (personal, commercial, academic)
+- Use Task Master for any purpose (personal, commercial, academic)
 - Modify the code
 - Distribute copies
-- Create and sell products built using Task Master Lite
+- Create and sell products built using Task Master
 
 ❌ **Not Allowed**:
 
-- Sell Task Master Lite itself
-- Offer Task Master Lite as a hosted service
-- Create competing products based on Task Master Lite
+- Sell Task Master itself
+- Offer Task Master as a hosted service
+- Create competing products based on Task Master
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.
