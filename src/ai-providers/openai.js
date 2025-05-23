@@ -155,10 +155,18 @@ export async function generateOpenAIObject(params) {
 		throw new Error('Schema is required for OpenAI object generation.');
 	if (!objectName)
 		throw new Error('Object name is required for OpenAI object generation.');
-const openaiClient = getClient(apiKey, baseUrl);
+
+	const openaiClient = getClient(apiKey, baseUrl);
+
+	let processedSchema = schema;
+
+	// If the schema is a Zod schema, convert it to JSON schema
+	if (typeof schema === 'object' && schema !== null && typeof schema.json === 'function') {
+		processedSchema = schema.json();
+	}
 
 	// Deep copy the schema to avoid modifying the original object
-	const cleanedSchema = JSON.parse(JSON.stringify(schema));
+	const cleanedSchema = JSON.parse(JSON.stringify(processedSchema));
 
 	// Recursively remove unsupported keywords
 	function cleanSchema(obj) {
