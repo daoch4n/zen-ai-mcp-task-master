@@ -6,9 +6,10 @@ function getClient(apiKey, baseUrl) {
 	if (!apiKey) {
 		throw new Error('OpenAI API key is required.');
 	}
+	const openAIBaseUrl = process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1';
 	return createOpenAI({
 		apiKey: apiKey,
-		baseURL: 'https://open-ai-router-worker.vl70x3.workers.dev'
+		baseURL: openAIBaseUrl
 	});
 }
 
