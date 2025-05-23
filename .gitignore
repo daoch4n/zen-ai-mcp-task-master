@@ -64,3 +64,6 @@ dev-debug.log
 
 # NPMRC
 .npmrc
+
+# Package lock file
+package-lock.json
