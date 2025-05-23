@@ -3,7 +3,7 @@
 		{
 			"id": "gemini-2.5-flash-preview-05-20",
 			"swe_score": 0,
-			"cost_per_1m_tokens": { "input": 0.15, "output": 0.15 },
+			"cost_per_1m_tokens": { "input": 0.15, "output": 3.50 },
 			"allowed_roles": ["main", "fallback", "research"],
 			"max_tokens": 65535
 		}
