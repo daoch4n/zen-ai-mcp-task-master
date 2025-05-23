@@ -25,13 +25,20 @@ Using the research model is optional but highly recommended.
 
 MCP (Model Control Protocol) provides the easiest way to get started with Task Master Lite directly in your editor.
 
-1.  **Start the MCP server**:
+1.  **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/eyaltoledano/claude-task-master.git
+    cd claude-task-master
+    ```
+
+2.  **Start the MCP server**:
 
     ```bash
     node mcp-server/server.js
     ```
 
-2.  **Add the MCP config to your editor** :
+3.  **Add the MCP config to your editor** :
 
     ```json
     {
@@ -46,15 +53,15 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
     }
     ```
 
-3.  **Enable the MCP** in your editor
+4.  **Enable the MCP** in your editor
 
-4.  **Prompt the AI** to initialize Task Master Lite:
+5.  **Prompt the AI** to initialize Task Master Lite:
 
     ```
     Initialize taskmaster-lite-ai into project.
     ```
 
-5.  **Use common commands** directly through your AI assistant:
+6.  **Use common commands** directly through your AI assistant:
 
     ```txt
     Parse PRD at scripts/prd.txt.
@@ -63,7 +70,37 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
     Expand task 4.
     ```
 
-### Option 2: Using Command Line
+### Option 2 | MCP via Docker:
+
+For a containerized environment, you can run Task Master Lite using Docker.
+
+1.  **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/eyaltoledano/claude-task-master.git
+    cd claude-task-master
+    ```
+
+2.  **Build the Docker image**:
+
+    ```bash
+    docker build -t taskmaster-lite-ai .
+    ```
+
+3.  **Run the Docker container**:
+
+    ```bash
+    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" taskmaster-lite-ai
+    ```
+
+    Ensure you replace `YOUR_OPENAI_KEY_HERE` with your actual OpenAI API key.
+
+4.  **Add the MCP config to your editor** (same as Option 1, step 3).
+5.  **Enable the MCP** in your editor.
+6.  **Prompt the AI** to initialize Task Master Lite (same as Option 1, step 5).
+7.  **Use common commands** directly through your AI assistant (same as Option 1, step 6).
+
+### Option 3: Using Command Line
 
 #### Installation
 
