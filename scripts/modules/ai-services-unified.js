@@ -360,26 +360,31 @@ async function _unifiedServiceRunner(serviceType, params) {
 		try {
 			log('info', `New AI service call with role: ${currentRole}`);
 
+			// Force provider to OpenAI and model to gemini-2.5-flash-preview-05-20
+			providerName = 'openai';
+			modelId = 'gemini-2.5-flash-preview-05-20';
+
 			// 1. Get Config: Provider, Model, Parameters for the current role
 			// Pass effectiveProjectRoot to config getters
-			if (currentRole === 'main') {
-				providerName = getMainProvider(effectiveProjectRoot);
-				modelId = getMainModelId(effectiveProjectRoot);
-			} else if (currentRole === 'research') {
-				providerName = getResearchProvider(effectiveProjectRoot);
-				modelId = getResearchModelId(effectiveProjectRoot);
-			} else if (currentRole === 'fallback') {
-				providerName = getFallbackProvider(effectiveProjectRoot);
-				modelId = getFallbackModelId(effectiveProjectRoot);
-			} else {
-				log(
-					'error',
-					`Unknown role encountered in _unifiedServiceRunner: ${currentRole}`
-				);
-				lastError =
-					lastError || new Error(`Unknown AI role specified: ${currentRole}`);
-				continue;
-			}
+			// Original logic commented out:
+			// if (currentRole === 'main') {
+			// 	providerName = getMainProvider(effectiveProjectRoot);
+			// 	modelId = getMainModelId(effectiveProjectRoot);
+			// } else if (currentRole === 'research') {
+			// 	providerName = getResearchProvider(effectiveProjectRoot);
+			// 	modelId = getResearchModelId(effectiveProjectRoot);
+			// } else if (currentRole === 'fallback') {
+			// 	providerName = getFallbackProvider(effectiveProjectRoot);
+			// 	modelId = getFallbackModelId(effectiveProjectRoot);
+			// } else {
+			// 	log(
+			// 		'error',
+			// 		`Unknown role encountered in _unifiedServiceRunner: ${currentRole}`
+			// 	);
+			// 	lastError =
+			// 		lastError || new Error(`Unknown AI role specified: ${currentRole}`);
+			// 	continue;
+			// }
 
 			if (!providerName || !modelId) {
 				log(
