@@ -1,6 +1,6 @@
-# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+# Task Master Lite [![GitHub stars](https://img.shields.io/github/stars/daoch4n/zen-ai-mcp-task-master?style=social)](https://github.com/daoch4n/zen-ai-mcp-task-master/stargazers)
 
-[![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+[![CI](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/daoch4n/zen-ai-mcp-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
 ### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
 
@@ -21,14 +21,14 @@ Using the research model is optional but highly recommended.
 
 ## Quick Start
 
-### Option 1 | MCP (Recommended):
+### Option 1 | MCP:
 
 MCP (Model Control Protocol) provides the easiest way to get started with Task Master Lite directly in your editor.
 
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/eyaltoledano/claude-task-master.git
+    git clone https://github.com/daoch4n/zen-ai-mcp-task-master
     cd claude-task-master
     ```
 
@@ -77,7 +77,7 @@ For a containerized environment, you can run Task Master Lite using Docker.
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/eyaltoledano/claude-task-master.git
+    git clone https://github.com/daoch4n/zen-ai-mcp-task-master
     cd claude-task-master
     ```
 
@@ -166,20 +166,20 @@ npx task-master-ai init
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/daoch4n/zen-ai-mcp-task-master
 cd zen-ai-mcp-task-master
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master Lite project contributors" />
+<a href="https://github.com/daoch4n/zen-ai-mcp-task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=daoch4n/zen-ai-mcp-task-master" alt="Task Master Lite project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=daoch4n/zen-ai-mcp-task-master&type=Timeline)](https://www.star-history.com/#daoch4n/zen-ai-mcp-task-master&Timeline)
 
 ## Licensing
 
