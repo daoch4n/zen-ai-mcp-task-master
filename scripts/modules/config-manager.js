@@ -36,21 +36,21 @@ const VALID_PROVIDERS = Object.keys(MODEL_MAP || {});
 const DEFAULTS = {
 	models: {
 		main: {
-			provider: 'anthropic',
-			modelId: 'claude-3-7-sonnet-20250219',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000,
 			temperature: 0.2
 		},
 		research: {
-			provider: 'perplexity',
-			modelId: 'sonar-pro',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 8700,
 			temperature: 0.1
 		},
 		fallback: {
 			// No default fallback provider/model initially
-			provider: 'anthropic',
-			modelId: 'claude-3-5-sonnet',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000, // Default parameters if fallback IS configured
 			temperature: 0.2
 		}
