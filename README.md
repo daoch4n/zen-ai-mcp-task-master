@@ -146,7 +146,7 @@ node scripts/init.js
 
 ## Licensing
 
-Task Master Lite is licensed under the MIT License with Commons Clause. This means you can:
+Task Master is licensed under the MIT License with Commons Clause. This means you can:
 
 ✅ **Allowed**:
 
