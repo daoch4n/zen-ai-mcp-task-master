@@ -158,27 +158,17 @@ export async function generateOpenAIObject(params) {
 
 	const openaiClient = getClient(apiKey, baseUrl);
 
-	let processedSchema = JSON.parse(JSON.stringify(schema)); // Deep copy to avoid modifying original
-
-	// Recursively remove unsupported keywords for specific AI providers (e.g., Gemini adapter)
-	function cleanSchema(obj) {
-		for (const key in obj) {
-			if (Object.prototype.hasOwnProperty.call(obj, key)) {
-				if (key === '$schema' || key === 'exclusiveMinimum') {
-					delete obj[key];
-				} else if (typeof obj[key] === 'object' && obj[key] !== null) {
-					cleanSchema(obj[key]);
-				}
-			}
-		}
-	}
-	cleanSchema(processedSchema);
+	// The 'ai-sdk' generateObject function expects a Zod schema directly.
+	// Any attempt to deep copy or pre-process the schema (like JSON.parse(JSON.stringify(schema)))
+	// will strip it of its Zod methods (like .shape), leading to the "def.shape is not a function" error.
+	// The SDK itself handles the conversion of the Zod schema to the appropriate
+	// JSON schema format for the API call internally.
 
 	try {
-		log('debug', 'Cleaned schema before generateObject call:', processedSchema); // New log
+		log('debug', 'Schema before generateObject call:', schema);
 		const result = await generateObject({
 			model: openaiClient(modelId),
-			schema: processedSchema, // Use the cleaned schema
+			schema: schema, // Pass the original Zod schema directly
 			messages: messages,
 			mode: 'tool',
 			maxTokens: maxTokens,
