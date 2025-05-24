@@ -11,8 +11,8 @@ https://github.com/user-attachments/assets/3212ebe3-9495-4181-bacf-65b431274fe7
 
 ## Requirements
 
-Taskmaster Lite utilizes OpenAI for AI-driven commands, which requires an OpenAI API key.
-You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either the main or research fail). Whatever model you use, its provider API key must be present in either mcp.json or .env. Any OpenAI-compatible model can be used by specifying a custom endpoint.
+Taskmaster Lite utilizes OpenAI API for AI-driven commands, which requires an OpenAI-compatible API key.
+You can define 3 types of models to be used: the main model, the research model, and the fallback model (in case either fail). Whichever model you decide to use, its API key must be present in either mcp.json or .env as `OPENAI_API_KEY`. Any OpenAI-compatible model can be used by specifying a custom endpoint.
 You can configure the main AI model using `TASKMASTER_AI_MODEL` and the research AI model using `TASKMASTER_RESEARCH_MODEL` in the `.env.example` file. Both default to affordable option "gemini-2.5-flash-preview-05-20" if unset which works just fine for daily tasks!
 
 - Bring your own OpenAI-compatible API key
