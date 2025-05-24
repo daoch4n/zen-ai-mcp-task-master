@@ -37,20 +37,20 @@ const DEFAULTS = {
 	models: {
 		main: {
 			provider: 'openai',
-			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000,
 			temperature: 0.2
 		},
 		research: {
 			provider: 'openai',
-			modelId: resolveEnvVariable('TASKMASTER_RESEARCH_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 8700,
 			temperature: 0.1
 		},
 		fallback: {
 			// No default fallback provider/model initially
 			provider: 'openai',
-			modelId: resolveEnvVariable('TASKMASTER_AI_MODEL', null, explicitRoot) || 'gemini-2.5-flash-preview-05-20',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000, // Default parameters if fallback IS configured
 			temperature: 0.2
 		}
@@ -124,6 +124,11 @@ function _loadAndValidateConfig(explicitRoot = null) {
 				global: { ...defaults.global, ...parsedConfig?.global }
 			};
 			configSource = `file (${configPath})`; // Update source info
+
+				        // Apply environment variable overrides AFTER loading from file
+				        config.models.main.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.main.modelId;
+				        config.models.research.modelId = resolveEnvVariable('TASKMASTER_RESEARCH_MODEL', null, rootToUse) || config.models.research.modelId;
+				        config.models.fallback.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.fallback.modelId; // Fallback uses main AI model env var
 
 			// --- Validation (Warn if file content is invalid) ---
 			// Use log.warn for consistency
