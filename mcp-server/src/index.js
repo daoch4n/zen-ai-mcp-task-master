@@ -17,14 +17,15 @@ const __dirname = path.dirname(__filename);
  * Main MCP server class that integrates with Task Master
  */
 class TaskMasterMCPServer {
-	constructor() {
+	constructor(options = {}) {
 		// Get version from package.json using synchronous fs
 		const packagePath = path.join(__dirname, '../../package.json');
 		const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
 		this.options = {
 			name: 'Task Master MCP Server',
-			version: packageJson.version
+			version: packageJson.version,
+			port: options.port || 3000 // Default to 3000 if not provided
 		};
 
 		this.server = new FastMCP(this.options);
@@ -70,7 +71,7 @@ class TaskMasterMCPServer {
 			transportType: 'sse',
 			sse: {
 				endpoint: '/events',
-				port: 3000
+				port: this.options.port
 			},
 			timeout: 120000 // 2 minutes timeout (in milliseconds)
 		});

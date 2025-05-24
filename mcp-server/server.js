@@ -21,7 +21,8 @@ try {
 async function startServer() {
 	let server;
 	try {
-		server = new TaskMasterMCPServer();
+		const port = process.env.SERVER_PORT || 3000;
+		server = new TaskMasterMCPServer({ port });
 		console.log('TaskMasterMCPServer instantiated.'); // Added for diagnostic
 	} catch (e) {
 		console.error('Error instantiating TaskMasterMCPServer:', e);
