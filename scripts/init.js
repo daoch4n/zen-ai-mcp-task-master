@@ -470,7 +470,7 @@ function createProjectStructure(addAliases, dryRun) {
 	log('info', `Initializing project in ${targetDir}`);
 
 	// Create directories
-	ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));
+	// ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules')); // Exclude .cursor folder
 
 	// Create Roo directories
 	ensureDirectoryExists(path.join(targetDir, '.roo'));
@@ -486,7 +486,7 @@ function createProjectStructure(addAliases, dryRun) {
 		ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
 	}
 
-	ensureDirectoryExists(path.join(targetDir, 'scripts'));
+	// ensureDirectoryExists(path.join(targetDir, 'scripts')); // Exclude scripts folder
 	ensureDirectoryExists(path.join(targetDir, 'tasks'));
 
 	// Setup MCP configuration for integration with Cursor
@@ -498,54 +498,54 @@ function createProjectStructure(addAliases, dryRun) {
 	};
 
 	// Copy .env.example
-	copyTemplateFile(
-		'env.example',
-		path.join(targetDir, '.env.example'),
-		replacements
-	);
+	// copyTemplateFile(
+	// 	'env.example',
+	// 	path.join(targetDir, '.env.example'),
+	// 	replacements
+	// );
 
 	// Copy .taskmasterconfig with project name
-	copyTemplateFile(
-		'.taskmasterconfig',
-		path.join(targetDir, '.taskmasterconfig'),
-		{
-			...replacements
-		}
-	);
+	// copyTemplateFile(
+	// 	'.taskmasterconfig',
+	// 	path.join(targetDir, '.taskmasterconfig'),
+	// 	{
+	// 		...replacements
+	// 	}
+	// );
 
 	// Copy .gitignore
 	copyTemplateFile('gitignore', path.join(targetDir, '.gitignore'));
 
 	// Copy dev_workflow.mdc
-	copyTemplateFile(
-		'dev_workflow.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'dev_workflow.mdc')
-	);
+	// copyTemplateFile(
+	// 	'dev_workflow.mdc',
+	// 	path.join(targetDir, '.cursor', 'rules', 'dev_workflow.mdc')
+	// );
 
 	// Copy taskmaster.mdc
-	copyTemplateFile(
-		'taskmaster.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'taskmaster.mdc')
-	);
+	// copyTemplateFile(
+	// 	'taskmaster.mdc',
+	// 	path.join(targetDir, '.cursor', 'rules', 'taskmaster.mdc')
+	// );
 
 	// Copy cursor_rules.mdc
-	copyTemplateFile(
-		'cursor_rules.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'cursor_rules.mdc')
-	);
+	// copyTemplateFile(
+	// 	'cursor_rules.mdc',
+	// 	path.join(targetDir, '.cursor', 'rules', 'cursor_rules.mdc')
+	// );
 
 	// Copy self_improve.mdc
-	copyTemplateFile(
-		'self_improve.mdc',
-		path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
-	);
+	// copyTemplateFile(
+	// 	'self_improve.mdc',
+	// 	path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
+	// );
 
 	// Generate Roo rules from Cursor rules
 	log('info', 'Generating Roo rules from Cursor rules...');
 	convertAllCursorRulesToRooRules(targetDir);
 
 	// Copy .windsurfrules
-	copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules'));
+	// copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules')); // Exclude .windsurfrules
 
 	// Copy .roomodes for Roo Code integration
 	copyTemplateFile('.roomodes', path.join(targetDir, '.roomodes'));
