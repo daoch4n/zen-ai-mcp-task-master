@@ -3,6 +3,27 @@ import path from 'path';
 import chalk from 'chalk';
 import boxen from 'boxen';
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+// Utility function to clean the JSON schema
+function cleanJsonSchema(schema) {
+	const cleaned = JSON.parse(JSON.stringify(schema)); // Deep copy to avoid modifying original
+
+	// Recursively remove unsupported keywords for specific AI providers (e.g., Gemini adapter)
+	function recurseClean(obj) {
+		for (const key in obj) {
+			if (Object.prototype.hasOwnProperty.call(obj, key)) {
+				if (key === '$schema' || key === 'exclusiveMinimum') {
+					delete obj[key];
+				} else if (typeof obj[key] === 'object' && obj[key] !== null) {
+					recurseClean(obj[key]);
+				}
+			}
+		}
+	}
+	recurseClean(cleaned);
+	return cleaned;
+}
 
 import {
 	log,
@@ -148,6 +169,13 @@ async function parsePRD(prdPath, tasksPath, numTasks, options = {}) {
 			throw new Error(`Input file ${prdPath} is empty or could not be read.`);
 		}
 
+		// Convert Zod schema to JSON schema and clean it
+		const jsonSchema = zodToJsonSchema(prdResponseSchema, {
+			target: 'openApi3', // Or 'jsonSchema7' if preferred, but OpenAPI3 is common for tools
+			$refStrategy: 'none' // Do not use $ref, inline everything
+		});
+		const cleanedJsonSchema = cleanJsonSchema(jsonSchema);
+
 		// Build system prompt for PRD parsing
 		const systemPrompt = `You are an AI assistant specialized in analyzing Product Requirements Documents (PRDs) and generating a structured, logically ordered, dependency-aware and sequenced list of development tasks in JSON format.
 Analyze the provided PRD content and generate approximately ${numTasks} top-level development tasks. If the complexity or the level of detail of the PRD is high, generate more tasks relative to the complexity of the PRD
@@ -211,7 +239,7 @@ Guidelines:
 			role: 'main',
 			session: session,
 			projectRoot: projectRoot,
-			schema: prdResponseSchema,
+			schema: cleanedJsonSchema,
 			objectName: 'tasks_data',
 			systemPrompt: systemPrompt,
 			prompt: userPrompt,
