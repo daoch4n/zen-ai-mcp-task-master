@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 import { z } from 'zod';
 
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import {
 	log,
 	writeJSON,
@@ -55,7 +56,43 @@ const prdResponseSchema = z.object({
  * @param {Object} [options.session] - Session object from MCP server (optional).
  * @param {string} [options.projectRoot] - Project root path (for MCP/env fallback).
  * @param {string} [outputFormat='text'] - Output format ('text' or 'json').
+/**
+ * Recursively cleans a JSON schema object by removing unsupported keywords.
+ * Specifically targets keywords that cause issues with certain AI model adapters.
+ * @param {object} schema - The JSON schema object to clean.
+ * @returns {object} The cleaned JSON schema object.
  */
+function cleanJsonSchema(schema) {
+	if (typeof schema !== 'object' || schema === null) {
+		return schema;
+	}
+
+	if (Array.isArray(schema)) {
+		return schema.map((item) => cleanJsonSchema(item));
+	}
+
+	const newSchema = {};
+	for (const key in schema) {
+		// Remove the "$schema" keyword if present, as some APIs don't like it in tool definitions
+		// Remove "exclusiveMinimum" and "exclusiveMaximum" as they are not widely supported
+		// or cause issues with some OpenAI/Gemini adapters.
+		if (
+			key === '$schema' ||
+			key === 'exclusiveMinimum' ||
+			key === 'exclusiveMaximum'
+		) {
+			continue;
+		}
+
+		// Recursively clean nested objects and arrays
+		if (typeof schema[key] === 'object' && schema[key] !== null) {
+			newSchema[key] = cleanJsonSchema(schema[key]);
+		} else {
+			newSchema[key] = schema[key];
+		}
+	}
+	return newSchema;
+}
 async function parsePRD(prdPath, tasksPath, numTasks, options = {}) {
 	const {
 		reportProgress,
@@ -148,6 +185,13 @@ async function parsePRD(prdPath, tasksPath, numTasks, options = {}) {
 			throw new Error(`Input file ${prdPath} is empty or could not be read.`);
 		}
 
+		// Convert Zod schema to JSON schema and clean it
+		const jsonSchema = zodToJsonSchema(prdResponseSchema, {
+			target: 'openApi3', // Or 'jsonSchema7' if preferred, but OpenAPI3 is common for tools
+			$refStrategy: 'none' // Do not use $ref, inline everything
+		});
+		const cleanedJsonSchema = cleanJsonSchema(jsonSchema);
+
 		// Build system prompt for PRD parsing
 		const systemPrompt = `You are an AI assistant specialized in analyzing Product Requirements Documents (PRDs) and generating a structured, logically ordered, dependency-aware and sequenced list of development tasks in JSON format.
 Analyze the provided PRD content and generate approximately ${numTasks} top-level development tasks. If the complexity or the level of detail of the PRD is high, generate more tasks relative to the complexity of the PRD
@@ -186,22 +230,22 @@ Guidelines:
 
 		Return your response in this format:
 {
-    "tasks": [
-        {
-            "id": 1,
-            "title": "Setup Project Repository",
-            "description": "...",
-            ...
-        },
-        ...
-    ],
-    "metadata": {
-        "projectName": "PRD Implementation",
-        "totalTasks": ${numTasks},
-        "sourceFile": "${prdPath}",
-        "generatedAt": "YYYY-MM-DD"
-    }
-}`;
+		  "tasks": [
+		      {
+		          "id": 1,
+		          "title": "Setup Project Repository",
+		          "description": "...",
+		          ...
+		      },
+		      ...
+		  ],
+		      "metadata": {
+		          "projectName": "PRD Implementation",
+		          "totalTasks": ${numTasks},
+		          "sourceFile": "${prdPath}",
+		          "generatedAt": "YYYY-MM-DD"
+		      }
+		  }`;
 
 		// Call the unified AI service
 		report('Calling AI service to generate tasks from PRD...', 'info');
@@ -211,7 +255,7 @@ Guidelines:
 			role: 'main',
 			session: session,
 			projectRoot: projectRoot,
-			schema: prdResponseSchema,
+			schema: cleanedJsonSchema, // Pass the original Zod schema
 			objectName: 'tasks_data',
 			systemPrompt: systemPrompt,
 			prompt: userPrompt,

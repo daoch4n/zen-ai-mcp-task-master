@@ -574,7 +574,7 @@ describe('Commands Module', () => {
 							)
 						);
 						console.log(
-							chalk.yellow('Falling back to Claude AI for task update.')
+							chalk.yellow('Falling back to AI AI for task update.')
 						);
 					} else {
 						console.log(
@@ -723,7 +723,7 @@ describe('Commands Module', () => {
 			};
 
 			// Mock perplexity API key
-			process.env.PERPLEXITY_API_KEY = 'dummy-key';
+			
 
 			// Call the action directly
 			await updateTaskAction(options);

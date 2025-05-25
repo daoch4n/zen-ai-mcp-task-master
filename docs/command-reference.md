@@ -148,9 +148,6 @@ task-master analyze-complexity
 # Save report to a custom location
 task-master analyze-complexity --output=my-report.json
 
-# Use a specific LLM model
-task-master analyze-complexity --model=claude-3-opus-20240229
-
 # Set a custom complexity threshold (1-10)
 task-master analyze-complexity --threshold=6
 
@@ -217,19 +214,19 @@ task-master init
 task-master models
 
 # Set the primary model for generation/updates (provider inferred if known)
-task-master models --set-main=claude-3-opus-20240229
+task-master models --set-main=gpt-4o
 
 # Set the research model
 task-master models --set-research=sonar-pro
 
 # Set the fallback model
-task-master models --set-fallback=claude-3-haiku-20240307
+task-master models --set-fallback=gpt-4o
 
 # Set a custom Ollama model for the main role
 task-master models --set-main=my-local-llama --ollama
 
 # Set a custom OpenRouter model for the research role
-task-master models --set-research=google/gemini-pro --openrouter
+task-master models --set-research=openai/gpt-4o --openrouter
 
 # Run interactive setup to configure models, including custom ones
 task-master models --setup

@@ -690,7 +690,7 @@ npm test -- -t "pattern to match"
   ```javascript
   // In tests/setup.js or at the top of test file
   process.env.ANTHROPIC_API_KEY = 'test-mock-api-key-for-tests';
-  process.env.PERPLEXITY_API_KEY = 'test-mock-perplexity-key-for-tests';
+  
   ```
 
 - **DO NOT use real AI client initialization logic**

@@ -13,6 +13,15 @@ import { getLogLevel, getDebugFlag } from './config-manager.js';
 // Global silent mode flag
 let silentMode = false;
 
+// Define log file path
+const LOG_FILE_DIR = path.join(process.cwd(), 'logs');
+const LOG_FILE_PATH = path.join(LOG_FILE_DIR, 'taskmaster.log');
+
+// Ensure log directory exists
+if (!fs.existsSync(LOG_FILE_DIR)) {
+    fs.mkdirSync(LOG_FILE_DIR, { recursive: true });
+}
+
 // --- Environment Variable Resolution Utility ---
 /**
  * Resolves an environment variable's value.
@@ -166,9 +175,20 @@ function log(level, ...args) {
 		// Use console.log for all levels, let chalk handle coloring
 		// Construct the message properly
 		const message = args
-			.map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
+			.map((arg) => (typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg))
 			.join(' ');
-		console.log(`${prefix} ${message}`);
+		
+		const timestamp = new Date().toISOString();
+		const logEntry = `${timestamp} ${prefix} ${message}\n`;
+
+		console.log(`${prefix} ${message}`); // Log to console
+
+		// Append to log file
+		try {
+			fs.appendFileSync(LOG_FILE_PATH, logEntry);
+		} catch (fileError) {
+			console.error(chalk.red(`Error writing to log file ${LOG_FILE_PATH}: ${fileError.message}`));
+		}
 	}
 }
 

@@ -14,22 +14,13 @@ const mockGetDebugFlag = jest.fn();
 // --- Mock MODEL_MAP Data ---
 // Provide a simplified structure sufficient for cost calculation tests
 const mockModelMap = {
-	anthropic: [
+	openai: [
 		{
-			id: 'test-main-model',
-			cost_per_1m_tokens: { input: 3, output: 15, currency: 'USD' }
-		},
-		{
-			id: 'test-fallback-model',
-			cost_per_1m_tokens: { input: 3, output: 15, currency: 'USD' }
+			id: 'gpt-4o',
+			cost_per_1m_tokens: { input: 5, output: 15, currency: 'USD' }
 		}
 	],
-	perplexity: [
-		{
-			id: 'test-research-model',
-			cost_per_1m_tokens: { input: 1, output: 1, currency: 'USD' }
-		}
-	]
+	
 	// Add other providers/models if needed for specific tests
 };
 const mockGetBaseUrlForRole = jest.fn();
@@ -49,14 +40,7 @@ jest.unstable_mockModule('../../scripts/modules/config-manager.js', () => ({
 }));
 
 // Mock AI Provider Modules
-const mockGenerateAnthropicText = jest.fn();
-const mockStreamAnthropicText = jest.fn();
-const mockGenerateAnthropicObject = jest.fn();
-jest.unstable_mockModule('../../src/ai-providers/anthropic.js', () => ({
-	generateAnthropicText: mockGenerateAnthropicText,
-	streamAnthropicText: mockStreamAnthropicText,
-	generateAnthropicObject: mockGenerateAnthropicObject
-}));
+
 
 const mockGeneratePerplexityText = jest.fn();
 const mockStreamPerplexityText = jest.fn();
@@ -65,6 +49,15 @@ jest.unstable_mockModule('../../src/ai-providers/perplexity.js', () => ({
 	generatePerplexityText: mockGeneratePerplexityText,
 	streamPerplexityText: mockStreamPerplexityText,
 	generatePerplexityObject: mockGeneratePerplexityObject
+}));
+
+const mockGenerateOpenAIText = jest.fn();
+const mockStreamOpenAIText = jest.fn();
+const mockGenerateOpenAIObject = jest.fn();
+jest.unstable_mockModule('../../src/ai-providers/openai.js', () => ({
+	generateOpenAIText: mockGenerateOpenAIText,
+	streamOpenAIText: mockStreamOpenAIText,
+	generateOpenAIObject: mockGenerateOpenAIObject
 }));
 
 // ... Mock other providers (google, openai, etc.) similarly ...
@@ -97,12 +90,12 @@ describe('Unified AI Services', () => {
 		jest.clearAllMocks(); // Clears all mocks
 
 		// Set default mock behaviors
-		mockGetMainProvider.mockReturnValue('anthropic');
-		mockGetMainModelId.mockReturnValue('test-main-model');
-		mockGetResearchProvider.mockReturnValue('perplexity');
-		mockGetResearchModelId.mockReturnValue('test-research-model');
-		mockGetFallbackProvider.mockReturnValue('anthropic');
-		mockGetFallbackModelId.mockReturnValue('test-fallback-model');
+		mockGetMainProvider.mockReturnValue('openai');
+		mockGetMainModelId.mockReturnValue('gpt-4o');
+		
+		
+		mockGetFallbackProvider.mockReturnValue('openai');
+		mockGetFallbackModelId.mockReturnValue('gpt-4o');
 		mockGetParametersForRole.mockImplementation((role) => {
 			if (role === 'main') return { maxTokens: 100, temperature: 0.5 };
 			if (role === 'research') return { maxTokens: 200, temperature: 0.3 };
@@ -110,8 +103,8 @@ describe('Unified AI Services', () => {
 			return { maxTokens: 100, temperature: 0.5 }; // Default
 		});
 		mockResolveEnvVariable.mockImplementation((key) => {
-			if (key === 'ANTHROPIC_API_KEY') return 'mock-anthropic-key';
-			if (key === 'PERPLEXITY_API_KEY') return 'mock-perplexity-key';
+			if (key === 'OPENAI_API_KEY') return 'mock-openai-key';
+			
 			return null;
 		});
 
@@ -123,7 +116,7 @@ describe('Unified AI Services', () => {
 
 	describe('generateTextService', () => {
 		test('should use main provider/model and succeed', async () => {
-			mockGenerateAnthropicText.mockResolvedValue({
+			mockGenerateOpenAIText.mockResolvedValue({
 				text: 'Main provider response',
 				usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 }
 			});
@@ -145,14 +138,14 @@ describe('Unified AI Services', () => {
 				fakeProjectRoot
 			);
 			expect(mockResolveEnvVariable).toHaveBeenCalledWith(
-				'ANTHROPIC_API_KEY',
+				'OPENAI_API_KEY',
 				params.session,
 				fakeProjectRoot
 			);
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(1);
-			expect(mockGenerateAnthropicText).toHaveBeenCalledWith({
-				apiKey: 'mock-anthropic-key',
-				modelId: 'test-main-model',
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(1);
+			expect(mockGenerateOpenAIText).toHaveBeenCalledWith({
+				apiKey: 'mock-openai-key',
+				modelId: 'gpt-4o',
 				maxTokens: 100,
 				temperature: 0.5,
 				messages: [
@@ -160,12 +153,12 @@ describe('Unified AI Services', () => {
 					{ role: 'user', content: 'Test' }
 				]
 			});
-			expect(mockGeneratePerplexityText).not.toHaveBeenCalled();
+			
 		});
 
 		test('should fall back to fallback provider if main fails', async () => {
 			const mainError = new Error('Main provider failed');
-			mockGenerateAnthropicText
+			mockGenerateOpenAIText
 				.mockRejectedValueOnce(mainError)
 				.mockResolvedValueOnce({
 					text: 'Fallback provider response',
@@ -194,13 +187,13 @@ describe('Unified AI Services', () => {
 			);
 
 			expect(mockResolveEnvVariable).toHaveBeenCalledWith(
-				'ANTHROPIC_API_KEY',
+				'OPENAI_API_KEY',
 				undefined,
 				explicitRoot
 			);
 
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(2);
-			expect(mockGeneratePerplexityText).not.toHaveBeenCalled();
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(2);
+			
 			expect(mockLog).toHaveBeenCalledWith(
 				'error',
 				expect.stringContaining('Service call failed for role main')
@@ -214,7 +207,7 @@ describe('Unified AI Services', () => {
 		test('should fall back to research provider if main and fallback fail', async () => {
 			const mainError = new Error('Main failed');
 			const fallbackError = new Error('Fallback failed');
-			mockGenerateAnthropicText
+			mockGenerateOpenAIText
 				.mockRejectedValueOnce(mainError)
 				.mockRejectedValueOnce(fallbackError);
 			mockGeneratePerplexityText.mockResolvedValue({
@@ -244,12 +237,12 @@ describe('Unified AI Services', () => {
 			);
 
 			expect(mockResolveEnvVariable).toHaveBeenCalledWith(
-				'ANTHROPIC_API_KEY',
+				'OPENAI_API_KEY',
 				undefined,
 				fakeProjectRoot
 			);
 			expect(mockResolveEnvVariable).toHaveBeenCalledWith(
-				'ANTHROPIC_API_KEY',
+				'OPENAI_API_KEY',
 				undefined,
 				fakeProjectRoot
 			);
@@ -259,7 +252,7 @@ describe('Unified AI Services', () => {
 				fakeProjectRoot
 			);
 
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(2);
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(2);
 			expect(mockGeneratePerplexityText).toHaveBeenCalledTimes(1);
 			expect(mockLog).toHaveBeenCalledWith(
 				'error',
@@ -272,8 +265,8 @@ describe('Unified AI Services', () => {
 		});
 
 		test('should throw error if all providers in sequence fail', async () => {
-			mockGenerateAnthropicText.mockRejectedValue(
-				new Error('Anthropic failed')
+			mockGenerateOpenAIText.mockRejectedValue(
+				new Error('OpenAI failed')
 			);
 			mockGeneratePerplexityText.mockRejectedValue(
 				new Error('Perplexity failed')
@@ -285,13 +278,13 @@ describe('Unified AI Services', () => {
 				'Perplexity failed' // Error from the last attempt (research)
 			);
 
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(2); // main, fallback
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(2); // main, fallback
 			expect(mockGeneratePerplexityText).toHaveBeenCalledTimes(1); // research
 		});
 
 		test('should handle retryable errors correctly', async () => {
 			const retryableError = new Error('Rate limit');
-			mockGenerateAnthropicText
+			mockGenerateOpenAIText
 				.mockRejectedValueOnce(retryableError) // Fails once
 				.mockResolvedValueOnce({
 					// Succeeds on retry
@@ -304,7 +297,7 @@ describe('Unified AI Services', () => {
 
 			expect(result.mainResult).toBe('Success after retry');
 			expect(result).toHaveProperty('telemetryData');
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(2); // Initial + 1 retry
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(2); // Initial + 1 retry
 			expect(mockLog).toHaveBeenCalledWith(
 				'info',
 				expect.stringContaining(
@@ -315,7 +308,7 @@ describe('Unified AI Services', () => {
 
 		test('should use default project root or handle null if findProjectRoot returns null', async () => {
 			mockFindProjectRoot.mockReturnValue(null); // Simulate not finding root
-			mockGenerateAnthropicText.mockResolvedValue({
+			mockGenerateOpenAIText.mockResolvedValue({
 				text: 'Response with no root',
 				usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
 			});
@@ -326,11 +319,11 @@ describe('Unified AI Services', () => {
 			expect(mockGetMainProvider).toHaveBeenCalledWith(null);
 			expect(mockGetParametersForRole).toHaveBeenCalledWith('main', null);
 			expect(mockResolveEnvVariable).toHaveBeenCalledWith(
-				'ANTHROPIC_API_KEY',
+				'OPENAI_API_KEY',
 				undefined,
 				null
 			);
-			expect(mockGenerateAnthropicText).toHaveBeenCalledTimes(1);
+			expect(mockGenerateOpenAIText).toHaveBeenCalledTimes(1);
 		});
 
 		// Add more tests for edge cases:

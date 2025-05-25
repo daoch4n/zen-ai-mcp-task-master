@@ -36,21 +36,21 @@ const VALID_PROVIDERS = Object.keys(MODEL_MAP || {});
 const DEFAULTS = {
 	models: {
 		main: {
-			provider: 'anthropic',
-			modelId: 'claude-3-7-sonnet-20250219',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000,
 			temperature: 0.2
 		},
 		research: {
-			provider: 'perplexity',
-			modelId: 'sonar-pro',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 8700,
 			temperature: 0.1
 		},
 		fallback: {
 			// No default fallback provider/model initially
-			provider: 'anthropic',
-			modelId: 'claude-3-5-sonnet',
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
 			maxTokens: 64000, // Default parameters if fallback IS configured
 			temperature: 0.2
 		}
@@ -125,6 +125,11 @@ function _loadAndValidateConfig(explicitRoot = null) {
 			};
 			configSource = `file (${configPath})`; // Update source info
 
+				        // Apply environment variable overrides AFTER loading from file
+				        config.models.main.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.main.modelId;
+				        config.models.research.modelId = resolveEnvVariable('TASKMASTER_RESEARCH_MODEL', null, rootToUse) || config.models.research.modelId;
+				        config.models.fallback.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.fallback.modelId; // Fallback uses main AI model env var
+
 			// --- Validation (Warn if file content is invalid) ---
 			// Use log.warn for consistency
 			if (!validateProvider(config.models.main.provider)) {
@@ -185,7 +190,6 @@ function _loadAndValidateConfig(explicitRoot = null) {
 		config = { ...defaults };
 		configSource = `defaults (file not found at ${configPath})`;
 	}
-
 	return config;
 }
 
@@ -431,7 +435,7 @@ function getParametersForRole(role, explicitRoot = null) {
 /**
  * Checks if the API key for a given provider is set in the environment.
  * Checks process.env first, then session.env if session is provided, then .env file if projectRoot provided.
- * @param {string} providerName - The name of the provider (e.g., 'openai', 'anthropic').
+ * @param {string} providerName - The name of the provider (e.g., 'openai').
  * @param {object|null} [session=null] - The MCP session object (optional).
  * @param {string|null} [projectRoot=null] - The project root directory (optional, for .env file check).
  * @returns {boolean} True if the API key is set, false otherwise.
@@ -444,9 +448,6 @@ function isApiKeySet(providerName, session = null, projectRoot = null) {
 
 	const keyMap = {
 		openai: 'OPENAI_API_KEY',
-		anthropic: 'ANTHROPIC_API_KEY',
-		google: 'GOOGLE_API_KEY',
-		perplexity: 'PERPLEXITY_API_KEY',
 		mistral: 'MISTRAL_API_KEY',
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
@@ -508,10 +509,6 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 		let placeholderValue = null;
 
 		switch (providerName) {
-			case 'anthropic':
-				apiKeyToCheck = mcpEnv.ANTHROPIC_API_KEY;
-				placeholderValue = 'YOUR_ANTHROPIC_API_KEY_HERE';
-				break;
 			case 'openai':
 				apiKeyToCheck = mcpEnv.OPENAI_API_KEY;
 				placeholderValue = 'YOUR_OPENAI_API_KEY_HERE'; // Assuming placeholder matches OPENAI
@@ -519,14 +516,6 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 			case 'openrouter':
 				apiKeyToCheck = mcpEnv.OPENROUTER_API_KEY;
 				placeholderValue = 'YOUR_OPENROUTER_API_KEY_HERE';
-				break;
-			case 'google':
-				apiKeyToCheck = mcpEnv.GOOGLE_API_KEY;
-				placeholderValue = 'YOUR_GOOGLE_API_KEY_HERE';
-				break;
-			case 'perplexity':
-				apiKeyToCheck = mcpEnv.PERPLEXITY_API_KEY;
-				placeholderValue = 'YOUR_PERPLEXITY_API_KEY_HERE';
 				break;
 			case 'xai':
 				apiKeyToCheck = mcpEnv.XAI_API_KEY;

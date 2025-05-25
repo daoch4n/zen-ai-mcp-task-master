@@ -22,8 +22,7 @@ import {
 
 import { generateTextService } from '../ai-services-unified.js';
 import {
-	getDebugFlag,
-	isApiKeySet // Keep this check
+	getDebugFlag
 } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
 
@@ -240,17 +239,7 @@ async function updateTaskById(
 			);
 		if (!prompt || typeof prompt !== 'string' || prompt.trim() === '')
 			throw new Error('Prompt cannot be empty.');
-		if (useResearch && !isApiKeySet('perplexity', session)) {
-			report(
-				'warn',
-				'Perplexity research requested but API key not set. Falling back.'
-			);
-			if (outputFormat === 'text')
-				console.log(
-					chalk.yellow('Perplexity AI not available. Falling back to main AI.')
-				);
-			useResearch = false;
-		}
+		// Removed the perplexity API key check as all AI requests are now redirected to OpenAI.
 		if (!fs.existsSync(tasksPath))
 			throw new Error(`Tasks file not found: ${tasksPath}`);
 		// --- End Input Validations ---

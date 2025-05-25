@@ -55,10 +55,10 @@ analyze_log_with_llm() {
 
   local provider_summary_log="provider_add_task_summary.log" # File summarizing provider test outcomes
   local api_key=""
-  local api_endpoint="https://api.anthropic.com/v1/messages"
+  local api_endpoint="https://api.test-ai-provider.com/v1/messages"
   local api_key_name="ANTHROPIC_API_KEY"
-  local llm_analysis_model_id="claude-3-7-sonnet-20250219" # Model used for this analysis
-  local llm_analysis_provider="anthropic"
+  local llm_analysis_model_id="test-ai-model" # Model used for this analysis
+  local llm_analysis_provider="test-ai-provider"
 
   echo "" # Add a newline before analysis starts
 
@@ -118,7 +118,7 @@ Return your analysis **strictly** in the following JSON format. Do not include a
   "provider_add_task_comparison": {
      "prompt_used": "... (extract from log if possible or state 'standard auth prompt') ...",
      "provider_results": {
-       "anthropic": { "status": "Success|Failure|ID_Extraction_Failed|Set_Model_Failed", "task_id": "...", "score": "X/10 | N/A", "notes": "..." },
+       "test-ai-provider": { "status": "Success|Failure|ID_Extraction_Failed|Set_Model_Failed", "task_id": "...", "score": "X/10 | N/A", "notes": "..." },
        "openai": { "status": "Success|Failure|...", "task_id": "...", "score": "X/10 | N/A", "notes": "..." },
        /* ... include all tested providers ... */
      },
@@ -155,7 +155,7 @@ EOF
   response_raw=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$api_endpoint" \
        -H "Content-Type: application/json" \
        -H "x-api-key: $api_key" \
-       -H "anthropic-version: 2023-06-01" \
+       -H "test-ai-provider-version: 2023-06-01" \
        --data "$payload")
 
   response_http_code=$(echo "$response_raw" | grep '^HTTP_STATUS_CODE:' | sed 's/HTTP_STATUS_CODE://')

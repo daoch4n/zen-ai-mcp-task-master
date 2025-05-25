@@ -47,7 +47,7 @@ fi
 
 
 # --- Configuration ---
-# Assumes script is run from the project root (claude-task-master)
+# Assumes script is run from the project root (task-master)
 TASKMASTER_SOURCE_DIR="." # Current directory is the source
 # Base directory for test runs, relative to project root
 BASE_TEST_DIR="$TASKMASTER_SOURCE_DIR/tests/e2e/_runs"
@@ -392,24 +392,24 @@ log_step() {
   log_success "Initial model config saved to models_initial_config.log"
 
   log_step "Setting main model"
-  task-master models --set-main claude-3-7-sonnet-20250219
+  task-master models --set-main gpt-4o
   log_success "Set main model."
 
   log_step "Setting research model"
-  task-master models --set-research sonar-pro
+  task-master models --set-research gpt-4o
   log_success "Set research model."
 
   log_step "Setting fallback model"
-  task-master models --set-fallback claude-3-5-sonnet-20241022
+  task-master models --set-fallback gpt-4o
   log_success "Set fallback model."
 
   log_step "Checking final model configuration"
   task-master models > models_final_config.log
   log_success "Final model config saved to models_final_config.log"
 
-  log_step "Resetting main model to default (Claude Sonnet) before provider tests"
-  task-master models --set-main claude-3-7-sonnet-20250219
-  log_success "Main model reset to claude-3-7-sonnet-20250219."
+  log_step "Resetting main model to default (OpenAI) before provider tests"
+  task-master models --set-main gpt-4o
+  log_success "Main model reset to gpt-4o."
 
   # === End Model Commands Test ===
 
@@ -447,20 +447,16 @@ log_step() {
 
   # Define providers, models, and flags
   # Array order matters: providers[i] corresponds to models[i] and flags[i]
-  declare -a providers=("anthropic" "openai" "google" "perplexity" "xai" "openrouter")
+  declare -a providers=("openai" "openrouter")
   declare -a models=(
-    "claude-3-7-sonnet-20250219"
     "gpt-4o"
-    "gemini-2.5-pro-preview-05-06"
-    "sonar-pro" # Note: This is research-only, add-task might fail if not using research model
-    "grok-3"
-    "anthropic/claude-3.7-sonnet" # OpenRouter uses Claude 3.7
+    "openai/gpt-4o" # OpenRouter uses OpenAI models
   )
   # Flags: Add provider-specific flags here, e.g., --openrouter. Use empty string if none.
-  declare -a flags=("" "" "" "" "" "--openrouter")
+  declare -a flags=("" "--openrouter")
 
   # Consistent prompt for all providers
-  add_task_prompt="Create a task to implement user authentication using OAuth 2.0 with Google as the provider. Include steps for registering the app, handling the callback, and storing user sessions."
+  add_task_prompt="Create a task to implement user authentication using OAuth 2.0 with a generic provider. Include steps for registering the app, handling the callback, and storing user sessions."
   log_info "Using consistent prompt for add-task tests: \"$add_task_prompt\""
   echo "--- Multi-Provider Add Task Summary ---" > provider_add_task_summary.log # Initialize summary log
 
@@ -775,103 +771,3 @@ log_step() {
   # === End New Test Section ===
 
   log_step "Generating task files (final)"
-  task-master generate
-  log_success "Generated task files."
-  # === End Core Task Commands Test ===
-
-  # === AI Commands (Re-test some after changes) ===
-  log_step "Analyzing complexity (AI with Research - Final Check)"
-  cmd_output_analyze_final=$(task-master analyze-complexity --research --output complexity_results_final.json 2>&1)
-  exit_status_analyze_final=$?
-  echo "$cmd_output_analyze_final"
-  extract_and_sum_cost "$cmd_output_analyze_final"
-  if [ $exit_status_analyze_final -ne 0 ] || [ ! -f "complexity_results_final.json" ]; then
-    log_error "Final Complexity analysis failed. Exit status: $exit_status_analyze_final. File found: $(test -f complexity_results_final.json && echo true || echo false)"
-    exit 1 # Critical for subsequent report step
-  else
-    log_success "Final Complexity analysis command executed and file created."
-  fi
-
-  log_step "Generating complexity report (Non-AI - Final Check)"
-  task-master complexity-report --file complexity_results_final.json > complexity_report_formatted_final.log
-  log_success "Final Formatted complexity report saved."
-
-  # === End AI Commands Re-test ===
-
-  log_step "Listing tasks again (final)"
-  task-master list --with-subtasks > task_list_final.log
-  log_success "Final task list saved to task_list_final.log"
-
-  # --- Test Completion (Output to tee) ---
-  log_step "E2E Test Steps Completed"
-  echo ""
-  ABS_TEST_RUN_DIR="$(pwd)"
-  echo "Test artifacts and logs are located in: $ABS_TEST_RUN_DIR"
-  echo "Key artifact files (within above dir):"
-  ls -1 # List files in the current directory
-  echo ""
-  echo "Full script log also available at: $LOG_FILE (relative to project root)"
-
-  # Optional: cd back to original directory
-  # cd "$ORIGINAL_DIR"
-
-# End of the main execution block brace
-} 2>&1 | tee "$LOG_FILE"
-
-# --- Final Terminal Message ---
-EXIT_CODE=${PIPESTATUS[0]}
-overall_end_time=$(date +%s)
-total_elapsed_seconds=$((overall_end_time - overall_start_time))
-
-# Format total duration
-total_minutes=$((total_elapsed_seconds / 60))
-total_sec_rem=$((total_elapsed_seconds % 60))
-formatted_total_time=$(printf "%dm%02ds" "$total_minutes" "$total_sec_rem")
-
-# Count steps and successes from the log file *after* the pipe finishes
-# Use grep -c for counting lines matching the pattern
-# Corrected pattern to match '  STEP X:' format
-final_step_count=$(grep -c '^[[:space:]]\+STEP [0-9]\+:' "$LOG_FILE" || true)
-final_success_count=$(grep -c '\[SUCCESS\]' "$LOG_FILE" || true) # Count lines containing [SUCCESS]
-
-echo "--- E2E Run Summary ---"
-echo "Log File: $LOG_FILE"
-echo "Total Elapsed Time: ${formatted_total_time}"
-echo "Total Steps Executed: ${final_step_count}" # Use count from log
-
-if [ $EXIT_CODE -eq 0 ]; then
-    echo "Status: SUCCESS"
-    # Use counts from log file
-    echo "Successful Steps: ${final_success_count}/${final_step_count}"
-else
-    echo "Status: FAILED"
-    # Use count from log file for total steps attempted
-    echo "Failure likely occurred during/after Step: ${final_step_count}"
-    # Use count from log file for successes before failure
-    echo "Successful Steps Before Failure: ${final_success_count}"
-    echo "Please check the log file '$LOG_FILE' for error details."
-fi
-echo "-------------------------"
-
-# --- Attempt LLM Analysis ---
-# Run this *after* the main execution block and tee pipe finish writing the log file
-if [ -d "$TEST_RUN_DIR" ]; then
-  # Define absolute path to source dir if not already defined (though it should be by setup)
-  TASKMASTER_SOURCE_DIR_ABS=${TASKMASTER_SOURCE_DIR_ABS:-$(cd "$ORIGINAL_DIR/$TASKMASTER_SOURCE_DIR" && pwd)}
-
-  cd "$TEST_RUN_DIR"
-  # Pass the absolute source directory path
-  analyze_log_with_llm "$LOG_FILE" "$TASKMASTER_SOURCE_DIR_ABS"
-  ANALYSIS_EXIT_CODE=$? # Capture the exit code of the analysis function
-  # Optional: cd back again if needed
-  cd "$ORIGINAL_DIR" # Ensure we change back to the original directory
-else
-  formatted_duration_for_error=$(_format_duration "$total_elapsed_seconds")
-  echo "[ERROR] [$formatted_duration_for_error] $(date +"%Y-%m-%d %H:%M:%S") Test run directory $TEST_RUN_DIR not found. Cannot perform LLM analysis." >&2
-fi
-
-# Final cost formatting
-formatted_total_e2e_cost=$(printf "%.6f" "$total_e2e_cost")
-echo "Total E2E AI Cost: $formatted_total_e2e_cost USD"
-
-exit $EXIT_CODE

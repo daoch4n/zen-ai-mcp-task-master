@@ -12,22 +12,20 @@ Taskmaster uses two primary methods for configuration:
       {
       	"models": {
       		"main": {
-      			"provider": "anthropic",
-      			"modelId": "claude-3-7-sonnet-20250219",
+      			"provider": "openai",
+      			"modelId": "gpt-4o",
       			"maxTokens": 64000,
-      			"temperature": 0.2,
-      			"baseUrl": "https://api.anthropic.com/v1"
+      			"temperature": 0.2
       		},
       		"research": {
       			"provider": "perplexity",
       			"modelId": "sonar-pro",
       			"maxTokens": 8700,
-      			"temperature": 0.1,
-      			"baseUrl": "https://api.perplexity.ai/v1"
+      			"temperature": 0.1
       		},
       		"fallback": {
-      			"provider": "anthropic",
-      			"modelId": "claude-3-5-sonnet",
+      			"provider": "openai",
+      			"modelId": "gpt-4o",
       			"maxTokens": 64000,
       			"temperature": 0.2
       		}
@@ -50,10 +48,8 @@ Taskmaster uses two primary methods for configuration:
       - For CLI usage: Create a `.env` file in your project root.
       - For MCP/Cursor usage: Configure keys in the `env` section of your `.cursor/mcp.json` file.
     - **Required API Keys (Depending on configured providers):**
-      - `ANTHROPIC_API_KEY`: Your Anthropic API key.
       - `PERPLEXITY_API_KEY`: Your Perplexity API key.
       - `OPENAI_API_KEY`: Your OpenAI API key.
-      - `GOOGLE_API_KEY`: Your Google API key.
       - `MISTRAL_API_KEY`: Your Mistral API key.
       - `AZURE_OPENAI_API_KEY`: Your Azure OpenAI API key (also requires `AZURE_OPENAI_ENDPOINT`).
       - `OPENROUTER_API_KEY`: Your OpenRouter API key.
@@ -69,10 +65,8 @@ Taskmaster uses two primary methods for configuration:
 
 ```
 # Required API keys for providers configured in .taskmasterconfig
-ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
 PERPLEXITY_API_KEY=pplx-your-key-here
 # OPENAI_API_KEY=sk-your-key-here
-# GOOGLE_API_KEY=AIzaSy...
 # etc.
 
 # Optional Endpoint Overrides
@@ -92,13 +86,12 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 Try running it with Node directly:
 
 ```bash
-node node_modules/claude-task-master/scripts/init.js
+node node_modules/task-master-ai/scripts/init.js
 ```
 
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
-cd claude-task-master
+git clone https://github.com/eyaltoledano/task-master.git
+cd task-master
 node scripts/init.js
-```
