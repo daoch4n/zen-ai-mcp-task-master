@@ -31,12 +31,6 @@ export async function modelsDirect(args, log, context = {}) {
 	log.info(`Executing models_direct with args: ${JSON.stringify(args)}`);
 	log.info(`Using project root: ${projectRoot}`);
 
-	// Validate flags: cannot use both openrouter and ollama simultaneously
-	if (args.ollama) {
-		log.warn(
-			'The --ollama flag is deprecated and will be removed in a future version. Ollama models are now detected automatically.'
-		);
-	}
 
 	try {
 		enableSilentMode();

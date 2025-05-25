@@ -111,8 +111,6 @@ async function runInteractiveSetup(projectRoot) {
 		);
 	}
 
-	// Helper function to fetch OpenRouter models (duplicated for CLI context)
-
 	// Helper to get choices and default index for a role
 	const getPromptData = (role, allowNone = false) => {
 		const currentModel = currentModels[role]; // Use the fetched data

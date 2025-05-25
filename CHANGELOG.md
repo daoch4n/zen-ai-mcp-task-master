@@ -135,16 +135,14 @@
   - Integrate `task-complexity-report.json` to automatically determine the number of subtasks and use tailored prompts for expansion based on prior analysis. You no longer need to try copy-pasting the recommended prompt. If it exists, it will use it for you. You can just run `task-master update --id=[id of task] --research` and it will use that prompt automatically. No extra prompt needed.
   - Change default behavior to _append_ new subtasks to existing ones. Use the `--force` flag to clear existing subtasks before expanding. This is helpful if you need to add more subtasks to a task but you want to do it by the batch from a given prompt. Use force if you want to start fresh with a task's subtasks.
 
-- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`87d97bb`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/87d97bba00d84e905756d46ef96b2d5b984e0f38) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds support for the OpenRouter AI provider. Users can now configure models available through OpenRouter (requiring an `OPENROUTER_API_KEY`) via the `task-master models` command, granting access to a wide range of additional LLMs. - IMPORTANT FYI ABOUT OPENROUTER: Taskmaster relies on AI SDK, which itself relies on tool use. It looks like **free** models sometimes do not include tool use. For example, Gemini 2.5 pro (free) failed via OpenRouter (no tool use) but worked fine on the paid version of the model. Custom model support for Open Router is considered experimental and likely will not be further improved for some time.
 
 - [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`1ab836f`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/1ab836f191cb8969153593a9a0bd47fc9aa4a831) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds model management and new configuration file .taskmasterconfig which houses the models used for main, and research. Adds models command and setter flags. Adds a --setup flag with an interactive setup. We should be calling this during init. Shows a table of active and available models when models is called without flags. Includes SWE scores and token costs, which are manually entered into the supported_models.json, the new place where models are defined for support. Config-manager.js is the core module responsible for managing the new config."
 
-- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`c8722b0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/c8722b0a7a443a73b95d1bcd4a0b68e0fce2a1cd) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds custom model ID support for Ollama and OpenRouter providers.
-
-  - Adds the `--ollama` and `--openrouter` flags to `task-master models --set-<role>` command to set models for those providers outside of the support models list.
-  - Updated `task-master models --setup` interactive mode with options to explicitly enter custom Ollama or OpenRouter model IDs.
-  - Implemented live validation against OpenRouter API (`/api/v1/models`) when setting a custom OpenRouter model ID (via flag or setup).
-  - Refined logic to prioritize explicit provider flags/choices over internal model list lookups in case of ID conflicts.
+- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`c8722b0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/c8722b0a7a443a73b95d1bcd4a0b68e0fce2a1cd) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds custom model ID support for Ollama provider.
+ 
+   - Adds the `--ollama` flag to `task-master models --set-<role>` command to set models for that provider outside of the support models list.
+   - Updated `task-master models --setup` interactive mode with options to explicitly enter custom Ollama model IDs.
+   - Refined logic to prioritize explicit provider flags/choices over internal model list lookups in case of ID conflicts.
   - Added warnings when setting custom/unvalidated models.
   - We obviously don't recommend going with a custom, unproven model. If you do and find performance is good, please let us know so we can add it to the list of supported models.
 

@@ -25,7 +25,7 @@ The high-level objectives of Task Master are to:
 *   **Complexity Analysis**: Analyze the complexity of tasks and recommend further breakdown if necessary.
 
 ### AI Provider
-OpenAI is the primary and currently supported AI provider for all AI-powered capabilities within Task Master. Previous integrations with other providers, such as OpenRouter, have been removed to streamline development, enhance stability, and focus efforts on a single, robust AI backend.
+OpenAI is the primary and currently supported AI provider for all AI-powered capabilities within Task Master. Previous integrations with other providers, such as OpenRouter, have been removed. This consolidation ensures a single, robust AI backend, minimizes potential bugs from purged integrations, and maintains strict adherence to the upstream codebase, avoiding unnecessary refactoring.
 
 ### CLI and MCP Tool Integration
 Task Master provides a comprehensive Command Line Interface (CLI) for direct interaction and management of tasks. Additionally, it integrates with the Model Context Protocol (MCP), exposing its functionalities as tools that can be utilized by external AI agents and systems, enabling advanced automation and extensibility.

@@ -6,8 +6,6 @@ set -u
 set -o pipefail
 
 # --- Default Settings ---
-:start_line:9
--------
 # --- Argument Parsing ---
 # Simple loop to check for the skip flag
 # Note: This needs to happen *before* the main block piped to tee
@@ -251,8 +249,6 @@ log_step() {
   # called *inside* this block depend on it. If not, it can be removed.
   start_time_for_helpers=$(date +%s) # Keep if needed by helpers called inside this block
 
-:start_line:260
--------
   # --- Dependency Checks ---
   log_step "Checking for dependencies (jq, bc)"
   if ! command -v jq &> /dev/null; then
@@ -269,7 +265,7 @@ log_step() {
   log_step "Setting up test environment"
 
   log_step "Creating global npm link for task-master-ai"
-  if npm link; then
+  if sudo npm link; then
     log_success "Global link created/updated."
   else
     log_error "Failed to run 'npm link'. Check permissions or output for details."
@@ -318,7 +314,7 @@ log_step() {
   # --- Test Execution (Output to tee) ---
 
   log_step "Linking task-master-ai package locally"
-  npm link task-master-ai
+  sudo npm link task-master-ai
   log_success "Package linked locally."
 
   log_step "Initializing Task Master project (non-interactive)"
@@ -393,8 +389,6 @@ log_step() {
   task-master models --set-search gpt-4o
   log_success "Set search model (for research-backed subtask generation/task updates)."
 
-:start_line:402
--------
 
   log_step "Checking final model configuration"
   task-master models > models_final_config.log
@@ -406,8 +400,6 @@ log_step() {
 
   # === End Model Commands Test ===
 
-:start_line:416
--------
 
 
   # === Multi-Provider Add-Task Test (Keep as is) ===
@@ -760,3 +752,4 @@ log_step() {
   # === End New Test Section ===
 
   log_step "Generating task files (final)"
+} # End of main execution block piped to tee

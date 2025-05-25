@@ -1998,7 +1998,7 @@ function displayAvailableModels(availableModels) {
 				) +
 				'\n' +
 				chalk.cyan(
-					`5. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research|search <model_id>')}`
+					`5. Use custom ollama models: ${chalk.yellow('task-master models --ollama --set-main|research|search <model_id>')}`
 				),
 			{
 				padding: 1,

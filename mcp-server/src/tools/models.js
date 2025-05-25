@@ -49,11 +49,7 @@ export function registerModelsTool(server) {
 				.string()
 				.optional()
 				.describe('The directory of the project. Must be an absolute path.'),
-			openrouter: z
-				.boolean()
-				.optional()
-				.describe('Indicates the set model ID is a custom OpenRouter model.'),
-			ollama: z
+				ollama: z
 				.boolean()
 				.optional()
 				.describe('Indicates the set model ID is a custom Ollama model.')

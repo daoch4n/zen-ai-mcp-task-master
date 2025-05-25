@@ -401,8 +401,7 @@ describe('getConfig Tests', () => {
 				return JSON.stringify(INVALID_PROVIDER_CONFIG);
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);

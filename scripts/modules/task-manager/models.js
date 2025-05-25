@@ -5,7 +5,6 @@
 
 import path from 'path';
 import fs from 'fs';
-import https from 'https';
 import {
 	getMainModelId,
 	getResearchModelId,
@@ -22,10 +21,6 @@ import {
 	getAllProviders
 } from '../config-manager.js';
 
-/**
- * Fetches the list of models from OpenRouter API.
- * @returns {Promise<Array|null>} A promise that resolves with the list of model IDs or null if fetch fails.
- */
 
 /**
  * Get the current model configuration
@@ -293,7 +288,7 @@ async function getAvailableModelsList(options = {}) {
  * @param {string} role - The model role to update ('main', 'research', 'fallback')
  * @param {string} modelId - The model ID to set for the role
  * @param {Object} [options] - Options for the operation
- * @param {string} [options.providerHint] - Provider hint if already determined ('openrouter' or 'ollama')
+ * @param {string} [options.providerHint] - Provider hint if already determined ('ollama')
  * @param {Object} [options.session] - Session object containing environment variables (for MCP)
  * @param {Function} [options.mcpLog] - MCP logger object (for MCP)
  * @param {string} [options.projectRoot] - Project root directory
@@ -372,44 +367,41 @@ async function setModel(role, modelId, options = {}) {
 		// --- Revised Logic: Prioritize providerHint --- //
 
 		if (providerHint) {
-			// Hint provided (--ollama or --openrouter flag used)
+			// Hint provided (--ollama flag used)
 			if (modelData && modelData.provider === providerHint) {
-				// Found internally AND provider matches the hint
+				// Model is in supported list AND matches provider hint
 				determinedProvider = providerHint;
 				report(
 					'info',
 					`Model ${modelId} found internally with matching provider hint ${determinedProvider}.`
 				);
+			} else if (providerHint === 'ollama') {
+				// Hinted as Ollama - set provider directly
+				determinedProvider = 'ollama';
+				warningMessage = `Warning: Custom Ollama model '${modelId}' set. Ensure your Ollama server is running and has pulled this model. Taskmaster cannot guarantee compatibility.`;
+				report('warn', warningMessage);
 			} else {
-				// Either not found internally, OR found but under a DIFFERENT provider than hinted.
-				// Proceed with custom logic based ONLY on the hint.
-				if (providerHint === 'ollama') {
-					// Hinted as Ollama - set provider directly WITHOUT checking OpenRouter
-					determinedProvider = 'ollama';
-					warningMessage = `Warning: Custom Ollama model '${modelId}' set. Ensure your Ollama server is running and has pulled this model. Taskmaster cannot guarantee compatibility.`;
-					report('warn', warningMessage);
-				} else {
-					// Invalid provider hint - should not happen
-					throw new Error(`Invalid provider hint received: ${providerHint}`);
-				}
+				// Invalid provider hint - should not happen
+				throw new Error(`Invalid provider hint received: ${providerHint}`);
 			}
+		} else if (modelData) {
+			// No hint, found internally, use the provider from the internal list
+			determinedProvider = modelData.provider;
+			report(
+				'info',
+				`Model ${modelId} found internally with provider ${determinedProvider}.`
+			);
 		} else {
-			// No hint provided (flags not used)
-			if (modelData) {
-				// Found internally, use the provider from the internal list
-				determinedProvider = modelData.provider;
-				report(
-					'info',
-					`Model ${modelId} found internally with provider ${determinedProvider}.`
-				);
+			// No hint, not in supported models - try to guess based on known custom models
+			if (isOllamaModel(modelId)) {
+				determinedProvider = 'ollama';
 			} else {
-				// Model not found and no provider hint was given
 				return {
 					success: false,
 					error: {
 						code: 'MODEL_NOT_FOUND_NO_HINT',
-						message: `Model ID "${modelId}" not found in Taskmaster's supported models. If this is a custom model, please specify the provider using --openrouter or --ollama.`
-					}
+						message: `Model ID "${modelId}" not found in Taskmaster's supported models. If this is a custom model, please specify the provider using --ollama.`,
+					},
 				};
 			}
 		}
@@ -528,5 +520,5 @@ export {
 	getModelConfiguration,
 	getAvailableModelsList,
 	setModel,
-	getApiKeyStatusReport
+	getApiKeyStatusReport,
 };
