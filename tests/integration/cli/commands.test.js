@@ -2,8 +2,8 @@ import { jest } from '@jest/globals';
 
 // --- Define mock functions ---
 const mockGetMainModelId = jest.fn().mockReturnValue('test-ai-model');
-const mockGetResearchModelId = jest.fn().mockReturnValue('gpt-4-turbo');
-const mockGetSearchModelId = jest.fn().mockReturnValue('test-ai-model-3'); // Mock for search model
+const mockGetResearchModelId = jest.fn().mockReturnValue('gemini-2.5-flash-preview-05-20');
+const mockGetSearchModelId = jest.fn().mockReturnValue('gemini-2.5-flash-preview-05-20'); // Mock for search model
 const mockSetMainModel = jest.fn().mockResolvedValue(true);
 const mockSetResearchModel = jest.fn().mockResolvedValue(true);
 const mockSetSearchModel = jest.fn().mockResolvedValue(true); // Mock for setSearchModel
@@ -144,7 +144,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 				if (await configManager.setResearchModel(provider, modelId)) {
 					console.log(
 						chalk.green(
-							`Research model set to: ${modelId} (Provider: ${provider})`
+							`In-depth analysis model set to: ${modelId} (Provider: ${provider})`
 						)
 					);
 					modelSetAction = true;
@@ -174,7 +174,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 				if (await configManager.setSearchModel(provider, modelId)) {
 					console.log(
 						chalk.green(
-							`Search model set to: ${modelId} (Provider: ${provider})`
+							`Research-backed subtask generation/task updates model set to: ${modelId} (Provider: ${provider})`
 						)
 					);
 					modelSetAction = true;
@@ -287,7 +287,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 			modelId
 		);
 		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining(`Research model set to: ${modelId}`)
+			expect.stringContaining(`In-depth analysis model set to: ${modelId}`)
 		);
 		expect(console.log).toHaveBeenCalledWith(
 			expect.stringContaining(`(Provider: ${expectedProvider})`)
@@ -300,7 +300,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 		await modelsAction({ setSearch: modelId });
 		expect(mockSetSearchModel).toHaveBeenCalledWith(expectedProvider, modelId);
 		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining(`Search model set to: ${modelId}`)
+			expect.stringContaining(`Research-backed subtask generation/task updates model set to: ${modelId}`)
 		);
 		expect(console.log).toHaveBeenCalledWith(
 			expect.stringContaining(`(Provider: ${expectedProvider})`)

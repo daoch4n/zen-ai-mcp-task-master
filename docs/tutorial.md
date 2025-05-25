@@ -260,7 +260,7 @@ The agent will execute:
 ```bash
 task-master update --from=4 --prompt="Now we are using MongoDB instead of PostgreSQL."
 
-# OR, if research is needed to find best practices for MongoDB:
+# OR, if research-backed subtask generation/task updates are needed for MongoDB:
 task-master update --from=4 --prompt="Update to use MongoDB, researching best practices" --research
 
 # OR, if in-depth analysis is needed for MongoDB:
@@ -307,10 +307,10 @@ The agent will execute:
 task-master expand --all
 ```
 
-For research-backed subtask generation using the configured research model:
+For in-depth analysis using the configured research model:
 
 ```
-Please break down task 5 using research-backed generation.
+Please break down task 5 using in-depth analysis.
 ```
 
 The agent will execute:

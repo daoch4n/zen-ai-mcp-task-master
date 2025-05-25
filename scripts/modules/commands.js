@@ -297,7 +297,7 @@ async function runInteractiveSetup(projectRoot) {
 		{
 			type: 'list',
 			name: 'searchModel',
-			message: 'Select the search model (for in-depth analysis):',
+			message: 'Select the search model (for research-backed subtask generation and task updates):',
 			choices: searchPromptData.choices,
 			default: searchPromptData.default,
 			when: (ans) => ans.mainModel !== '__CANCEL__'
@@ -617,7 +617,7 @@ function registerCommands(programInstance) {
 		)
 		.option(
 			'-r, --research',
-			'Enable research-backed task updates'
+			'Enable in-depth analysis for task updates'
 		)
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -666,7 +666,7 @@ function registerCommands(programInstance) {
 
 			if (useResearch) {
 				console.log(
-					chalk.blue('Using research-backed task updates')
+					chalk.blue('Using in-depth analysis for task updates')
 				);
 			}
 
@@ -694,7 +694,7 @@ function registerCommands(programInstance) {
 		)
 		.option(
 			'-r, --research',
-			'Enable research-backed task updates'
+			'Enable in-depth analysis for task updates'
 		)
 		.action(async (options) => {
 			try {
@@ -777,7 +777,7 @@ function registerCommands(programInstance) {
 
 				if (useResearch) {
 					console.log(
-						chalk.blue('Using research-backed task updates')
+						chalk.blue('Using in-depth analysis for task updates')
 					);
 				}
 
@@ -815,7 +815,7 @@ function registerCommands(programInstance) {
 		)
 		.option(
 			'-r, --research',
-			'Enable research-backed subtask updates'
+			'Enable in-depth analysis for subtask updates'
 		)
 		.action(async (options) => {
 			try {
@@ -927,7 +927,7 @@ function registerCommands(programInstance) {
 
 				if (useResearch) {
 					console.log(
-						chalk.blue('Using research-backed subtask updates')
+						chalk.blue('Using in-depth analysis for subtask updates')
 					);
 				}
 
@@ -1177,7 +1177,7 @@ function registerCommands(programInstance) {
 		.option('-p, --prompt <text>', 'Additional context for subtask generation')
 		.option('-a, --all', 'Expand all pending tasks')
 		.option('-f, --force', 'Force expansion even if subtasks exist')
-		.option('-r, --research', 'Enable research-backed subtask generation')
+		.option('-r, --research', 'Enable in-depth analysis for subtask generation')
 		.option('--file <file>', 'Path to the tasks file', 'tasks/tasks.json')
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -1477,7 +1477,7 @@ function registerCommands(programInstance) {
 		.option('--test-strategy <text>', 'Test strategy (for manual task creation)')
 		.option('--dependencies <ids>', 'Comma-separated list of task IDs this task depends on')
 		.option('--priority <level>', 'Task priority (high, medium, low)')
-		.option('-r, --research', 'Enable research capabilities for task creation')
+		.option('-r, --research', 'Enable in-depth analysis capabilities for task creation')
 		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -1825,7 +1825,7 @@ function registerCommands(programInstance) {
 		.command('analyze-complexity')
 		.description('Analyze task complexity and generate expansion recommendations')
 		.option('-t, --threshold <number>', 'Complexity score threshold (1-10) to recommend expansion', '5')
-		.option('-r, --research', 'Enable research-backed analysis')
+		.option('-r, --research', 'Enable in-depth analysis for complexity analysis')
 		.option('-o, --output <file>', 'Output file path for the report', 'scripts/task-complexity-report.json')
 		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
 		.action(async (options) => {
@@ -1917,8 +1917,8 @@ function registerCommands(programInstance) {
 		.command('models')
 		.description('Get information about available AI models or set model configurations')
 		.option('--set-main <modelId>', 'Set the primary model for task generation/updates')
-		.option('--set-research <modelId>', 'Set the model for research-backed operations')
-		.option('--set-search <modelId>', 'Set the model for in-depth analysis operations')
+		.option('--set-research <modelId>', 'Set the model for in-depth analysis operations')
+		.option('--set-search <modelId>', 'Set the model for research-backed subtask generation/task updates operations')
 		.option('--list-available-models', 'List all available models not currently in use')
 		.option('--setup', 'Run interactive setup for model configuration')
 		.option('--openrouter', 'Indicates the set model ID is a custom OpenRouter model')
@@ -1960,7 +1960,7 @@ function registerCommands(programInstance) {
 			} else if (options.setResearch) {
 				const result = await setModel('research', options.setResearch, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
 				if (result.success) {
-					console.log(chalk.green(`Research model set to: ${result.data.provider} / ${result.data.modelId}`));
+					console.log(chalk.green(`In-depth analysis model set to: ${result.data.provider} / ${result.data.modelId}`));
 					if (result.data.warning) {
 						console.log(chalk.yellow(result.data.warning));
 					}
@@ -1971,7 +1971,7 @@ function registerCommands(programInstance) {
 			} else if (options.setSearch) {
 				const result = await setModel('search', options.setSearch, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
 				if (result.success) {
-					console.log(chalk.green(`Search model set to: ${result.data.provider} / ${result.data.modelId}`));
+					console.log(chalk.green(`Research-backed subtask generation/task updates model set to: ${result.data.provider} / ${result.data.modelId}`));
 					if (result.data.warning) {
 						console.log(chalk.yellow(result.data.warning));
 					}

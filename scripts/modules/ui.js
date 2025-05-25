@@ -423,7 +423,12 @@ function displayHelp() {
 				{
 					name: 'models --set-research',
 					args: '<model_id>',
-					desc: 'Set the model for research operations'
+					desc: 'Set the model for in-depth analysis operations'
+				},
+				{
+					name: 'models --set-search',
+					args: '<model_id>',
+					desc: 'Set the model for research-backed subtask generation/task updates operations'
 				},
 			]
 		},
@@ -1914,7 +1919,7 @@ function displayModelConfiguration(configData, allAvailableModels = []) {
 		// getCombinedStatus(active.main.keyStatus) // Removed
 	]);
 	activeTable.push([
-		chalk.white('Research'),
+		chalk.white('In-depth Analysis'),
 		active.research.provider,
 		active.research.modelId,
 		formatSweScoreWithTertileStars(
@@ -1927,7 +1932,7 @@ function displayModelConfiguration(configData, allAvailableModels = []) {
 	// Add Search model if it exists
 	if (active.search) {
 		activeTable.push([
-			chalk.white('Search'),
+			chalk.white('Research-backed Subtask Generation/Task Updates'),
 			active.search.provider,
 			active.search.modelId,
 			formatSweScoreWithTertileStars(

@@ -53,7 +53,7 @@ task-master show 1.2
 # Update tasks from a specific ID and provide context
 task-master update --from=<id> --prompt="<prompt>"
 
-# Update tasks using research role
+# Update tasks using research-backed subtask generation/task updates role
 task-master update --from=<id> --prompt="<prompt>" --research
 ```
 
@@ -119,10 +119,10 @@ task-master expand --all
 # Force regeneration of subtasks for tasks that already have them
 task-master expand --all --force
 
-# Research-backed subtask generation for a specific task
+# In-depth analysis for a specific task
 task-master expand --id=<id> --research
 
-# Research-backed generation for all tasks
+# In-depth analysis for all tasks
 task-master expand --all --research
 ```
 
@@ -216,10 +216,10 @@ task-master models
 # Set the primary model for generation/updates (provider inferred if known)
 task-master models --set-main=gpt-4o
 
-# Set the research model
+# Set the research model (for in-depth analysis)
 task-master models --set-research=sonar-pro
 
-# Set the search model (for in-depth analysis)
+# Set the search model (for research-backed subtask generation/task updates)
 task-master models --set-search=gemini-2.5-flash-preview-05-20
 
 # Set a custom Ollama model for the main role

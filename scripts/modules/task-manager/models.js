@@ -385,7 +385,7 @@ async function setModel(role, modelId, options = {}) {
 			success: false,
 			error: {
 				code: 'INVALID_ROLE',
-				message: `Invalid role: ${role}. Must be one of: main, research, fallback.`
+				message: `Invalid role: ${role}. Must be one of: main, research, search, fallback.`
 			}
 		};
 	}

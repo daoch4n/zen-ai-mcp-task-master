@@ -44,14 +44,14 @@ const DEFAULTS = {
 		research: {
 			provider: 'openai',
 			modelId: 'gemini-2.5-flash-preview-05-20',
-			maxTokens: 8700,
-			temperature: 0.1
+			maxTokens: 8700, // Now for in-depth analysis
+			temperature: 0.1 // Now for in-depth analysis
 		},
 		search: {
 			provider: 'openai',
 			modelId: 'gemini-2.5-flash-preview-05-20',
-			maxTokens: 8700, // Default to research model's maxTokens
-			temperature: 0.1 // Default to research model's temperature
+			maxTokens: 64000, // Now for research-backed subtask generation and task updates
+			temperature: 0.2 // Now for research-backed subtask generation and task updates
 		},
 		fallback: {
 			// No default fallback provider/model initially
@@ -121,6 +121,10 @@ function _loadAndValidateConfig(explicitRoot = null) {
 						...defaults.models.research,
 						...parsedConfig?.models?.research
 					},
+					search: {
+						...defaults.models.search,
+						...parsedConfig?.models?.search
+					},
 					fallback:
 						parsedConfig?.models?.fallback?.provider &&
 						parsedConfig?.models?.fallback?.modelId
@@ -129,11 +133,11 @@ function _loadAndValidateConfig(explicitRoot = null) {
 				},
 				global: { ...defaults.global, ...parsedConfig?.global }
 			};
-			configSource = `file (${configPath})`; // Update source info
 
 				        // Apply environment variable overrides AFTER loading from file
 				        config.models.main.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.main.modelId;
 				        config.models.research.modelId = resolveEnvVariable('TASKMASTER_RESEARCH_MODEL', null, rootToUse) || config.models.research.modelId;
+				        config.models.search.modelId = resolveEnvVariable('TASKMASTER_SEARCH_MODEL', null, rootToUse) || config.models.search.modelId;
 				        config.models.fallback.modelId = resolveEnvVariable('TASKMASTER_AI_MODEL', null, rootToUse) || config.models.fallback.modelId; // Fallback uses main AI model env var
 
 			// --- Validation (Warn if file content is invalid) ---
@@ -153,6 +157,14 @@ function _loadAndValidateConfig(explicitRoot = null) {
 					)
 				);
 				config.models.research = { ...defaults.models.research };
+			}
+			if (!validateProvider(config.models.search.provider)) {
+				console.warn(
+					chalk.yellow(
+						`Warning: Invalid search provider "${config.models.search.provider}" in ${configPath}. Falling back to default.`
+					)
+				);
+				config.models.search = { ...defaults.models.search };
 			}
 			if (
 				config.models.fallback?.provider &&
@@ -293,21 +305,27 @@ function getMainTemperature(explicitRoot = null) {
 }
 
 function getResearchProvider(explicitRoot = null) {
-	return getModelConfigForRole('research', explicitRoot).provider;
+	const config = getConfig(explicitRoot);
+	// If research model is not explicitly configured, fall back to main model's provider
+	return config?.models?.research?.provider || getMainProvider(explicitRoot);
 }
 
 function getResearchModelId(explicitRoot = null) {
-	return getModelConfigForRole('research', explicitRoot).modelId;
+	const config = getConfig(explicitRoot);
+	// If research model is not explicitly configured, fall back to main model's modelId
+	return config?.models?.research?.modelId || getMainModelId(explicitRoot);
 }
 
 function getResearchMaxTokens(explicitRoot = null) {
-	// Directly return value from config
-	return getModelConfigForRole('research', explicitRoot).maxTokens;
+	const config = getConfig(explicitRoot);
+	// If research model is not explicitly configured, fall back to main model's maxTokens
+	return config?.models?.research?.maxTokens || getMainMaxTokens(explicitRoot);
 }
 
 function getResearchTemperature(explicitRoot = null) {
-	// Directly return value from config
-	return getModelConfigForRole('research', explicitRoot).temperature;
+	const config = getConfig(explicitRoot);
+	// If research model is not explicitly configured, fall back to main model's temperature
+	return config?.models?.research?.temperature || getMainTemperature(explicitRoot);
 }
 
 function getSearchProvider(explicitRoot = null) {

@@ -341,7 +341,7 @@ log_step() {
     log_success "PRD parsed successfully."
   fi
 
-  log_step "Expanding Task 1 (to ensure subtask 1.1 exists)"
+  log_step "Analyzing complexity with research model (to ensure subtask 1.1 exists)"
   cmd_output_analyze=$(task-master analyze-complexity --research --output complexity_results.json 2>&1)
   exit_status_analyze=$?
   echo "$cmd_output_analyze"
@@ -385,13 +385,13 @@ log_step() {
   task-master models --set-main gpt-4o
   log_success "Set main model."
 
-  log_step "Setting research model"
+  log_step "Setting research model (for in-depth analysis)"
   task-master models --set-research gpt-4o
-  log_success "Set research model."
+  log_success "Set research model (for in-depth analysis)."
 
-  log_step "Setting search model"
+  log_step "Setting search model (for research-backed subtask generation/task updates)"
   task-master models --set-search gpt-4o
-  log_success "Set search model."
+  log_success "Set search model (for research-backed subtask generation/task updates)."
 
 :start_line:402
 -------
@@ -632,7 +632,7 @@ log_step() {
     log_success "Attempted update from Task 5 onwards."
   fi
 
-  log_step "Updating Tasks from Task 5 using search model (update AI)"
+  log_step "Updating Tasks from Task 5 using research-backed subtask generation/task updates model (update AI)"
   cmd_output_update_from5_search=$(task-master update --from=5 --search --prompt="Refactor the backend storage module to use a simple JSON file (storage.json) instead of an in-memory object for persistence. Update relevant tasks." 2>&1)
   exit_status_update_from5_search=$?
   echo "$cmd_output_update_from5_search"
@@ -654,7 +654,7 @@ log_step() {
     log_success "Attempted to expand Task 8."
   fi
 
-  log_step "Expanding Task 8 using search model (AI)"
+  log_step "Expanding Task 8 using research-backed subtask generation/task updates model (AI)"
   cmd_output_expand8_search=$(task-master expand --id=8 --search 2>&1)
   exit_status_expand8_search=$?
   echo "$cmd_output_expand8_search"

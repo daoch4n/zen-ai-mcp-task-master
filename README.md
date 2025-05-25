@@ -26,8 +26,8 @@ The following environment variables can be configured in a `.env` file (based on
 - `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, search, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
 - `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Defaults to OpenAI provider
 - `TASKMASTER_AI_MODEL`: Specifies the AI model to be used for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
-- `TASKMASTER_SEARCH_MODEL`: Specifies the AI model to be used for in-depth analysis operations. Default: `gemini-2.5-flash-preview-05-20`
-- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `gemini-2.5-flash-preview-05-20`
+- `TASKMASTER_SEARCH_MODEL`: Specifies the AI model to be used for research-backed subtask generation/task updates operations. Default: `gemini-2.5-flash-preview-05-20`
+- `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for in-depth analysis operations. Default: `gemini-2.5-flash-preview-05-20`
 
 ## Quick Start
 
