@@ -389,6 +389,10 @@ log_step() {
   task-master models --set-research gpt-4o
   log_success "Set research model."
 
+  log_step "Setting search model"
+  task-master models --set-search gpt-4o
+  log_success "Set search model."
+
 :start_line:402
 -------
 
@@ -628,6 +632,17 @@ log_step() {
     log_success "Attempted update from Task 5 onwards."
   fi
 
+  log_step "Updating Tasks from Task 5 using search model (update AI)"
+  cmd_output_update_from5_search=$(task-master update --from=5 --search --prompt="Refactor the backend storage module to use a simple JSON file (storage.json) instead of an in-memory object for persistence. Update relevant tasks." 2>&1)
+  exit_status_update_from5_search=$?
+  echo "$cmd_output_update_from5_search"
+  extract_and_sum_cost "$cmd_output_update_from5_search"
+  if [ $exit_status_update_from5_search -ne 0 ]; then
+    log_error "Updating from Task 5 using search model failed. Exit status: $exit_status_update_from5_search"
+  else
+    log_success "Attempted update from Task 5 onwards using search model."
+  fi
+
   log_step "Expanding Task 8 (AI)"
   cmd_output_expand8=$(task-master expand --id=8 2>&1)
   exit_status_expand8=$?
@@ -637,6 +652,17 @@ log_step() {
     log_error "Expanding Task 8 failed. Exit status: $exit_status_expand8"
   else
     log_success "Attempted to expand Task 8."
+  fi
+
+  log_step "Expanding Task 8 using search model (AI)"
+  cmd_output_expand8_search=$(task-master expand --id=8 --search 2>&1)
+  exit_status_expand8_search=$?
+  echo "$cmd_output_expand8_search"
+  extract_and_sum_cost "$cmd_output_expand8_search"
+  if [ $exit_status_expand8_search -ne 0 ]; then
+    log_error "Expanding Task 8 using search model failed. Exit status: $exit_status_expand8_search"
+  else
+    log_success "Attempted to expand Task 8 using search model."
   fi
 
   log_step "Updating Subtask 8.1 (update-subtask AI)"

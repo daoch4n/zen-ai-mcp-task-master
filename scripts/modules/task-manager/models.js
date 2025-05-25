@@ -121,6 +121,8 @@ async function getModelConfiguration(options = {}) {
 		const mainModelId = getMainModelId(projectRoot);
 		const researchProvider = getResearchProvider(projectRoot);
 		const researchModelId = getResearchModelId(projectRoot);
+		const searchProvider = getSearchProvider(projectRoot); // Get search provider
+		const searchModelId = getSearchModelId(projectRoot); // Get search model ID
 		const fallbackProvider = getFallbackProvider(projectRoot);
 		const fallbackModelId = getFallbackModelId(projectRoot);
 
@@ -133,6 +135,12 @@ async function getModelConfiguration(options = {}) {
 			projectRoot
 		);
 		const researchMcpKeyOk = getMcpApiKeyStatus(researchProvider, projectRoot);
+		const searchCliKeyOk = searchProvider
+			? isApiKeySet(searchProvider, session, projectRoot)
+			: true; // Check only if provider exists
+		const searchMcpKeyOk = searchProvider
+			? getMcpApiKeyStatus(searchProvider, projectRoot)
+			: true; // Check only if provider exists
 		const fallbackCliKeyOk = fallbackProvider
 			? isApiKeySet(fallbackProvider, session, projectRoot)
 			: true;
@@ -148,6 +156,9 @@ async function getModelConfiguration(options = {}) {
 		const researchModelData = availableModels.find(
 			(m) => m.id === researchModelId
 		);
+		const searchModelData = searchModelId
+			? availableModels.find((m) => m.id === searchModelId)
+			: null; // Find search model data
 		const fallbackModelData = fallbackModelId
 			? availableModels.find((m) => m.id === fallbackModelId)
 			: null;
@@ -177,6 +188,18 @@ async function getModelConfiguration(options = {}) {
 							mcp: researchMcpKeyOk
 						}
 					},
+					search: searchProvider
+						? {
+								provider: searchProvider,
+								modelId: searchModelId,
+								sweScore: searchModelData?.swe_score || null,
+								cost: searchModelData?.cost_per_1m_tokens || null,
+								keyStatus: {
+									cli: searchCliKeyOk,
+									mcp: searchMcpKeyOk
+								}
+							}
+						: null, // Include search model
 					fallback: fallbackProvider
 						? {
 								provider: fallbackProvider,
@@ -269,12 +292,16 @@ async function getAvailableModelsList(options = {}) {
 		// Get currently used model IDs
 		const mainModelId = getMainModelId(projectRoot);
 		const researchModelId = getResearchModelId(projectRoot);
+		const searchModelId = getSearchModelId(projectRoot); // Get search model ID
 		const fallbackModelId = getFallbackModelId(projectRoot);
 
 		// Filter out placeholder models and active models
-		const activeIds = [mainModelId, researchModelId, fallbackModelId].filter(
-			Boolean
-		);
+		const activeIds = [
+			mainModelId,
+			researchModelId,
+			searchModelId, // Include search model ID
+			fallbackModelId
+		].filter(Boolean);
 		const otherAvailableModels = allAvailableModels.map((model) => ({
 			provider: model.provider || 'N/A',
 			modelId: model.id,
@@ -353,7 +380,7 @@ async function setModel(role, modelId, options = {}) {
 	}
 
 	// Validate role
-	if (!['main', 'research', 'fallback'].includes(role)) {
+	if (!['main', 'research', 'search', 'fallback'].includes(role)) {
 		return {
 			success: false,
 			error: {

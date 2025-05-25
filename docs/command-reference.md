@@ -219,6 +219,8 @@ task-master models --set-main=gpt-4o
 # Set the research model
 task-master models --set-research=sonar-pro
 
+# Set the search model (for in-depth analysis)
+task-master models --set-search=gemini-2.5-flash-preview-05-20
 
 # Set a custom Ollama model for the main role
 task-master models --set-main=my-local-llama --ollama

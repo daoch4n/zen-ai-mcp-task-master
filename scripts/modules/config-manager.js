@@ -47,6 +47,12 @@ const DEFAULTS = {
 			maxTokens: 8700,
 			temperature: 0.1
 		},
+		search: {
+			provider: 'openai',
+			modelId: 'gemini-2.5-flash-preview-05-20',
+			maxTokens: 8700, // Default to research model's maxTokens
+			temperature: 0.1 // Default to research model's temperature
+		},
 		fallback: {
 			// No default fallback provider/model initially
 			provider: 'openai',
@@ -302,6 +308,30 @@ function getResearchMaxTokens(explicitRoot = null) {
 function getResearchTemperature(explicitRoot = null) {
 	// Directly return value from config
 	return getModelConfigForRole('research', explicitRoot).temperature;
+}
+
+function getSearchProvider(explicitRoot = null) {
+	const config = getConfig(explicitRoot);
+	// If search model is not explicitly configured, fall back to research model's provider
+	return config?.models?.search?.provider || getResearchProvider(explicitRoot);
+}
+
+function getSearchModelId(explicitRoot = null) {
+	const config = getConfig(explicitRoot);
+	// If search model is not explicitly configured, fall back to research model's modelId
+	return config?.models?.search?.modelId || getResearchModelId(explicitRoot);
+}
+
+function getSearchMaxTokens(explicitRoot = null) {
+	const config = getConfig(explicitRoot);
+	// If search model is not explicitly configured, fall back to research model's maxTokens
+	return config?.models?.search?.maxTokens || getResearchMaxTokens(explicitRoot);
+}
+
+function getSearchTemperature(explicitRoot = null) {
+	const config = getConfig(explicitRoot);
+	// If search model is not explicitly configured, fall back to research model's temperature
+	return config?.models?.search?.temperature || getResearchTemperature(explicitRoot);
 }
 
 function getFallbackProvider(explicitRoot = null) {
@@ -724,6 +754,10 @@ export {
 	getResearchModelId,
 	getResearchMaxTokens,
 	getResearchTemperature,
+	getSearchProvider,
+	getSearchModelId,
+	getSearchMaxTokens,
+	getSearchTemperature,
 	getFallbackProvider,
 	getFallbackModelId,
 	getFallbackMaxTokens,

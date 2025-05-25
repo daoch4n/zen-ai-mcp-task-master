@@ -262,6 +262,9 @@ task-master update --from=4 --prompt="Now we are using MongoDB instead of Postgr
 
 # OR, if research is needed to find best practices for MongoDB:
 task-master update --from=4 --prompt="Update to use MongoDB, researching best practices" --research
+
+# OR, if in-depth analysis is needed for MongoDB:
+task-master update --from=4 --prompt="Update to use MongoDB, analyzing implications" --search
 ```
 
 This will rewrite or re-scope subsequent tasks in tasks.json while preserving completed work.

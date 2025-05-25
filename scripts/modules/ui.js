@@ -1924,6 +1924,19 @@ function displayModelConfiguration(configData, allAvailableModels = []) {
 		formatCost(active.research.cost)
 		// getCombinedStatus(active.research.keyStatus) // Removed
 	]);
+	// Add Search model if it exists
+	if (active.search) {
+		activeTable.push([
+			chalk.white('Search'),
+			active.search.provider,
+			active.search.modelId,
+			formatSweScoreWithTertileStars(
+				active.search.sweScore,
+				allAvailableModels
+			),
+			formatCost(active.search.cost)
+		]);
+	}
 	console.log(activeTable.toString());
 }
 
@@ -1972,11 +1985,15 @@ function displayAvailableModels(availableModels) {
 				) +
 				'\n' +
 				chalk.cyan(
-					`3. Run interactive setup: ${chalk.yellow('task-master models --setup')}`
+					`3. Set search model: ${chalk.yellow('task-master models --set-search <model_id>')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`4. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research <model_id>')}`
+					`4. Run interactive setup: ${chalk.yellow('task-master models --setup')}`
+				) +
+				'\n' +
+				chalk.cyan(
+					`5. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research|search <model_id>')}`
 				),
 			{
 				padding: 1,

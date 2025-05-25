@@ -98,7 +98,7 @@ async function runInteractiveSetup(projectRoot) {
 
 
 		? currentConfigResult.data.activeModels
-		: { main: null, research: null };
+		: { main: null, research: null, search: null };
 	// Handle potential config load failure gracefully for the setup flow
 	if (
 		!currentConfigResult.success &&
@@ -275,7 +275,8 @@ async function runInteractiveSetup(projectRoot) {
 
 
 	const mainPromptData = getPromptData('main');
-	const researchPromptData = getPromptData('research');
+	const researchPromptData = getPromptData('research', true); // Allow 'None' for research model
+	const searchPromptData = getPromptData('search', true); // Allow 'None' for search model
 
 	const answers = await inquirer.prompt([
 		{
@@ -291,6 +292,14 @@ async function runInteractiveSetup(projectRoot) {
 			message: 'Select the research model:',
 			choices: researchPromptData.choices,
 			default: researchPromptData.default,
+			when: (ans) => ans.mainModel !== '__CANCEL__'
+		},
+		{
+			type: 'list',
+			name: 'searchModel',
+			message: 'Select the search model (for in-depth analysis):',
+			choices: searchPromptData.choices,
+			default: searchPromptData.default,
 			when: (ans) => ans.mainModel !== '__CANCEL__'
 		},
 	]);
@@ -416,7 +425,15 @@ async function runInteractiveSetup(projectRoot) {
 	) {
 		return false; // Explicitly return false if cancelled
 	}
-
+	if (
+		!(await handleSetModel(
+			'search',
+			answers.searchModel,
+			currentModels.search?.modelId
+		))
+	) {
+		return false; // Explicitly return false if cancelled
+	}
 
 
 	if (setupSuccess && setupConfigModified) {
@@ -1901,6 +1918,7 @@ function registerCommands(programInstance) {
 		.description('Get information about available AI models or set model configurations')
 		.option('--set-main <modelId>', 'Set the primary model for task generation/updates')
 		.option('--set-research <modelId>', 'Set the model for research-backed operations')
+		.option('--set-search <modelId>', 'Set the model for in-depth analysis operations')
 		.option('--list-available-models', 'List all available models not currently in use')
 		.option('--setup', 'Run interactive setup for model configuration')
 		.option('--openrouter', 'Indicates the set model ID is a custom OpenRouter model')
@@ -1946,10 +1964,19 @@ function registerCommands(programInstance) {
 					if (result.data.warning) {
 						console.log(chalk.yellow(result.data.warning));
 					}
-
-
 				} else {
 					console.error(chalk.red(`Error setting research model: ${result.error?.message || 'Unknown'}`));
+					process.exit(1);
+				}
+			} else if (options.setSearch) {
+				const result = await setModel('search', options.setSearch, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
+				if (result.success) {
+					console.log(chalk.green(`Search model set to: ${result.data.provider} / ${result.data.modelId}`));
+					if (result.data.warning) {
+						console.log(chalk.yellow(result.data.warning));
+					}
+				} else {
+					console.error(chalk.red(`Error setting search model: ${result.error?.message || 'Unknown'}`));
 					process.exit(1);
 				}
 			} else if (options.listAvailableModels) {

@@ -12,20 +12,21 @@ https://github.com/user-attachments/assets/3212ebe3-9495-4181-bacf-65b431274fe7
 ## Requirements
 
 Taskmaster Lite utilizes OpenAI API for AI-driven commands, which requires an OpenAI-compatible API key and compatible provider (OpenAI , OpenRouter , self-hosted models not relying on Ollama etc!..) <br>
-You can define 2 types of models to be used: the main model and the research model. <br> Whichever model you decide to use, its API key must be present in either mcp.json or .env as `OPENAI_API_KEY`. <br> Any OpenAI-compatible model can be used by specifying a custom endpoint. <br>
-You can configure the main AI model using `TASKMASTER_AI_MODEL` and the research AI model using `TASKMASTER_RESEARCH_MODEL` in the `.env` file. <br> Both default to affordable option "gemini-2.5-flash-preview-05-20" if unset which works wonders on 24k thinking budget for a fraction of cost of alternative models!
+You can define 3 types of models to be used: the main model, the research model, and the search model. <br> Whichever model you decide to use, its API key must be present in either mcp.json or .env as `OPENAI_API_KEY`. <br> Any OpenAI-compatible model can be used by specifying a custom endpoint. <br>
+You can configure the main AI model using `TASKMASTER_AI_MODEL`, the research AI model using `TASKMASTER_RESEARCH_MODEL`, and the search AI model using `TASKMASTER_SEARCH_MODEL` in the `.env` file. <br> Both default to affordable option "gemini-2.5-flash-preview-05-20" if unset which works wonders on 24k thinking budget for a fraction of cost of alternative models!
 
 - Bring your own OpenAI-compatible API key
 
-- Using dedicated research model is optional but highly recommended
+- Using dedicated research and search models is optional but highly recommended
 
 ## Environment Variables
 
 The following environment variables can be configured in a `.env` file (based on `.env.example`):
 
-- `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
+- `OPENAI_API_KEY`: Your OpenAI API key. This is required for using any AI role (main, research, search, or fallback). Default: `YOUR_OPENAI_KEY_HERE`
 - `OPENAI_API_BASE_URL`: A custom endpoint for OpenAI-compatible models. Defaults to OpenAI provider
 - `TASKMASTER_AI_MODEL`: Specifies the AI model to be used for Task Master's main operations. Default: `gemini-2.5-flash-preview-05-20`
+- `TASKMASTER_SEARCH_MODEL`: Specifies the AI model to be used for in-depth analysis operations. Default: `gemini-2.5-flash-preview-05-20`
 - `TASKMASTER_RESEARCH_MODEL`: Specifies the AI model to be used for research operations. Default: `gemini-2.5-flash-preview-05-20`
 
 ## Quick Start
@@ -99,7 +100,7 @@ For a containerized environment, you can run Task Master Lite using Docker.
 3.  **Run the Docker container**:
 
     ```bash
-    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" -e OPENAI_API_BASE_URL="YOUR_OPENAI_API_BASE_URL_HERE" -e TASKMASTER_AI_MODEL="YOUR_TASKMASTER_AI_MODEL_HERE" -e TASKMASTER_RESEARCH_MODEL="YOUR_TASKMASTER_RESEARCH_MODEL_HERE" taskmaster-lite-ai
+    docker run -p 3000:3000 -e OPENAI_API_KEY="YOUR_OPENAI_KEY_HERE" -e OPENAI_API_BASE_URL="YOUR_OPENAI_API_BASE_URL_HERE" -e TASKMASTER_AI_MODEL="YOUR_TASKMASTER_AI_MODEL_HERE" -e TASKMASTER_RESEARCH_MODEL="YOUR_TASKMASTER_RESEARCH_MODEL_HERE" -e TASKMASTER_SEARCH_MODEL="YOUR_TASKMASTER_SEARCH_MODEL_HERE" taskmaster-lite-ai
     ```
 
     Ensure you replace `YOUR_OPENAI_KEY_HERE` with your actual OpenAI API key.

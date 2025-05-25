@@ -3,8 +3,10 @@ import { jest } from '@jest/globals';
 // --- Define mock functions ---
 const mockGetMainModelId = jest.fn().mockReturnValue('test-ai-model');
 const mockGetResearchModelId = jest.fn().mockReturnValue('gpt-4-turbo');
+const mockGetSearchModelId = jest.fn().mockReturnValue('test-ai-model-3'); // Mock for search model
 const mockSetMainModel = jest.fn().mockResolvedValue(true);
 const mockSetResearchModel = jest.fn().mockResolvedValue(true);
+const mockSetSearchModel = jest.fn().mockResolvedValue(true); // Mock for setSearchModel
 const mockGetAvailableModels = jest.fn().mockReturnValue([
 	{ id: 'test-ai-model', name: 'Test AI Model', provider: 'test-ai-provider' },
 	{ id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'openai' },
@@ -23,8 +25,10 @@ const mockStopLoadingIndicator = jest.fn();
 jest.unstable_mockModule('../../../scripts/modules/config-manager.js', () => ({
 	getMainModelId: mockGetMainModelId,
 	getResearchModelId: mockGetResearchModelId,
+	getSearchModelId: mockGetSearchModelId, // Add mock for getSearchModelId
 	setMainModel: mockSetMainModel,
 	setResearchModel: mockSetResearchModel,
+	setSearchModel: mockSetSearchModel, // Add mock for setSearchModel
 	getAvailableModels: mockGetAvailableModels,
 	VALID_PROVIDERS: ['test-ai-provider', 'openai']
 }));
@@ -150,6 +154,36 @@ describe('CLI Models Command (Action Handler Test)', () => {
 				}
 			}
 
+			if (options.setSearch) {
+				const modelId = options.setSearch;
+				if (typeof modelId !== 'string' || modelId.trim() === '') {
+					console.error(
+						chalk.red('Error: --set-search flag requires a valid model ID.')
+					);
+					process.exit(1);
+				}
+				const provider = findProvider(modelId);
+				if (!provider) {
+					console.error(
+						chalk.red(
+							`Error: Model ID "${modelId}" not found in available models.`
+						)
+					);
+					process.exit(1);
+				}
+				if (await configManager.setSearchModel(provider, modelId)) {
+					console.log(
+						chalk.green(
+							`Search model set to: ${modelId} (Provider: ${provider})`
+						)
+					);
+					modelSetAction = true;
+				} else {
+					console.error(chalk.red(`Failed to set search model.`));
+					process.exit(1);
+				}
+			}
+
 
 			if (!modelSetAction) {
 				const currentMain = configManager.getMainModelId();
@@ -260,22 +294,42 @@ describe('CLI Models Command (Action Handler Test)', () => {
 		);
 	});
 
+	it('should call setSearchModel with correct provider and ID', async () => {
+		const modelId = 'test-ai-model-3';
+		const expectedProvider = 'test-ai-provider';
+		await modelsAction({ setSearch: modelId });
+		expect(mockSetSearchModel).toHaveBeenCalledWith(expectedProvider, modelId);
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining(`Search model set to: ${modelId}`)
+		);
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining(`(Provider: ${expectedProvider})`)
+		);
+	});
+
 
 	it('should call all set*Model functions when all flags are used', async () => {
 		const mainModelId = 'test-ai-model';
 		const researchModelId = 'gpt-4-turbo';
+		const searchModelId = 'test-ai-model-3'; // Add search model ID
 		const mainProvider = 'test-ai-provider';
 		const researchProvider = 'openai';
+		const searchProvider = 'test-ai-provider'; // Add search provider
 
 		await modelsAction({
 			setMain: mainModelId,
-			setResearch: researchModelId
+			setResearch: researchModelId,
+			setSearch: searchModelId // Include setSearch
 		});
 		expect(mockSetMainModel).toHaveBeenCalledWith(mainProvider, mainModelId);
 		expect(mockSetResearchModel).toHaveBeenCalledWith(
 			researchProvider,
 			researchModelId
 		);
+		expect(mockSetSearchModel).toHaveBeenCalledWith(
+			searchProvider,
+			searchModelId
+		); // Verify setSearchModel call
 	});
 
 	it('should call specific get*ModelId and getAvailableModels and log table when run without flags', async () => {
@@ -283,6 +337,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 
 		expect(mockGetMainModelId).toHaveBeenCalled();
 		expect(mockGetResearchModelId).toHaveBeenCalled();
+		expect(mockGetSearchModelId).toHaveBeenCalled(); // Verify getSearchModelId call
 		expect(mockGetAvailableModels).toHaveBeenCalled();
 
 		expect(console.log).toHaveBeenCalled();
