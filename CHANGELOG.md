@@ -4,6 +4,8 @@
 
 ### Minor Changes
 
+- [`[REDACTED]`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/[REDACTED]) Thanks [@zen-ai-dev[bot]](https://github.com/zen-ai-dev)! - Remove OpenRouter AI provider and default to OpenAI.
+
 - [#521](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/521) [`ed17cb0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/ed17cb0e0a04dedde6c616f68f24f3660f68dd04) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - .taskmasterconfig now supports a baseUrl field per model role (main, research), allowing endpoint overrides for any provider.
 
 - [#536](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/536) [`f4a83ec`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/f4a83ec047b057196833e3a9b861d4bceaec805d) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - Add Ollama as a supported AI provider.

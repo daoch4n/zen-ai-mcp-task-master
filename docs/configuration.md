@@ -6,7 +6,7 @@ Taskmaster uses two primary methods for configuration:
 
     - This JSON file stores most configuration settings, including AI model selections, parameters, logging levels, and project defaults.
     - **Location:** This file is created in the root directory of your project when you run the `task-master models --setup` interactive setup. You typically do this during the initialization sequence. Do not manually edit this file beyond adjusting Temperature and Max Tokens depending on your model.
-    - **Management:** Use the `task-master models --setup` command (or `models` MCP tool) to interactively create and manage this file. You can also set specific models directly using `task-master models --set-<role>=<model_id>`, adding `--ollama` or `--openrouter` flags for custom models. Manual editing is possible but not recommended unless you understand the structure.
+    - **Management:** Use the `task-master models --setup` command (or `models` MCP tool) to interactively create and manage this file. You can also set specific models directly using `task-master models --set-<role>=<model_id>`, adding `--ollama` flag for custom models. Manual editing is possible but not recommended unless you understand the structure.
     - **Example Structure:**
       ```json
       {
@@ -52,7 +52,6 @@ Taskmaster uses two primary methods for configuration:
       - `OPENAI_API_KEY`: Your OpenAI API key.
       - `MISTRAL_API_KEY`: Your Mistral API key.
       - `AZURE_OPENAI_API_KEY`: Your Azure OpenAI API key (also requires `AZURE_OPENAI_ENDPOINT`).
-      - `OPENROUTER_API_KEY`: Your OpenRouter API key.
       - `XAI_API_KEY`: Your X-AI API key.
     - **Optional Endpoint Overrides:**
       - **Per-role `baseUrl` in `.taskmasterconfig`:** You can add a `baseUrl` property to any model role (`main`, `research`, `fallback`) to override the default API endpoint for that provider. If omitted, the provider's standard endpoint is used.

@@ -26,7 +26,6 @@ import * as openai from '../../src/ai-providers/openai.js';
 
 
 
-import * as openrouter from '../../src/ai-providers/openrouter.js';
 
 
 // Helper function to get cost for a specific model
@@ -70,11 +69,6 @@ const PROVIDER_FUNCTIONS = {
 	
 	
 	
-	openrouter: {
-		generateText: openrouter.generateOpenRouterText,
-		streamText: openrouter.streamOpenRouterText,
-		generateObject: openrouter.generateOpenRouterObject
-	},
 	
 };
 
@@ -158,7 +152,6 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		
 		
 		
-		openrouter: 'OPENROUTER_API_KEY',
 
 	};
 

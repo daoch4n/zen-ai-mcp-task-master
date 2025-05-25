@@ -183,7 +183,6 @@ describe('Validation Functions', () => {
 	test('validateProvider should return true for valid providers', () => {
 		expect(configManager.validateProvider('openai')).toBe(true);
 		expect(configManager.validateProvider('ollama')).toBe(true);
-		expect(configManager.validateProvider('openrouter')).toBe(true);
 	});
 
 	test('validateProvider should return false for invalid providers', () => {
@@ -214,14 +213,11 @@ describe('Validation Functions', () => {
 		).toBe(false);
 	});
 
-	test('validateProviderModelCombination should return true for ollama/openrouter (empty lists in map)', () => {
+	test('validateProviderModelCombination should return true for ollama (empty lists in map)', () => {
 		// Re-load config to ensure MODEL_MAP is populated from mock (now real data)
 		configManager.getConfig(MOCK_PROJECT_ROOT, true);
 		expect(
 			configManager.validateProviderModelCombination('ollama', 'any-model')
-		).toBe(false);
-		expect(
-			configManager.validateProviderModelCombination('openrouter', 'any/model')
 		).toBe(false);
 	});
 
@@ -286,8 +282,7 @@ describe('getConfig Tests', () => {
 				// Provide necessary models for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
@@ -324,8 +319,7 @@ describe('getConfig Tests', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4-turbo' }],
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
@@ -356,8 +350,7 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before parse error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
@@ -383,8 +376,7 @@ describe('getConfig Tests', () => {
 			// Mock models read needed for initial load before read error
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
@@ -511,8 +503,7 @@ describe('Getter Functions', () => {
 			if (path.basename(filePath) === 'supported-models.json') {
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);
@@ -536,8 +527,7 @@ describe('Getter Functions', () => {
 				// Provide enough mock model data for validation within getConfig
 				return JSON.stringify({
 					openai: [{ id: 'gpt-4o' }],
-					ollama: [],
-					openrouter: []
+					ollama: []
 				});
 			}
 			throw new Error(`Unexpected fs.readFileSync call: ${filePath}`);

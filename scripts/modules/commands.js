@@ -112,47 +112,6 @@ async function runInteractiveSetup(projectRoot) {
 	}
 
 	// Helper function to fetch OpenRouter models (duplicated for CLI context)
-	function fetchOpenRouterModelsCLI() {
-		return new Promise((resolve) => {
-			const options = {
-				hostname: 'openrouter.ai',
-				path: '/api/v1/models',
-				method: 'GET',
-				headers: {
-					Accept: 'application/json'
-				}
-			};
-
-			const req = https.request(options, (res) => {
-				let data = '';
-				res.on('data', (chunk) => {
-					data += chunk;
-				});
-				res.on('end', () => {
-					if (res.statusCode === 200) {
-						try {
-							const parsedData = JSON.parse(data);
-							resolve(parsedData.data || []); // Return the array of models
-						} catch (e) {
-							console.error('Error parsing OpenRouter response:', e);
-							resolve(null); // Indicate failure
-						}
-					} else {
-						console.error(
-							`OpenRouter API request failed with status code: ${res.statusCode}`
-						);
-						resolve(null); // Indicate failure
-					}
-				});
-			});
-
-			req.on('error', (e) => {
-				console.error('Error fetching OpenRouter models:', e);
-				resolve(null); // Indicate failure
-			});
-			req.end();
-		});
-	}
 
 	// Helper to get choices and default index for a role
 	const getPromptData = (role, allowNone = false) => {
@@ -176,10 +135,6 @@ async function runInteractiveSetup(projectRoot) {
 				}
 			: null;
 
-		const customOpenRouterOption = {
-			name: '* Custom OpenRouter model', // Symbol updated
-			value: '__CUSTOM_OPENROUTER__'
-		};
 
 		let choices = [];
 		let defaultIndex = 0; // Default to 'Cancel'
@@ -225,7 +180,6 @@ async function runInteractiveSetup(projectRoot) {
 			commonPrefix.push(noChangeOption);
 		}
 		commonPrefix.push(cancelOption);
-		commonPrefix.push(customOpenRouterOption);
 
 		let prefixLength = commonPrefix.length; // Initial prefix length
 
@@ -327,36 +281,7 @@ async function runInteractiveSetup(projectRoot) {
 		let providerHint = null;
 		let isCustomSelection = false;
 
-		if (selectedValue === '__CUSTOM_OPENROUTER__') {
-			isCustomSelection = true;
-			const { customId } = await inquirer.prompt([
-				{
-					type: 'input',
-					name: 'customId',
-					message: `Enter the custom OpenRouter Model ID for the ${role} role:`
-				}
-			]);
-			if (!customId) {
-				console.log(chalk.yellow('No custom ID entered. Skipping role.'));
-				return true; // Continue setup, but don't set this role
-			}
-			modelIdToSet = customId;
-			providerHint = 'openrouter';
-			// Validate against live OpenRouter list
-			const openRouterModels = await fetchOpenRouterModelsCLI();
-			if (
-				!openRouterModels ||
-				!openRouterModels.some((m) => m.id === modelIdToSet)
-			) {
-				console.error(
-					chalk.red(
-						`Error: Model ID "${modelIdToSet}" not found in the live OpenRouter model list. Please check the ID.`
-					)
-				);
-				setupSuccess = false;
-				return true; // Continue setup, but mark as failed
-			}
-		} else if (
+		if (
 			selectedValue &&
 			typeof selectedValue === 'object' &&
 			selectedValue.id
@@ -1921,7 +1846,6 @@ function registerCommands(programInstance) {
 		.option('--set-search <modelId>', 'Set the model for research-backed subtask generation/task updates operations')
 		.option('--list-available-models', 'List all available models not currently in use')
 		.option('--setup', 'Run interactive setup for model configuration')
-		.option('--openrouter', 'Indicates the set model ID is a custom OpenRouter model')
 		.option('--ollama', 'Indicates the set model ID is a custom Ollama model')
 		.action(async (options) => {
 			const projectRoot = findProjectRoot();
@@ -1947,7 +1871,7 @@ function registerCommands(programInstance) {
 			}
 
 			if (options.setMain) {
-				const result = await setModel('main', options.setMain, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
+				const result = await setModel('main', options.setMain, { projectRoot, ollama: options.ollama });
 				if (result.success) {
 					console.log(chalk.green(`Main model set to: ${result.data.provider} / ${result.data.modelId}`));
 					if (result.data.warning) {
@@ -1958,7 +1882,7 @@ function registerCommands(programInstance) {
 					process.exit(1);
 				}
 			} else if (options.setResearch) {
-				const result = await setModel('research', options.setResearch, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
+				const result = await setModel('research', options.setResearch, { projectRoot, ollama: options.ollama });
 				if (result.success) {
 					console.log(chalk.green(`In-depth analysis model set to: ${result.data.provider} / ${result.data.modelId}`));
 					if (result.data.warning) {
@@ -1969,7 +1893,7 @@ function registerCommands(programInstance) {
 					process.exit(1);
 				}
 			} else if (options.setSearch) {
-				const result = await setModel('search', options.setSearch, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
+				const result = await setModel('search', options.setSearch, { projectRoot, ollama: options.ollama });
 				if (result.success) {
 					console.log(chalk.green(`Research-backed subtask generation/task updates model set to: ${result.data.provider} / ${result.data.modelId}`));
 					if (result.data.warning) {

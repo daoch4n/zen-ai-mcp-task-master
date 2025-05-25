@@ -225,8 +225,6 @@ task-master models --set-search=gemini-2.5-flash-preview-05-20
 # Set a custom Ollama model for the main role
 task-master models --set-main=my-local-llama --ollama
 
-# Set a custom OpenRouter model for the research role
-task-master models --set-research=openai/gpt-4o --openrouter
 
 # Run interactive setup to configure models, including custom ones
 task-master models --setup

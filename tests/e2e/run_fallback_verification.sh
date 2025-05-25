@@ -185,7 +185,6 @@ jq -c 'to_entries[] | .key as $provider | .value[] | select(.allowed_roles[]? ==
 
     log_info "--- Verifying: $provider / $model_id ---"
 
-    if [ "$provider" == "openrouter" ]; then flag="--openrouter"; fi
     if [ "$provider" == "ollama" ]; then flag="--ollama"; fi
 
     if ! command -v task-master &> /dev/null; then

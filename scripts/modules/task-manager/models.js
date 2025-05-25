@@ -26,47 +26,6 @@ import {
  * Fetches the list of models from OpenRouter API.
  * @returns {Promise<Array|null>} A promise that resolves with the list of model IDs or null if fetch fails.
  */
-function fetchOpenRouterModels() {
-	return new Promise((resolve) => {
-		const options = {
-			hostname: 'openrouter.ai',
-			path: '/api/v1/models',
-			method: 'GET',
-			headers: {
-				Accept: 'application/json'
-			}
-		};
-
-		const req = https.request(options, (res) => {
-			let data = '';
-			res.on('data', (chunk) => {
-				data += chunk;
-			});
-			res.on('end', () => {
-				if (res.statusCode === 200) {
-					try {
-						const parsedData = JSON.parse(data);
-						resolve(parsedData.data || []); // Return the array of models
-					} catch (e) {
-						console.error('Error parsing OpenRouter response:', e);
-						resolve(null); // Indicate failure
-					}
-				} else {
-					console.error(
-						`OpenRouter API request failed with status code: ${res.statusCode}`
-					);
-					resolve(null); // Indicate failure
-				}
-			});
-		});
-
-		req.on('error', (e) => {
-			console.error('Error fetching OpenRouter models:', e);
-			resolve(null); // Indicate failure
-		});
-		req.end();
-	});
-}
 
 /**
  * Get the current model configuration
@@ -424,25 +383,7 @@ async function setModel(role, modelId, options = {}) {
 			} else {
 				// Either not found internally, OR found but under a DIFFERENT provider than hinted.
 				// Proceed with custom logic based ONLY on the hint.
-				if (providerHint === 'openrouter') {
-					// Check OpenRouter ONLY because hint was openrouter
-					report('info', `Checking OpenRouter for ${modelId} (as hinted)...`);
-					const openRouterModels = await fetchOpenRouterModels();
-
-					if (
-						openRouterModels &&
-						openRouterModels.some((m) => m.id === modelId)
-					) {
-						determinedProvider = 'openrouter';
-						warningMessage = `Warning: Custom OpenRouter model '${modelId}' set. This model is not officially validated by Taskmaster and may not function as expected.`;
-						report('warn', warningMessage);
-					} else {
-						// Hinted as OpenRouter but not found in live check
-						throw new Error(
-							`Model ID "${modelId}" not found in the live OpenRouter model list. Please verify the ID and ensure it's available on OpenRouter.`
-						);
-					}
-				} else if (providerHint === 'ollama') {
+				if (providerHint === 'ollama') {
 					// Hinted as Ollama - set provider directly WITHOUT checking OpenRouter
 					determinedProvider = 'ollama';
 					warningMessage = `Warning: Custom Ollama model '${modelId}' set. Ensure your Ollama server is running and has pulled this model. Taskmaster cannot guarantee compatibility.`;

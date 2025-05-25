@@ -415,13 +415,12 @@ log_step() {
 
   # Define providers, models, and flags
   # Array order matters: providers[i] corresponds to models[i] and flags[i]
-  declare -a providers=("openai" "openrouter")
+  declare -a providers=("openai")
   declare -a models=(
     "gpt-4o"
-    "openai/gpt-4o" # OpenRouter uses OpenAI models
   )
-  # Flags: Add provider-specific flags here, e.g., --openrouter. Use empty string if none.
-  declare -a flags=("" "--openrouter")
+  # Flags: Add provider-specific flags here. Use empty string if none.
+  declare -a flags=("")
 
   # Consistent prompt for all providers
   add_task_prompt="Create a task to implement user authentication using OAuth 2.0 with a generic provider. Include steps for registering the app, handling the callback, and storing user sessions."
