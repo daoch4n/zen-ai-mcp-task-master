@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- [#521](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/521) [`ed17cb0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/ed17cb0e0a04dedde6c616f68f24f3660f68dd04) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - .taskmasterconfig now supports a baseUrl field per model role (main, research, fallback), allowing endpoint overrides for any provider.
+- [#521](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/521) [`ed17cb0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/ed17cb0e0a04dedde6c616f68f24f3660f68dd04) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - .taskmasterconfig now supports a baseUrl field per model role (main, research), allowing endpoint overrides for any provider.
 
 - [#536](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/536) [`f4a83ec`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/f4a83ec047b057196833e3a9b861d4bceaec805d) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - Add Ollama as a supported AI provider.
 
@@ -48,7 +48,6 @@
 
   - Closes #419
 
-- [#435](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/435) [`a96215a`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/a96215a359b25061fd3b3f3c7b10e8ac0390c062) Thanks [@lebsral](https://github.com/lebsral)! - Fix default fallback model and maxTokens in Taskmaster initialization
 
 - [#517](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/517) [`e96734a`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/e96734a6cc6fec7731de72eb46b182a6e3743d02) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - Fix bug when updating tasks on the MCP server (#412)
 
@@ -82,7 +81,7 @@
 
 ### Minor Changes
 
-- [#521](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/521) [`ed17cb0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/ed17cb0e0a04dedde6c616f68f24f3660f68dd04) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - .taskmasterconfig now supports a baseUrl field per model role (main, research, fallback), allowing endpoint overrides for any provider.
+- [#521](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/521) [`ed17cb0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/ed17cb0e0a04dedde6c616f68f24f3660f68dd04) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - .taskmasterconfig now supports a baseUrl field per model role (main, research), allowing endpoint overrides for any provider.
 
 - [#528](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/528) [`58b417a`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/58b417a8ce697e655f749ca4d759b1c20014c523) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - Display task complexity scores in task lists, next task, and task details views.
 
@@ -108,7 +107,6 @@
 
   - Closes #419
 
-- [#435](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/435) [`a96215a`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/a96215a359b25061fd3b3f3c7b10e8ac0390c062) Thanks [@lebsral](https://github.com/lebsral)! - Fix default fallback model and maxTokens in Taskmaster initialization
 
 - [#517](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/517) [`e96734a`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/e96734a6cc6fec7731de72eb46b182a6e3743d02) Thanks [@Crunchyman-ralph](https://github.com/Crunchyman-ralph)! - Fix bug when updating tasks on the MCP server (#412)
 
@@ -137,7 +135,7 @@
 
 - [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`87d97bb`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/87d97bba00d84e905756d46ef96b2d5b984e0f38) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds support for the OpenRouter AI provider. Users can now configure models available through OpenRouter (requiring an `OPENROUTER_API_KEY`) via the `task-master models` command, granting access to a wide range of additional LLMs. - IMPORTANT FYI ABOUT OPENROUTER: Taskmaster relies on AI SDK, which itself relies on tool use. It looks like **free** models sometimes do not include tool use. For example, Gemini 2.5 pro (free) failed via OpenRouter (no tool use) but worked fine on the paid version of the model. Custom model support for Open Router is considered experimental and likely will not be further improved for some time.
 
-- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`1ab836f`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/1ab836f191cb8969153593a9a0bd47fc9aa4a831) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds model management and new configuration file .taskmasterconfig which houses the models used for main, research and fallback. Adds models command and setter flags. Adds a --setup flag with an interactive setup. We should be calling this during init. Shows a table of active and available models when models is called without flags. Includes SWE scores and token costs, which are manually entered into the supported_models.json, the new place where models are defined for support. Config-manager.js is the core module responsible for managing the new config."
+- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`1ab836f`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/1ab836f191cb8969153593a9a0bd47fc9aa4a831) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds model management and new configuration file .taskmasterconfig which houses the models used for main, and research. Adds models command and setter flags. Adds a --setup flag with an interactive setup. We should be calling this during init. Shows a table of active and available models when models is called without flags. Includes SWE scores and token costs, which are manually entered into the supported_models.json, the new place where models are defined for support. Config-manager.js is the core module responsible for managing the new config."
 
 - [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`c8722b0`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/c8722b0a7a443a73b95d1bcd4a0b68e0fce2a1cd) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds custom model ID support for Ollama and OpenRouter providers.
 
@@ -190,7 +188,7 @@
 
 - [#328](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/328) [`5a2371b`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/5a2371b7cc0c76f5e95d43921c1e8cc8081bf14e) Thanks [@knoxgraeme](https://github.com/knoxgraeme)! - Fix --task to --num-tasks in ui + related tests - issue #324
 
-- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`6cb213e`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/6cb213ebbd51116ae0688e35b575d09443d17c3b) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds a 'models' CLI and MCP command to get the current model configuration, available models, and gives the ability to set main/research/fallback models." - In the CLI, `task-master models` shows the current models config. Using the `--setup` flag launches an interactive set up that allows you to easily select the models you want to use for each of the three roles. Use `q` during the interactive setup to cancel the setup. - In the MCP, responses are simplified in RESTful format (instead of the full CLI output). The agent can use the `models` tool with different arguments, including `listAvailableModels` to get available models. Run without arguments, it will return the current configuration. Arguments are available to set the model for each of the three roles. This allows you to manage Taskmaster AI providers and models directly from either the CLI or MCP or both. - Updated the CLI help menu when you run `task-master` to include missing commands and .taskmasterconfig information. - Adds `--research` flag to `add-task` so you can hit up Perplexity right from the add-task flow, rather than having to add a task and then update it.
+- [#240](https://github.com/zen-ai/zen-ai-mcp-task-master/pull/240) [`6cb213e`](https://github.com/zen-ai/zen-ai-mcp-task-master/commit/66ac9ab9f66d006da518d6e8a3244e708af2764d) Thanks [@eyaltoledano](https://github.com/eyaltoledano)! - Adds a 'models' CLI and MCP command to get the current model configuration, available models, and gives the ability to set main/research models." - In the CLI, `task-master models` shows the current models config. Using the `--setup` flag launches an interactive set up that allows you to easily select the models you want to use for each of the two roles. Use `q` during the interactive setup to cancel the setup. - In the MCP, responses are simplified in RESTful format (instead of the full CLI output). The agent can use the `models` tool with different arguments, including `listAvailableModels` to get available models. Run without arguments, it will return the current configuration. Arguments are available to set the model for each of the two roles. This allows you to manage Taskmaster AI providers and models directly from either the CLI or MCP or both. - Updated the CLI help menu when you run `task-master` to include missing commands and .taskmasterconfig information. - Adds `--research` flag to `add-task` so you can hit up Perplexity right from the add-task flow, rather than having to add a task and then update it.
 
 ## 0.12.1
 
@@ -262,7 +260,6 @@
     - Smoother project start: **Improved the guidance provided to AI assistants immediately after setup** (related to `init` and `parse-prd` steps). This ensures the AI doesn't go on a tangent deciding its own workflow, and follows the exact process outlined in the Taskmaster workflow.
   - **Clearer Error Messages:**
     - When generating subtasks fails, error messages are now clearer, **including specific task IDs and potential suggestions.**
-    - AI fallback from AI to Perplexity now also works the other way around. If Perplexity is down, will switch to AI.
   - **Simplified Setup & Configuration:**
     - Made it clearer how to configure API keys depending on whether you're using the command-line tool (`.env` file) or an integrated tool (`.cursor/mcp.json` file).
     - Taskmaster is now better at automatically finding your project files, especially in integrated tools, reducing the need for manual path settings.

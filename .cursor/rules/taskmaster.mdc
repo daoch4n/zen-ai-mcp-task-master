@@ -63,7 +63,8 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 *   **Key MCP Parameters/Options:**
     *   `setMain <model_id>`: `Set the primary model ID for task generation/updates.` (CLI: `--set-main <model_id>`)
     *   `setResearch <model_id>`: `Set the model ID for research-backed operations.` (CLI: `--set-research <model_id>`)
-    *   `setFallback <model_id>`: `Set the model ID to use if the primary fails.` (CLI: `--set-fallback <model_id>`)
+:start_line:63
+-------
     *   `ollama <boolean>`: `Indicates the set model ID is a custom Ollama model.` (CLI: `--ollama`)
     *   `openrouter <boolean>`: `Indicates the set model ID is a custom OpenRouter model.` (CLI: `--openrouter`)
     *   `listAvailableModels <boolean>`: `If true, lists available models not currently assigned to a role.` (CLI: No direct equivalent; CLI lists available automatically)
@@ -71,7 +72,8 @@ This document provides a detailed reference for interacting with Taskmaster, cov
 *   **Key CLI Options:**
     *   `--set-main <model_id>`: `Set the primary model.`
     *   `--set-research <model_id>`: `Set the research model.`
-    *   `--set-fallback <model_id>`: `Set the fallback model.`
+:start_line:74
+-------
     *   `--ollama`: `Specify that the provided model ID is for Ollama (use with --set-*).`
     *   `--openrouter`: `Specify that the provided model ID is for OpenRouter (use with --set-*). Validates against OpenRouter API.`
     *   `--setup`: `Run interactive setup to configure models, including custom Ollama/OpenRouter IDs.`

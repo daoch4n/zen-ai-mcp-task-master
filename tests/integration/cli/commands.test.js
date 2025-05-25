@@ -3,10 +3,8 @@ import { jest } from '@jest/globals';
 // --- Define mock functions ---
 const mockGetMainModelId = jest.fn().mockReturnValue('test-ai-model');
 const mockGetResearchModelId = jest.fn().mockReturnValue('gpt-4-turbo');
-const mockGetFallbackModelId = jest.fn().mockReturnValue('test-ai-model-2');
 const mockSetMainModel = jest.fn().mockResolvedValue(true);
 const mockSetResearchModel = jest.fn().mockResolvedValue(true);
-const mockSetFallbackModel = jest.fn().mockResolvedValue(true);
 const mockGetAvailableModels = jest.fn().mockReturnValue([
 	{ id: 'test-ai-model', name: 'Test AI Model', provider: 'test-ai-provider' },
 	{ id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'openai' },
@@ -25,10 +23,8 @@ const mockStopLoadingIndicator = jest.fn();
 jest.unstable_mockModule('../../../scripts/modules/config-manager.js', () => ({
 	getMainModelId: mockGetMainModelId,
 	getResearchModelId: mockGetResearchModelId,
-	getFallbackModelId: mockGetFallbackModelId,
 	setMainModel: mockSetMainModel,
 	setResearchModel: mockSetResearchModel,
-	setFallbackModel: mockSetFallbackModel,
 	getAvailableModels: mockGetAvailableModels,
 	VALID_PROVIDERS: ['test-ai-provider', 'openai']
 }));
@@ -154,40 +150,10 @@ describe('CLI Models Command (Action Handler Test)', () => {
 				}
 			}
 
-			if (options.setFallback) {
-				const modelId = options.setFallback;
-				if (typeof modelId !== 'string' || modelId.trim() === '') {
-					console.error(
-						chalk.red('Error: --set-fallback flag requires a valid model ID.')
-					);
-					process.exit(1);
-				}
-				const provider = findProvider(modelId);
-				if (!provider) {
-					console.error(
-						chalk.red(
-							`Error: Model ID "${modelId}" not found in available models.`
-						)
-					);
-					process.exit(1);
-				}
-				if (await configManager.setFallbackModel(provider, modelId)) {
-					console.log(
-						chalk.green(
-							`Fallback model set to: ${modelId} (Provider: ${provider})`
-						)
-					);
-					modelSetAction = true;
-				} else {
-					console.error(chalk.red(`Failed to set fallback model.`));
-					process.exit(1);
-				}
-			}
 
 			if (!modelSetAction) {
 				const currentMain = configManager.getMainModelId();
 				const currentResearch = configManager.getResearchModelId();
-				const currentFallback = configManager.getFallbackModelId();
 
 				if (!availableModels || availableModels.length === 0) {
 					console.log(chalk.yellow('No models defined in configuration.'));
@@ -203,8 +169,7 @@ describe('CLI Models Command (Action Handler Test)', () => {
 						model.name || 'N/A',
 						model.provider || 'N/A',
 						model.id === currentMain ? chalk.green('   ✓') : '',
-						model.id === currentResearch ? chalk.green('     ✓') : '',
-						model.id === currentFallback ? chalk.green('     ✓') : ''
+						model.id === currentResearch ? chalk.green('     ✓') : ''
 					]);
 				});
 
@@ -295,43 +260,21 @@ describe('CLI Models Command (Action Handler Test)', () => {
 		);
 	});
 
-	it('should call setFallbackModel with correct provider and ID', async () => {
-		const modelId = 'test-ai-model-2';
-		const expectedProvider = 'test-ai-provider';
-		await modelsAction({ setFallback: modelId });
-		expect(mockSetFallbackModel).toHaveBeenCalledWith(
-			expectedProvider,
-			modelId
-		);
-		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining(`Fallback model set to: ${modelId}`)
-		);
-		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining(`(Provider: ${expectedProvider})`)
-		);
-	});
 
 	it('should call all set*Model functions when all flags are used', async () => {
 		const mainModelId = 'test-ai-model';
 		const researchModelId = 'gpt-4-turbo';
-		const fallbackModelId = 'test-ai-model-2';
 		const mainProvider = 'test-ai-provider';
 		const researchProvider = 'openai';
-		const fallbackProvider = 'test-ai-provider';
 
 		await modelsAction({
 			setMain: mainModelId,
-			setResearch: researchModelId,
-			setFallback: fallbackModelId
+			setResearch: researchModelId
 		});
 		expect(mockSetMainModel).toHaveBeenCalledWith(mainProvider, mainModelId);
 		expect(mockSetResearchModel).toHaveBeenCalledWith(
 			researchProvider,
 			researchModelId
-		);
-		expect(mockSetFallbackModel).toHaveBeenCalledWith(
-			fallbackProvider,
-			fallbackModelId
 		);
 	});
 
@@ -340,7 +283,6 @@ describe('CLI Models Command (Action Handler Test)', () => {
 
 		expect(mockGetMainModelId).toHaveBeenCalled();
 		expect(mockGetResearchModelId).toHaveBeenCalled();
-		expect(mockGetFallbackModelId).toHaveBeenCalled();
 		expect(mockGetAvailableModels).toHaveBeenCalled();
 
 		expect(console.log).toHaveBeenCalled();

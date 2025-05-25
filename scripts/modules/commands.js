@@ -95,8 +95,10 @@ async function runInteractiveSetup(projectRoot) {
 
 	const currentConfigResult = await getModelConfiguration({ projectRoot });
 	const currentModels = currentConfigResult.success
+
+
 		? currentConfigResult.data.activeModels
-		: { main: null, research: null, fallback: null };
+		: { main: null, research: null };
 	// Handle potential config load failure gracefully for the setup flow
 	if (
 		!currentConfigResult.success &&
@@ -270,9 +272,10 @@ async function runInteractiveSetup(projectRoot) {
 	};
 
 	// --- Generate choices using the helper ---
+
+
 	const mainPromptData = getPromptData('main');
 	const researchPromptData = getPromptData('research');
-	const fallbackPromptData = getPromptData('fallback', true); // Allow 'None' for fallback
 
 	const answers = await inquirer.prompt([
 		{
@@ -290,17 +293,7 @@ async function runInteractiveSetup(projectRoot) {
 			default: researchPromptData.default,
 			when: (ans) => ans.mainModel !== '__CANCEL__'
 		},
-		{
-			type: 'list',
-			name: 'fallbackModel',
-			message: 'Select the fallback model (optional):',
-			choices: fallbackPromptData.choices,
-			default: fallbackPromptData.default,
-			when: (ans) =>
-				ans.mainModel !== '__CANCEL__' && ans.researchModel !== '__CANCEL__'
-		}
 	]);
-
 	let setupSuccess = true;
 	let setupConfigModified = false;
 	const coreOptionsSetup = { projectRoot }; // Pass root for setup actions
@@ -362,10 +355,6 @@ async function runInteractiveSetup(projectRoot) {
 			// Standard model selected from list
 			modelIdToSet = selectedValue.id;
 			providerHint = selectedValue.provider; // Provider is known
-		} else if (selectedValue === null && role === 'fallback') {
-			// Handle disabling fallback
-			modelIdToSet = null;
-			providerHint = null;
 		} else if (selectedValue) {
 			console.error(
 				chalk.red(
@@ -403,28 +392,6 @@ async function runInteractiveSetup(projectRoot) {
 					);
 					setupSuccess = false;
 				}
-			} else if (role === 'fallback') {
-				// Disable fallback model
-				const currentCfg = getConfig(projectRoot);
-				if (currentCfg?.models?.fallback?.modelId) {
-					// Check if it was actually set before clearing
-					currentCfg.models.fallback = {
-						...currentCfg.models.fallback,
-						provider: undefined,
-						modelId: undefined
-					};
-					if (writeConfig(currentCfg, projectRoot)) {
-						console.log(chalk.blue('Fallback model disabled.'));
-						setupConfigModified = true;
-					} else {
-						console.error(
-							chalk.red('Failed to disable fallback model in config file.')
-						);
-						setupSuccess = false;
-					}
-				} else {
-					console.log(chalk.blue('Fallback model was already disabled.'));
-				}
 			}
 		}
 		return true; // Indicate setup should continue
@@ -449,15 +416,8 @@ async function runInteractiveSetup(projectRoot) {
 	) {
 		return false; // Explicitly return false if cancelled
 	}
-	if (
-		!(await handleSetModel(
-			'fallback',
-			answers.fallbackModel,
-			currentModels.fallback?.modelId // <--- Now 'currentModels' is defined
-		))
-	) {
-		return false; // Explicitly return false if cancelled
-	}
+
+
 
 	if (setupSuccess && setupConfigModified) {
 		console.log(chalk.green.bold('\nModel setup complete!'));
@@ -1941,7 +1901,6 @@ function registerCommands(programInstance) {
 		.description('Get information about available AI models or set model configurations')
 		.option('--set-main <modelId>', 'Set the primary model for task generation/updates')
 		.option('--set-research <modelId>', 'Set the model for research-backed operations')
-		.option('--set-fallback <modelId>', 'Set the model to use if the primary fails')
 		.option('--list-available-models', 'List all available models not currently in use')
 		.option('--setup', 'Run interactive setup for model configuration')
 		.option('--openrouter', 'Indicates the set model ID is a custom OpenRouter model')
@@ -1987,19 +1946,10 @@ function registerCommands(programInstance) {
 					if (result.data.warning) {
 						console.log(chalk.yellow(result.data.warning));
 					}
+
+
 				} else {
 					console.error(chalk.red(`Error setting research model: ${result.error?.message || 'Unknown'}`));
-					process.exit(1);
-				}
-			} else if (options.setFallback) {
-				const result = await setModel('fallback', options.setFallback, { projectRoot, openrouter: options.openrouter, ollama: options.ollama });
-				if (result.success) {
-					console.log(chalk.green(`Fallback model set to: ${result.data.provider} / ${result.data.modelId}`));
-					if (result.data.warning) {
-						console.log(chalk.yellow(result.data.warning));
-					}
-				} else {
-					console.error(chalk.red(`Error setting fallback model: ${result.error?.message || 'Unknown'}`));
 					process.exit(1);
 				}
 			} else if (options.listAvailableModels) {

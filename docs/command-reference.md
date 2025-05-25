@@ -219,8 +219,6 @@ task-master models --set-main=gpt-4o
 # Set the research model
 task-master models --set-research=sonar-pro
 
-# Set the fallback model
-task-master models --set-fallback=gpt-4o
 
 # Set a custom Ollama model for the main role
 task-master models --set-main=my-local-llama --ollama

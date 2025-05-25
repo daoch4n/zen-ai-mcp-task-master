@@ -6,8 +6,8 @@ set -u
 set -o pipefail
 
 # --- Default Settings ---
-run_verification_test=true
-
+:start_line:9
+-------
 # --- Argument Parsing ---
 # Simple loop to check for the skip flag
 # Note: This needs to happen *before* the main block piped to tee
@@ -16,11 +16,6 @@ run_verification_test=true
 processed_args=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --skip-verification)
-      run_verification_test=false
-      echo "[INFO] Argument '--skip-verification' detected. Fallback verification will be skipped."
-      shift # Consume the flag
-      ;;
     --analyze-log)
       # Keep the analyze-log flag handling separate for now
       # It exits early, so doesn't conflict with the main run flags
@@ -256,13 +251,8 @@ log_step() {
   # called *inside* this block depend on it. If not, it can be removed.
   start_time_for_helpers=$(date +%s) # Keep if needed by helpers called inside this block
 
-  # Log the verification decision
-  if [ "$run_verification_test" = true ]; then
-      log_info "Fallback verification test will be run as part of this E2E test."
-  else
-      log_info "Fallback verification test will be SKIPPED (--skip-verification flag detected)."
-  fi
-
+:start_line:260
+-------
   # --- Dependency Checks ---
   log_step "Checking for dependencies (jq, bc)"
   if ! command -v jq &> /dev/null; then
@@ -399,9 +389,8 @@ log_step() {
   task-master models --set-research gpt-4o
   log_success "Set research model."
 
-  log_step "Setting fallback model"
-  task-master models --set-fallback gpt-4o
-  log_success "Set fallback model."
+:start_line:402
+-------
 
   log_step "Checking final model configuration"
   task-master models > models_final_config.log
@@ -413,33 +402,8 @@ log_step() {
 
   # === End Model Commands Test ===
 
-  # === Fallback Model generateObjectService Verification ===
-  if [ "$run_verification_test" = true ]; then
-    log_step "Starting Fallback Model (generateObjectService) Verification (Calls separate script)"
-    verification_script_path="$ORIGINAL_DIR/tests/e2e/run_fallback_verification.sh"
-
-    if [ -x "$verification_script_path" ]; then
-        log_info "--- Executing Fallback Verification Script: $verification_script_path ---"
-        verification_output=$("$verification_script_path" "$(pwd)" 2>&1)
-        verification_exit_code=$?
-        echo "$verification_output"
-        extract_and_sum_cost "$verification_output"
-
-        log_info "--- Finished Fallback Verification Script Execution (Exit Code: $verification_exit_code) ---"
-
-        # Log success/failure based on captured exit code
-        if [ $verification_exit_code -eq 0 ]; then
-            log_success "Fallback verification script reported success."
-        else
-            log_error "Fallback verification script reported FAILURE (Exit Code: $verification_exit_code)."
-        fi
-    else
-        log_error "Fallback verification script not found or not executable at $verification_script_path. Skipping verification."
-    fi
-  else
-      log_info "Skipping Fallback Verification test as requested by flag."
-  fi
-  # === END Verification Section ===
+:start_line:416
+-------
 
 
   # === Multi-Provider Add-Task Test (Keep as is) ===

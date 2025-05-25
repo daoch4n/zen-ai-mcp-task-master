@@ -425,11 +425,6 @@ function displayHelp() {
 					args: '<model_id>',
 					desc: 'Set the model for research operations'
 				},
-				{
-					name: 'models --set-fallback',
-					args: '<model_id>',
-					desc: 'Set the fallback model (optional)'
-				}
 			]
 		},
 		{
@@ -1929,28 +1924,6 @@ function displayModelConfiguration(configData, allAvailableModels = []) {
 		formatCost(active.research.cost)
 		// getCombinedStatus(active.research.keyStatus) // Removed
 	]);
-	if (active.fallback && active.fallback.provider && active.fallback.modelId) {
-		activeTable.push([
-			chalk.white('Fallback'),
-			active.fallback.provider,
-			active.fallback.modelId,
-			formatSweScoreWithTertileStars(
-				active.fallback.sweScore,
-				allAvailableModels
-			),
-			formatCost(active.fallback.cost)
-			// getCombinedStatus(active.fallback.keyStatus) // Removed
-		]);
-	} else {
-		activeTable.push([
-			chalk.white('Fallback'),
-			chalk.gray('-'),
-			chalk.gray('(Not Set)'),
-			chalk.gray('-'),
-			chalk.gray('-')
-			// chalk.gray('-') // Removed
-		]);
-	}
 	console.log(activeTable.toString());
 }
 
@@ -1999,15 +1972,11 @@ function displayAvailableModels(availableModels) {
 				) +
 				'\n' +
 				chalk.cyan(
-					`3. Set fallback model: ${chalk.yellow('task-master models --set-fallback <model_id>')}`
+					`3. Run interactive setup: ${chalk.yellow('task-master models --setup')}`
 				) +
 				'\n' +
 				chalk.cyan(
-					`4. Run interactive setup: ${chalk.yellow('task-master models --setup')}`
-				) +
-				'\n' +
-				chalk.cyan(
-					`5. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research|fallback <model_id>')}`
+					`4. Use custom ollama/openrouter models: ${chalk.yellow('task-master models --openrouter|ollama --set-main|research <model_id>')}`
 				),
 			{
 				padding: 1,
