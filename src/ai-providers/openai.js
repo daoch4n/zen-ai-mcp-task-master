@@ -49,7 +49,7 @@ export async function generateOpenAIText(params) {
 		throw new Error('Invalid or empty messages array provided for OpenAI.');
 	}
 
-	const openaiClient = getClient(apiKey, baseUrl);
+	const openaiClient = getAiSdkClient(apiKey, baseUrl);
 
 	try {
 		const result = await generateText({
@@ -113,7 +113,7 @@ export async function streamOpenAIText(params) {
 		);
 	}
 
-	const openaiClient = getClient(apiKey, baseUrl);
+	const openaiClient = getAiSdkClient(apiKey, baseUrl);
 
 	try {
 		const stream = await openaiClient.chat.stream(messages, {
