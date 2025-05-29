@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import boxen from 'boxen';
@@ -91,13 +92,63 @@ async function addTask(
 			consoleLog(level, message);
 		}
 	};
+const tasksDirectory = path.dirname(tasksPath);
+		if (!fs.existsSync(tasksDirectory)) {
+			try {
+				report(`Creating missing tasks directory: ${tasksDirectory}`, 'info');
+				fs.mkdirSync(tasksDirectory, { recursive: true });
+			} catch (mkdirError) {
+				if (mkdirError.code === 'EACCES') {
+					report(
+						`Permission denied when attempting to create tasks directory: ${tasksDirectory}`,
+						'error'
+					);
+					throw new Error(
+						`Permission denied to create directory ${tasksDirectory}. Please check your permissions.`
+					);
+				} else {
+					report(
+						`Error creating tasks directory ${tasksDirectory}: ${mkdirError.message}`,
+						'error'
+					);
+					throw new Error(
+						`Failed to create directory ${tasksDirectory}: ${mkdirError.message}`
+					);
+				}
+			}
+		}
 
 	try {
 		// Read the existing tasks
-		const data = readJSON(tasksPath);
+		let data = readJSON(tasksPath);
 		if (!data || !data.tasks) {
-			report('Invalid or missing tasks.json.', 'error');
-			throw new Error('Invalid or missing tasks.json.');
+			report(
+				'tasks.json is missing, empty, or invalid. Initializing with empty tasks array.',
+				'warn'
+			);
+			data = { tasks: [] };
+			try {
+				writeJSON(tasksPath, data);
+				report('Successfully initialized tasks.json.', 'info');
+			} catch (writeError) {
+				if (writeError.code === 'EACCES') {
+					report(
+						`Permission denied when attempting to write initial tasks.json: ${tasksPath}`,
+						'error'
+					);
+					throw new Error(
+						`Permission denied to write file ${tasksPath}. Please check your permissions.`
+					);
+				} else {
+					report(
+						`Error writing initial tasks.json ${tasksPath}: ${writeError.message}`,
+						'error'
+					);
+					throw new Error(
+						`Failed to write initial tasks.json ${tasksPath}: ${writeError.message}`
+					);
+				}
+			}
 		}
 
 		// Find the highest task ID to determine the next ID
