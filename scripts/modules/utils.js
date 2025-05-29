@@ -189,7 +189,9 @@ function log(level, ...args) {
 		} catch (fileError) {
 			console.error(chalk.red(`Error writing to log file ${LOG_FILE_PATH}: ${fileError.message}`));
 		}
-	}
+
+	
+}
 }
 
 /**
@@ -210,7 +212,7 @@ function readJSON(filepath) {
 			// Use log utility for debug output too
 			log('error', 'Full error details:', error);
 		}
-		return null;
+		throw error;
 	}
 }
 
@@ -235,6 +237,34 @@ function writeJSON(filepath, data) {
 			// Use log utility for debug output too
 			log('error', 'Full error details:', error);
 		}
+	
+throw error;
+	}
+}
+
+/**
+ * Ensures a directory exists, creating it if it doesn't.
+ * Reports errors if directory creation fails (e.g., permissions).
+ * @param {string} directoryPath - The path to the directory to ensure existence.
+ * @returns {void}
+ * @throws {Error} If directory creation fails due to permissions or other I/O issues.
+ */
+function ensureDirectoryExists(directoryPath) {
+	const isDebug = getDebugFlag();
+	try {
+		if (!fs.existsSync(directoryPath)) {
+			log('debug', `Creating directory: ${directoryPath}`);
+			fs.mkdirSync(directoryPath, { recursive: true });
+			log('info', `Directory created: ${directoryPath}`);
+		}
+	} catch (error) {
+		const errorMessage = `Failed to create directory ${directoryPath}: ${error.message}`;
+		log('error', errorMessage);
+		if (isDebug) {
+			log('error', 'Full error details:', error);
+		}
+		// Re-throw with a more specific error message for external handling
+		throw new Error(`FILE_SYSTEM_ERROR: ${errorMessage}`);
 	}
 }
 
@@ -274,8 +304,8 @@ function readComplexityReport(customPath = null) {
 			log('error', 'Full error details:', error);
 		}
 		return null;
-	}
 }
+	}
 
 /**
  * Finds a task analysis in the complexity report
@@ -644,5 +674,6 @@ export {
 	addComplexityToTask,
 	resolveEnvVariable,
 	findProjectRoot,
-	aggregateTelemetry
+	aggregateTelemetry,
+	ensureDirectoryExists
 };

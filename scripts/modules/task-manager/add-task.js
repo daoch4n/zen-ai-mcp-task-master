@@ -12,7 +12,7 @@ import {
 	stopLoadingIndicator,
 	displayAiUsageSummary
 } from '../ui.js';
-import { readJSON, writeJSON, log as consoleLog, truncate } from '../utils.js';
+import { readJSON, writeJSON, log as consoleLog, truncate, ensureDirectoryExists } from '../utils.js';
 import { generateObjectService } from '../ai-services-unified.js';
 import { getDefaultPriority } from '../config-manager.js';
 import generateTaskFiles from './generate-task-files.js';
@@ -93,34 +93,25 @@ async function addTask(
 		}
 	};
 const tasksDirectory = path.dirname(tasksPath);
-		if (!fs.existsSync(tasksDirectory)) {
-			try {
-				report(`Creating missing tasks directory: ${tasksDirectory}`, 'info');
-				fs.mkdirSync(tasksDirectory, { recursive: true });
-			} catch (mkdirError) {
-				if (mkdirError.code === 'EACCES') {
-					report(
-						`Permission denied when attempting to create tasks directory: ${tasksDirectory}`,
-						'error'
-					);
-					throw new Error(
-						`Permission denied to create directory ${tasksDirectory}. Please check your permissions.`
-					);
-				} else {
-					report(
-						`Error creating tasks directory ${tasksDirectory}: ${mkdirError.message}`,
-						'error'
-					);
-					throw new Error(
-						`Failed to create directory ${tasksDirectory}: ${mkdirError.message}`
-					);
-				}
-			}
+		try {
+			ensureDirectoryExists(tasksDirectory);
+		} catch (error) {
+			// Re-throw the specific FILE_SYSTEM_ERROR from utils.js
+			throw error;
 		}
 
 	try {
 		// Read the existing tasks
-		let data = readJSON(tasksPath);
+		let data;
+		try {
+			data = readJSON(tasksPath);
+		} catch (error) {
+			// If readJSON throws an error (e.g., file not found or malformed JSON),
+			// initialize with empty tasks and proceed.
+			report(`Error reading tasks.json: ${error.message}. Initializing with empty tasks array.`, 'warn');
+			data = { tasks: [] };
+		}
+
 		if (!data || !data.tasks) {
 			report(
 				'tasks.json is missing, empty, or invalid. Initializing with empty tasks array.',
@@ -131,23 +122,11 @@ const tasksDirectory = path.dirname(tasksPath);
 				writeJSON(tasksPath, data);
 				report('Successfully initialized tasks.json.', 'info');
 			} catch (writeError) {
-				if (writeError.code === 'EACCES') {
-					report(
-						`Permission denied when attempting to write initial tasks.json: ${tasksPath}`,
-						'error'
-					);
-					throw new Error(
-						`Permission denied to write file ${tasksPath}. Please check your permissions.`
-					);
-				} else {
-					report(
-						`Error writing initial tasks.json ${tasksPath}: ${writeError.message}`,
-						'error'
-					);
-					throw new Error(
-						`Failed to write initial tasks.json ${tasksPath}: ${writeError.message}`
-					);
-				}
+				report(
+					`Error writing initial tasks.json ${tasksPath}: ${writeError.message}`,
+					'error'
+				);
+				throw writeError; // Re-throw the error from utils.js
 			}
 		}
 
