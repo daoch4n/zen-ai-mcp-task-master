@@ -26,7 +26,6 @@ import { registerFixDependenciesTool } from './fix-dependencies.js';
 import { registerComplexityReportTool } from './complexity-report.js';
 import { registerAddDependencyTool } from './add-dependency.js';
 import { registerRemoveTaskTool } from './remove-task.js';
-import { registerInitializeProjectTool } from './initialize-project.js';
 import { registerModelsTool } from './models.js';
 
 /**
@@ -38,10 +37,6 @@ export function registerTaskMasterTools(server) {
 		logger.info('Attempting to register Task Master tools...');
 
 		// Group 1: Initialization & Setup
-		logger.debug('Registering Initialize Project Tool...');
-		registerInitializeProjectTool(server); // Corrected line: was registerTaskMasterTools(server);
-		logger.debug('Initialize Project Tool registered.');
-
 		logger.debug('Registering Models Tool...');
 		registerModelsTool(server);
 		logger.debug('Models Tool registered.');
