@@ -7,11 +7,11 @@ https://github.com/user-attachments/assets/3212ebe3-9495-4181-bacf-65b431274fe7
 
 
 
-[![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE) [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano) [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
+[![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE) 
 
 ## Requirements
 
-Taskmaster Lite utilizes OpenAI API for AI-driven commands, which requires an OpenAI-compatible API key and compatible provider (OpenAI, self-hosted models not relying on Ollama etc!..) <br>
+Taskmaster Lite utilizes OpenAI API for AI-driven commands, which requires an OpenAI-compatible API key and compatible provider (Chutes, OpenRouter, OpenAI, self-hosted models, etc!..) <br>
 You can define 3 types of models to be used: the main model, the research model, and the search model. <br> Whichever model you decide to use, its API key must be present in either mcp.json or .env as `OPENAI_API_KEY`. <br> Any OpenAI-compatible model can be used by specifying a custom endpoint. <br>
 You can configure the main AI model using `TASKMASTER_AI_MODEL`, the research AI model using `TASKMASTER_RESEARCH_MODEL`, and the search AI model using `TASKMASTER_SEARCH_MODEL` in the `.env` file. <br> Both default to affordable option "gemini-2.5-flash-preview-05-20" if unset which works wonders on 24k thinking budget for a fraction of cost of alternative models!
 
