@@ -135,31 +135,5 @@ node /path-to/zen-ai-mcp-task-master/bin/task-master.js next
 node /path-to/zen-ai-mcp-task-master/bin/task-master.js generate
 ```
 
-## Documentation
 
-For more detailed information, check out the documentation in the `docs` directory:
 
-- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master Lite
-- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master Lite
-- [Command Reference](docs/command-reference.md) - Complete list of all available commands
-- [Task Structure](docs/task-structure.md) - Understanding the task format and features
-- [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
-
-## Licensing
-
-Task Master is licensed under the MIT License with Commons Clause:
-
-✅ **Allowed**:
-
-- Use Task Master for any purpose (personal, commercial, academic)
-- Modify the code
-- Distribute copies
-- Create and sell products built using Task Master
-
-❌ **Not Allowed**:
-
-- Sell Task Master itself
-- Offer Task Master as a hosted service
-- Create competing products based on Task Master
-
-See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.
