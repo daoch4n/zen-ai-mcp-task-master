@@ -1,4 +1,4 @@
-# [Task Master](https://github.com/eyaltoledano/claude-task-master) Lite [![GitHub stars](https://img.shields.io/github/stars/daoch4n/zen-ai-mcp-task-master?style=social)](https://github.com/daoch4n/zen-ai-mcp-task-master/stargazers)
+# mcp-[taskmaster](https://github.com/eyaltoledano/claude-task-master)-lite ⚙️
 ### Focusing on OpenAI custom endpoint & MCP server exposed via network
 
 
