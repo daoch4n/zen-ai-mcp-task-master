@@ -31,11 +31,12 @@ The following environment variables can be configured in a `.env` file (based on
 
 MCP (Model Control Protocol) provides the easiest way to get started with Task Master Lite directly in your editor.
 
-1.  **Clone the repository**:
+1.  **Install Task Master Lite**:
 
     ```bash
     git clone https://github.com/daoch4n/zen-ai-mcp-task-master
     cd zen-ai-mcp-task-master
+    npm install
     ```
 
 2.  **Start the MCP server**:
