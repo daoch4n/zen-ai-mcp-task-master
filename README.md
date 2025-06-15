@@ -1,5 +1,5 @@
-# mcp-[taskmaster](https://github.com/eyaltoledano/claude-task-master)-lite ⚙️
-### `-47000 loc` + `OpenAI custom endpoint` & `MCP via SSE transport`
+# mcp-[taskmaster](https://github.com/eyaltoledano/claude-task-master)-sse-openai-endpoint ⚙️
+### `-47000 loc` + `OpenAI custom endpoint` & `MCP via SSE`
 
 
 
