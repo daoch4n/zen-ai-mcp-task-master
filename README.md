@@ -1,4 +1,4 @@
-# mcp-[taskmaster](https://github.com/eyaltoledano/claude-task-master)-sse-openai-endpoint ⚙️
+# mcp-[taskmaster](https://github.com/eyaltoledano/claude-task-master)-sse-openai-api ⚙️
 ### `-47000 loc` + `OpenAI custom endpoint` & `MCP via SSE`
 
 
